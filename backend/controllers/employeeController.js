@@ -8,7 +8,7 @@ const createEmployee = (req, res) => {
     role,
   } = req.body;
 
-  // Required fields
+  // Validation
   if (
     !name ||
     !email ||
@@ -21,71 +21,27 @@ const createEmployee = (req, res) => {
     });
   }
 
-  // Password length
-  if (password.length < 6) {
-    return res.status(400).json({
-      message:
-        "Password must be at least 6 characters",
-    });
-  }
-
-  // Email format
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      message:
-        "Invalid email format",
-    });
-  }
-
-  // Check duplicate email
-  const checkEmail =
-    "SELECT * FROM users WHERE email = ?";
+  const sql =
+    "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
 
   db.query(
-    checkEmail,
-    [email],
+    sql,
+    [name, email, password, role],
     (err, result) => {
+
       if (err) {
+        console.log(err);
+
         return res.status(500).json({
-          message: "Server Error",
-        });
-      }
-
-      if (result.length > 0) {
-        return res.status(400).json({
           message:
-            "Email already exists",
+            "Failed to create employee",
         });
       }
 
-      const sql =
-        "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
-
-      db.query(
-        sql,
-        [
-          name,
-          email,
-          password,
-          role,
-        ],
-        (err, result) => {
-          if (err) {
-            return res.status(500).json({
-              message:
-                "Failed to create employee",
-            });
-          }
-
-          res.status(201).json({
-            message:
-              "Employee created successfully",
-          });
-        }
-      );
+      res.status(201).json({
+        message:
+          "Employee created successfully",
+      });
     }
   );
 };
