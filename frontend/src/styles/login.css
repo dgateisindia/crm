@@ -1,0 +1,60 @@
+/* Main Layout */
+@reference "tailwindcss";
+
+.login-container {
+  @apply min-h-screen flex;
+}
+
+/* Left Side */
+.login-left {
+  @apply w-1/2 bg-[#071739] text-white flex flex-col justify-center px-20;
+}
+
+.login-title {
+  @apply text-5xl font-bold mb-6;
+}
+
+.login-description {
+  @apply text-lg text-gray-300 leading-8;
+}
+
+/* Right Side */
+.login-right {
+  @apply w-1/2 flex items-center justify-center bg-gray-100;
+}
+
+.login-card {
+  @apply bg-white w-[420px] p-10 rounded-2xl shadow-lg;
+}
+
+.login-heading {
+  @apply text-3xl font-bold mb-2;
+}
+
+.login-subtitle {
+  @apply text-gray-500 mb-8;
+}
+
+/* Form */
+.login-form {
+  @apply space-y-5;
+}
+
+.form-label {
+  @apply block mb-2 font-medium;
+}
+
+.form-input {
+  @apply w-full border border-gray-300 p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+
+.login-btn {
+  @apply w-full
+  bg-blue-600
+  text-white
+  py-3
+  rounded-lg
+  hover:bg-blue-700
+  transition;
+}
