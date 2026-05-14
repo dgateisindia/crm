@@ -8,7 +8,7 @@ export default function EmployeeLayout({
 
       <EmployeeSidebar />
 
-      <div className="flex-1 ml-[260px] bg-gray-100 min-h-screen p-6">
+      <div className="flex-4 bg-gray-100 h-screen overflow-hidden">
         {children}
       </div>
 

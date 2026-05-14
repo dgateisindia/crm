@@ -40,23 +40,20 @@ export default function Sidebar() {
         <img
           src={logo}
           alt="DGATE Logo"
-          className="w-12 h-12 object-contain"
+          className="w-10 h-10 object-contain"
         />
-        <h1 className="text-3xl font-bold mb-10">
-          DGATE CRM
-        </h1>
 
         {/* Main Menu */}
         <div>
-          <h2 className="text-gray-400 uppercase text-sm mb-4">
+          <h2 className="text-gray-400 uppercase text-sm ">
             Main Menu
           </h2>
 
-          <ul className="space-y-2">
+          <ul className="space-y-0.1">
 
             <Link to="/manager/dashboard">
               <li className="sidebar-menu">
-                <LayoutDashboard size={20} />
+                <LayoutDashboard size={15} />
                 Dashboard
               </li>
             </Link>
@@ -68,7 +65,7 @@ export default function Sidebar() {
               onClick={() => setLeadDropdown(!leadDropdown)}
             >
               <div className="flex items-center gap-3">
-                <ContactRound size={20} />
+                <ContactRound size={12} />
                 <span>Leads</span>
               </div>
 
@@ -99,7 +96,7 @@ export default function Sidebar() {
           </li>
             <Link to="/manager/employees">
               <li className="sidebar-menu">
-                <UserCheck size={20} />
+                <UserCheck size={12} />
                 Employees
               </li>
             </Link>
@@ -107,7 +104,7 @@ export default function Sidebar() {
             <Link to="/manager/create-employee">
                 <li className="sidebar-menu">
                     
-                    <UserPlus size={20} />
+                    <UserPlus size={12} />
 
                     Create Employee
                 </li>
@@ -115,21 +112,21 @@ export default function Sidebar() {
 
             <Link to="/manager/followups">
               <li className="sidebar-menu">
-                <PhoneCall size={20} />
+                <PhoneCall size={12} />
                 Follow Ups
               </li>
             </Link>
 
             <Link to="/manager/reports">
               <li className="sidebar-menu">
-                <FileText size={20} />
+                <FileText size={12} />
                 Reports
               </li>
             </Link>
 
             <Link to="/manager/settings">
               <li className="sidebar-menu">
-                <Settings size={20} />
+                <Settings size={12} />
                 Settings
               </li>
             </Link>
@@ -138,56 +135,48 @@ export default function Sidebar() {
         </div>
 
         {/* Important Section */}
-        <div className="mt-10">
+        <div className="mt-4">
 
           <h2 className="text-gray-400 uppercase text-sm mb-4">
             Important
           </h2>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
 
             <div className="sidebar-important-card">
               <div className="flex items-center gap-2">
-                <AlertCircle size={18} />
+                <AlertCircle size={20} />
                 Important Leads
               </div>
 
-              <span className="bg-red-500 px-2 py-1 rounded-full text-sm">
-                12
-              </span>
+              
             </div>
 
             <div className="sidebar-important-card">
               <div className="flex items-center gap-2">
-                <Clock size={18} />
+                <Clock size={20} />
                 Pending Follow-ups
               </div>
 
-              <span className="bg-yellow-500 text-black px-2 py-1 rounded-full text-sm">
-                8
-              </span>
+              
             </div>
 
             <div className="sidebar-important-card">
               <div className="flex items-center gap-2">
-                <ClipboardList size={18} />
+                <ClipboardList size={20} />
                 Overdue Tasks
               </div>
 
-              <span className="bg-red-600 px-2 py-1 rounded-full text-sm">
-                3
-              </span>
+              
             </div>
 
             <div className="sidebar-important-card">
               <div className="flex items-center gap-2">
-                <StickyNote size={18} />
+                <StickyNote size={20} />
                 Important Notes
               </div>
 
-              <span className="bg-blue-500 px-2 py-1 rounded-full text-sm">
-                15
-              </span>
+              
             </div>
 
           </div>
@@ -198,11 +187,11 @@ export default function Sidebar() {
       {/* Bottom Profile */}
       <div>
 
-  {/*<div className="profile-card">
+  *<div className="profile-card">
     <img
       src="https://i.pravatar.cc/100"
       alt="profile"
-      className="w-12 h-12 rounded-full"
+      className="w-4 h-8 rounded-full"
     />
 
     <div>
@@ -214,7 +203,7 @@ export default function Sidebar() {
         CRM Manager
       </p>
     </div>
-  </div>*/}
+  </div>*
 
     <button
       onClick={handleLogout}

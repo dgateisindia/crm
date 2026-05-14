@@ -1,0 +1,70 @@
+@reference "tailwindcss";
+
+.employee-leads-container {
+  @apply p-5;
+}
+
+.employee-filter-card {
+  @apply bg-white
+  rounded-2xl
+  p-4
+  shadow-sm
+  flex
+  flex-col
+  md:flex-row
+  gap-4
+  justify-between
+  items-center
+  mb-5;
+}
+
+.employee-search-box {
+  @apply flex
+  items-center
+  gap-5
+  border
+  rounded-xl
+  px-3
+  py-2
+  w-full
+  md:w-[400px];
+}
+
+.employee-search-input {
+  @apply outline-none
+  w-full;
+}
+
+.employee-filter-box {
+  @apply flex
+  items-center
+  gap-2
+  border
+  rounded-xl
+  px-3
+  py-2;
+}
+
+.employee-filter-select {
+  @apply outline-none
+  bg-transparent;
+}
+
+.employee-table-card {
+  @apply bg-white
+  rounded-2xl
+  shadow-sm
+  overflow-hidden;
+}
+
+.employee-table-head {
+  @apply text-left
+  p-4
+  text-gray-500
+  font-semibold;
+}
+
+.employee-table-data {
+  @apply p-4
+  text-gray-700;
+}

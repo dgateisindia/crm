@@ -3,8 +3,15 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import logo
+from "../assets/logo.png";
+
+import "../styles/employeesidebar.css";
+
 import {
   LayoutDashboard,
+  Users,
+  PlusCircle,
   PhoneCall,
   User,
   LogOut,
@@ -15,51 +22,113 @@ export default function EmployeeSidebar() {
   const navigate =
     useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout =
+    () => {
 
-    localStorage.removeItem(
-      "token"
-    );
+      localStorage.removeItem(
+        "token"
+      );
 
-    localStorage.removeItem(
-      "role"
-    );
+      localStorage.removeItem(
+        "role"
+      );
 
-    navigate("/", {
-      replace: true,
-    });
-  };
+      navigate("/", {
+        replace: true,
+      });
+    };
 
   return (
-    <div className="w-[260px] h-screen bg-[#071739] text-white fixed p-5 flex flex-col justify-between">
+    <div className="sidebar">
 
       {/* Top */}
       <div>
 
-        <h1 className="text-3xl font-bold mb-10">
-          DGATE CRM
-        </h1>
+        {/* Logo */}
+        <div className="sidebar-logo">
 
-        <div className="space-y-3">
+          <img
+            src={logo}
+            alt="logo"
+            className="sidebar-logo-image"
+          />
 
-          <Link to="/employee/dashboard">
-            <div className="bg-blue-600 p-4 rounded-xl flex gap-3">
-              <LayoutDashboard />
+          <h1 className="sidebar-logo-text">
+            DGATE CRM
+          </h1>
+
+        </div>
+
+        {/* Menu */}
+        <div className="space-y-2">
+
+          <Link
+            to="/employee/dashboard"
+          >
+            <div className="sidebar-menu">
+
+              <LayoutDashboard
+                size={18}
+              />
+
               Dashboard
+
             </div>
           </Link>
 
-          <Link to="/employee/followups">
-            <div className="p-4 rounded-xl hover:bg-blue-600 flex gap-3">
-              <PhoneCall />
+          <Link
+            to="/employee/my-leads"
+          >
+            <div className="sidebar-menu">
+
+              <Users
+                size={18}
+              />
+
+              My Leads
+
+            </div>
+          </Link>
+
+          <Link
+            to="/employee/add-leads"
+          >
+            <div className="sidebar-menu">
+
+              <PlusCircle
+                size={18}
+              />
+
+              Add Lead
+
+            </div>
+          </Link>
+
+          <Link
+            to="/employee/followups"
+          >
+            <div className="sidebar-menu">
+
+              <PhoneCall
+                size={18}
+              />
+
               Follow Ups
+
             </div>
           </Link>
 
-          <Link to="/employee/profile">
-            <div className="p-4 rounded-xl hover:bg-blue-600 flex gap-3">
-              <User />
+          <Link
+            to="/employee/profile"
+          >
+            <div className="sidebar-menu">
+
+              <User
+                size={18}
+              />
+
               Profile
+
             </div>
           </Link>
 
@@ -68,13 +137,44 @@ export default function EmployeeSidebar() {
       </div>
 
       {/* Bottom */}
-      <button
-        onClick={handleLogout}
-        className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 transition py-3 rounded-xl"
-      >
-        <LogOut size={18} />
-        Logout
-      </button>
+      <div>
+
+        <div className="profile-card">
+
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="profile"
+            className="w-10 h-10 rounded-full"
+          />
+
+          <div>
+
+            <h3 className="font-semibold">
+              Employee
+            </h3>
+
+            <p className="text-xs text-gray-400">
+              CRM Employee
+            </p>
+
+          </div>
+
+        </div>
+
+        <button
+          onClick={
+            handleLogout
+          }
+          className="logout-btn"
+        >
+
+          <LogOut size={18} />
+
+          Logout
+
+        </button>
+
+      </div>
 
     </div>
   );

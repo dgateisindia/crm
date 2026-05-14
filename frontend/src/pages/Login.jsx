@@ -31,6 +31,8 @@ export default function Login() {
         role,
       } = response.data;
 
+      console.log(role);
+
       // Save login data
       localStorage.setItem(
         "token",

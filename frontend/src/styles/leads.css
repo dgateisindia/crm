@@ -2,26 +2,26 @@
 @import "tailwindcss";
 @layer components {
   .leads-container {
-    @apply bg-[#f5f7fb] min-h-screen p-6;
+    @apply bg-[#f5f7fb] min-h-screen p-3;
   }
 
   .leads-header-title {
-    @apply text-3xl font-bold text-[#071739];
+    @apply text-xl font-bold text-[#071739];
   }
 
 }
 
 @layer components {
   .leads-container {
-    @apply bg-[#f5f7fb] min-h-screen p-6;
+    @apply bg-[#f5f7fb] min-h-screen p-3;
   }
 
   .leads-header-title {
-    @apply text-3xl font-bold text-[#071739];
+    @apply text-xl font-bold text-[#071739];
   }
 
   .leads-header-subtitle {
-    @apply text-gray-500 mt-1;
+    @apply text-gray-500 mt-0;
   }
 
   /* Card Styles */

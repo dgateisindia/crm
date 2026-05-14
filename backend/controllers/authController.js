@@ -41,7 +41,7 @@ const login = (req, res) => {
         id: user.id,
         role: user.role,
       },
-      "crmSecretKey",
+      process.env.JWT_SECRET,
       {
         expiresIn: "1d",
       }

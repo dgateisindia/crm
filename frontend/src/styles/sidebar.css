@@ -1,52 +1,87 @@
 @reference "tailwindcss";
 
 .sidebar {
-  @apply w-60 h-screen bg-[#071739] text-white p-2 flex flex-col justify-between;
+  @apply w-60
+  h-screen
+  bg-[#071739]
+  text-white
+  px-4
+  py-3
+  flex
+  flex-col
+  justify-between
+  overflow-hidden;
 }
 
-.sidebar-title {
-  @apply text-xl font-bold mb-2;
-}
-
-.sidebar-menu {
-  @apply flex items-center gap-2 p-2 rounded-xl hover:bg-[#11224d] cursor-pointer transition;
-}
-
-.sidebar-section {
-  @apply text-gray-100 uppercase text-sm mb-1;
-}
-
-.sidebar-important-card {
-  @apply bg-[#11224d] p-1 rounded-xl flex justify-between items-center;
-}
-
-.profile-card {
-  @apply bg-[#11224d] p-1 rounded-xl flex items-center gap-2;
-}
+/* Logo */
 .sidebar-logo {
-  @apply mb-6 flex items-center gap-3;
+  @apply mb-4
+  flex
+  items-center
+  gap-2;
 }
 
 .sidebar-logo-image {
-  @apply w-8 h-8 object-contain;
+  @apply w-10
+  h-10
+  object-contain;
 }
 
 .sidebar-logo-text {
-  @apply text-xl font-bold;
+  @apply text-2xl
+  font-bold;
 }
+
+/* Title */
+.sidebar-title {
+  @apply text-lg
+  font-bold
+  mb-3;
+}
+
+/* Section */
+.sidebar-section {
+  @apply text-gray-400
+  uppercase
+  text-xs
+  mb-1;
+}
+
+/* Menu */
+.sidebar-menu {
+  @apply flex
+  items-center
+  gap-1
+  px-2
+  py-1
+  rounded-lg
+  hover:bg-[#11224d]
+  cursor-pointer
+  transition
+  text-[15px];
+}
+
+/* Dropdown */
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
 .submenu {
-  margin-left: 20px;
-  margin-top: 8px;
+  margin-left: 16px;
+  margin-top: 4px;
 }
 
 .submenu-item {
   display: block;
-  padding: 10px 14px;
+  padding: 4px 6px;
   color: #cfd8e3;
   text-decoration: none;
-  border-radius: 10px;
-  font-size: 14px;
-  margin-bottom: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 4px;
   transition: 0.3s;
 }
 
@@ -55,9 +90,55 @@
   color: white;
 }
 
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
+/* Important cards */
+.sidebar-important-card {
+  @apply bg-[#11224d]
+  px-1
+  py-1
+  rounded-lg
+  flex
+  justify-between
+  items-center
+  text-sm
+  mb-2;
+}
+
+/* Profile */
+.profile-card {
+  @apply bg-[#11224d]
+  p-0
+  rounded-lg
+  flex
+  items-center
+  gap-0.5
+  mb-1;
+}
+
+/* Logout */
+.logout-btn {
+  @apply w-full
+  bg-blue-500
+  hover:bg-blue-600
+  text-white
+  font-semibold
+  py-1
+  rounded-lg
+  transition;
+}
+.sidebar-logo {
+  @apply flex
+  items-center
+  gap-2
+  mb-3;
+}
+
+.sidebar-logo-image {
+  @apply w-12
+  h-12
+  object-contain;
+}
+
+.sidebar-logo-text {
+  @apply text-2xl
+  font-bold;
 }

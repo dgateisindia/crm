@@ -10,6 +10,10 @@ import Settings from "./pages/manager/Settings";
 import CreateEmployee from "./pages/manager/CreateEmployee";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
+import EmployeeFollowUps from "./pages/employee/EmployeeFollowUps"; 
+import EmployeeAddLeads from "./pages/employee/EmployeeAddLeads"; 
+import EmployeeMyLeads from "./pages/employee/EmployeeLeads"; 
+
 
 function App() {
   return (
@@ -28,11 +32,17 @@ function App() {
           </ProtectedRoute>
         }
       />
-      
-
 
       <Route
         path="/manager/leads"
+        element={
+          <ProtectedRoute>
+            <Leads />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/manager/add-leads"
         element={
           <ProtectedRoute>
             <Leads />
@@ -85,8 +95,37 @@ function App() {
       />
       <Route
         path="/employee/dashboard"
-        element={<EmployeeDashboard />}
+        element={
+          <ProtectedRoute>
+            <EmployeeDashboard />
+          </ProtectedRoute>
+        }
       />
+      <Route
+        path="/employee/followups"
+        element={
+          <ProtectedRoute>
+            <EmployeeFollowUps />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/employee/add-leads"
+        element={
+          <ProtectedRoute>
+            <EmployeeAddLeads />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/employee/my-leads"
+        element={
+          <ProtectedRoute>
+            <EmployeeMyLeads />
+          </ProtectedRoute>
+        }
+      />
+        
 
     </Routes>
   );
