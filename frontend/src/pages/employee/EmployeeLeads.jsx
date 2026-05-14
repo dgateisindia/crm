@@ -1,3 +1,10 @@
+import axios from "axios";
+
+import {
+  useState,
+  useEffect,
+} from "react";
+
 import EmployeeLayout
 from "../../layouts/EmployeeLayout";
 
@@ -7,6 +14,80 @@ import {
 } from "lucide-react";
 
 export default function EmployeeMyLeads() {
+
+  const [leads,
+    setLeads] =
+    useState([]);
+
+  const [search,
+    setSearch] =
+    useState("");
+
+  const [statusFilter,
+    setStatusFilter] =
+    useState("All Status");
+
+  useEffect(() => {
+
+    const userId =
+    localStorage.getItem(
+      "userId"
+    );
+
+    axios.get(
+      `http://localhost:5000/api/leads/my-leads/${userId}`
+    )
+    .then((res) => {
+
+      setLeads(
+        res.data
+      );
+
+    })
+    .catch((err) => {
+
+      console.log(err);
+
+    });
+
+  }, []);
+
+  // Filter Logic
+  const filteredLeads =
+    leads.filter(
+      (lead) => {
+
+      const matchesSearch =
+
+      lead.company_name
+      ?.toLowerCase()
+      .includes(
+        search.toLowerCase()
+      )
+
+      ||
+
+      lead.contact_person
+      ?.toLowerCase()
+      .includes(
+        search.toLowerCase()
+      );
+
+      const matchesStatus =
+
+      statusFilter ===
+      "All Status"
+
+      ||
+
+      lead.lead_status ===
+      statusFilter;
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+    });
 
   return (
     <EmployeeLayout>
@@ -38,6 +119,12 @@ export default function EmployeeMyLeads() {
               type="text"
               placeholder="Search company or contact..."
               className="employee-search-input"
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value
+                )
+              }
             />
 
           </div>
@@ -49,9 +136,22 @@ export default function EmployeeMyLeads() {
 
             <select
               className="employee-filter-select"
+              value={
+                statusFilter
+              }
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value
+                )
+              }
             >
+
               <option>
                 All Status
+              </option>
+
+              <option>
+                New Lead
               </option>
 
               <option>
@@ -69,6 +169,7 @@ export default function EmployeeMyLeads() {
               <option>
                 Converted
               </option>
+
             </select>
 
           </div>
@@ -114,61 +215,69 @@ export default function EmployeeMyLeads() {
 
             <tbody>
 
-              <tr className="border-b hover:bg-gray-50">
+              {
+                filteredLeads.map(
+                (lead) => (
 
-                <td className="employee-table-data">
-                  DGATE
-                </td>
+                <tr
+                  key={lead.id}
+                  className="border-b hover:bg-gray-50"
+                >
 
-                <td className="employee-table-data">
-                  Ashwin
-                </td>
+                  <td className="employee-table-data">
 
-                <td className="employee-table-data">
-                  9876543210
-                </td>
+                    {
+                      lead.company_name
+                    }
 
-                <td className="employee-table-data">
-                  Interested
-                </td>
+                  </td>
 
-                <td className="employee-table-data">
-                  Wedding Expo
-                </td>
+                  <td className="employee-table-data">
 
-                <td className="employee-table-data">
-                  20 May
-                </td>
+                    {
+                      lead.contact_person
+                    }
 
-              </tr>
+                  </td>
 
-              <tr className="hover:bg-gray-50">
+                  <td className="employee-table-data">
 
-                <td className="employee-table-data">
-                  ABC Corp
-                </td>
+                    {
+                      lead.phone
+                    }
 
-                <td className="employee-table-data">
-                  Rahul
-                </td>
+                  </td>
 
-                <td className="employee-table-data">
-                  9988776655
-                </td>
+                  <td className="employee-table-data">
 
-                <td className="employee-table-data">
-                  Connected
-                </td>
+                    {
+                      lead.lead_status
+                    }
 
-                <td className="employee-table-data">
-                  Business Meet
-                </td>
+                  </td>
 
-                <td className="employee-table-data">
-                  24 May
-                </td>
+                  <td className="employee-table-data">
 
-              </tr>
+                    {
+                      lead.special_event
+                      || "-"
+                    }
+
+                  </td>
+
+                  <td className="employee-table-data">
+
+                    {
+                      lead.event_date
+                      || "-"
+                    }
+
+                  </td>
+
+                </tr>
+
+              ))
+            }
 
             </tbody>
 

@@ -1,6 +1,9 @@
 const db = require("../db");
 
-const createEmployee = (req, res) => {
+// Create Employee
+const createEmployee =
+(req, res) => {
+
   const {
     name,
     email,
@@ -26,10 +29,16 @@ const createEmployee = (req, res) => {
 
   db.query(
     sql,
-    [name, email, password, role],
+    [
+      name,
+      email,
+      password,
+      role,
+    ],
     (err, result) => {
 
       if (err) {
+
         console.log(err);
 
         return res.status(500).json({
@@ -46,6 +55,63 @@ const createEmployee = (req, res) => {
   );
 };
 
+// Get Employees
+const getEmployees =
+(req, res) => {
+
+  const sql =
+    "SELECT id, name , email, role FROM users WHERE role = 'employee'";
+
+  db.query(
+    sql,
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+          message:
+            "Failed to fetch employees",
+        });
+      }
+
+      res.status(200).json(
+        result
+      );
+    }
+  );
+};
+
+const getEmployeeById =
+(req, res) => {
+
+  const sql =
+  "SELECT * FROM users WHERE id = ?";
+
+  db.query(
+    sql,
+    [req.params.id],
+    (err, result) => {
+
+      if (err) {
+
+        return res.status(500)
+        .json({
+          message:
+          "Error"
+        });
+      }
+
+      res.status(200)
+      .json(result[0]);
+    }
+  );
+};
+
+// Export
 module.exports = {
   createEmployee,
+  getEmployees,
+  getEmployeeById,
 };

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useLocation } from "react-router-dom";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -29,9 +29,11 @@ export default function Leads() {
       special_event: "",
       event_date: "",
       lead_status: "",
-      assigned_employee: "",
+      //assigned_employee: "",
       remarks: "",
     });
+      
+  const [allLeads,setAllLeads]=useState([]);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -42,6 +44,45 @@ export default function Leads() {
         e.target.value,
     });
   };
+  {/*}
+  useEffect(() => {
+
+        axios.get(
+          "http://localhost:5000/api/employee/employees"
+        )
+        .then((res) => {
+
+          setEmployees(
+            res.data
+          );
+
+        })
+        .catch((err) => {
+
+          console.log(err);
+
+        });
+
+      }, []);*/}
+    useEffect(() => {
+
+  axios.get(
+    "http://localhost:5000/api/leads/all"
+  )
+  .then((res) => {
+
+    setAllLeads(
+      res.data
+    );
+
+  })
+  .catch((err) => {
+
+    console.log(err);
+
+  });
+
+}, []);
 
   // Save Lead
   const handleSubmit =
@@ -71,7 +112,7 @@ export default function Leads() {
           special_event: "",
           event_date: "",
           lead_status: "",
-          assigned_employee: "",
+          //assigned_employee: "",
           remarks: "",
         });
 
@@ -150,13 +191,7 @@ export default function Leads() {
                     onChange={
                       handleChange
                     }
-                    onInput={(e) => {
-                      e.target.value =
-                        e.target.value.replace(
-                          /[^A-Za-z ]/g,
-                          ""
-                        );
-                    }}
+                 
                   />
 
                   {/* Contact Person */}
@@ -339,6 +374,7 @@ export default function Leads() {
                   </select>
 
                   {/* Assign Employee */}
+                  {/*
                   <select
                     name="assigned_employee"
                     className="leads-select"
@@ -355,15 +391,22 @@ export default function Leads() {
                       Assign Employee *
                     </option>
 
-                    <option>
-                      Employee 1
-                    </option>
+                     {
+                        employees.map(
+                          (employee) => (
 
-                    <option>
-                      Employee 2
-                    </option>
+                          <option
+                            key={employee.id}
+                            value={employee.id}
+                          >
+                            {employee.name}
+                          </option>
+
+                        ))
+                      }
 
                   </select>
+                  */}
 
                 </div>
 
@@ -433,16 +476,95 @@ export default function Leads() {
 
         <div className="leads-container">
 
-          <h1 className="leads-header-title">
-            Total Leads
-          </h1>
+  {/* Header */}
+  <div className="mb-6">
 
-          <p className="leads-header-subtitle">
-            View all leads added in CRM
-          </p>
+    <h1 className="leads-header-title">
+      Total Leads
+    </h1>
 
-        </div>
+    <p className="leads-header-subtitle">
+      View all leads added in CRM
+    </p>
 
+  </div>
+
+  {/* Table */}
+  <div className="leads-card overflow-x-auto">
+
+    <table className="w-full">
+
+      <thead>
+
+        <tr className="border-b">
+
+          <th className="text-left p-4">
+            Company
+          </th>
+
+          <th className="text-left p-4">
+            Contact
+          </th>
+
+          <th className="text-left p-4">
+            Phone
+          </th>
+
+          <th className="text-left p-4">
+            Status
+          </th>
+
+          {/*<th className="text-left p-4">
+            Assigned
+          </th>*/}
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {
+          allLeads.map(
+          (lead) => (
+
+          <tr
+            key={lead.id}
+            className="border-b hover:bg-gray-50"
+          >
+
+            <td className="p-4">
+              {lead.company_name}
+            </td>
+
+            <td className="p-4">
+              {lead.contact_person}
+            </td>
+
+            <td className="p-4">
+              {lead.phone}
+            </td>
+
+            <td className="p-4">
+              {lead.lead_status}
+            </td>
+
+            <td className="p-4">
+              {lead.employee_name}
+            </td>
+
+          </tr>
+
+        ))
+      }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
       )}
 
     </ManagerLayout>

@@ -139,7 +139,7 @@ export default function EmployeeSidebar() {
       {/* Bottom */}
       <div>
 
-        <div className="profile-card">
+        {/*<div className="profile-card">
 
           <img
             src="https://i.pravatar.cc/100"
@@ -159,7 +159,7 @@ export default function EmployeeSidebar() {
 
           </div>
 
-        </div>
+        </div>*/}
 
         <button
           onClick={

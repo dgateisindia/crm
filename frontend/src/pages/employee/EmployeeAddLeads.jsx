@@ -45,10 +45,25 @@ export default function EmployeeAddLeads() {
 
       try {
 
-        await axios.post(
-          "http://localhost:5000/api/leads/add",
-          leadData
-        );
+
+        const userId =
+                localStorage.getItem(
+                "userId"
+                );
+
+                console.log(
+                "User ID:",
+                userId
+                );
+
+                await axios.post(
+                "http://localhost:5000/api/leads/add",
+                {
+                ...leadData,
+                created_by:
+                    userId,
+                }
+                );
 
         alert(
           "Lead Added Successfully"
@@ -224,18 +239,7 @@ export default function EmployeeAddLeads() {
                   }
                 />
 
-                <input
-                  type="text"
-                  name="website"
-                  placeholder="Website"
-                  className="leads-input"
-                  value={
-                    leadData.website
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                
 
                 <select
                   name="lead_status"
