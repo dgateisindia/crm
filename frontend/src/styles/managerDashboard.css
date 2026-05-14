@@ -1,0 +1,13 @@
+@reference "tailwindcss";
+
+.dashboard-title {
+  @apply text-3xl font-bold mb-5;
+}
+
+.dashboard-grid {
+  @apply grid grid-cols-3 gap-5;
+}
+
+.dashboard-card {
+  @apply bg-white p-6 rounded-xl shadow;
+}
