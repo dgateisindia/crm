@@ -29,6 +29,7 @@ export default function Login() {
       const {
         token,
         role,
+        user,
       } = response.data;
 
       console.log(role);
@@ -42,6 +43,11 @@ export default function Login() {
       localStorage.setItem(
         "role",
         role
+      );
+
+      localStorage.setItem( 
+        "userId",
+        user.id
       );
 
       // Role-based login
