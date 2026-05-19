@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
+
 import Login from "./pages/Login";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import Leads from "./pages/manager/Leads";
@@ -13,6 +14,9 @@ import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeFollowUps from "./pages/employee/EmployeeFollowUps"; 
 import EmployeeAddLeads from "./pages/employee/EmployeeAddLeads"; 
 import EmployeeMyLeads from "./pages/employee/EmployeeLeads"; 
+import EmployeeDetails from "./pages/manager/EmployeeDetails";
+import EmployeeProfile from "./pages/employee/EmployeeProfile";
+import AddLeads from "./pages/manager/AddLeads";
 
 
 function App() {
@@ -45,7 +49,7 @@ function App() {
         path="/manager/add-leads"
         element={
           <ProtectedRoute>
-            <Leads />
+            <AddLeads />
           </ProtectedRoute>
         }
       />
@@ -125,7 +129,22 @@ function App() {
           </ProtectedRoute>
         }
       />
-        
+      <Route
+        path="/manager/employee/:id"
+        element={
+        <ProtectedRoute>
+          <EmployeeDetails />
+        </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/employee/profile"
+        element={
+          <ProtectedRoute>
+            <EmployeeProfile />
+          </ProtectedRoute>
+        }
+      />
 
     </Routes>
   );

@@ -1,17 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-
-import EmployeeLayout
-from "../../layouts/EmployeeLayout";
-
+import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
+import {Upload,UserPlus,} from "lucide-react";
 
-import {
-  Upload,
-  UserPlus,
-} from "lucide-react";
-
-export default function EmployeeAddLeads() {
+export default function AddLeads() {
 
   const [leadData,
     setLeadData] =
@@ -21,7 +14,6 @@ export default function EmployeeAddLeads() {
       phone: "",
       email: "",
       address: "",
-      website: "",
       special_event: "",
       event_date: "",
       lead_status: "",
@@ -29,73 +21,57 @@ export default function EmployeeAddLeads() {
     });
 
   const handleChange =
-    (e) => {
+  (e) => {
 
-      setLeadData({
-        ...leadData,
-        [e.target.name]:
-          e.target.value,
-      });
-    };
+    setLeadData({
+      ...leadData,
+      [e.target.name]:
+      e.target.value,
+    });
+  };
 
   const handleSubmit =
-    async (e) => {
+  async (e) => {
 
-      e.preventDefault();
+    e.preventDefault();
 
-      try {
+    try {
 
+      await axios.post(
+        "http://localhost:5000/api/leads/add",
+        leadData
+      );
 
-        const userId =
-                localStorage.getItem(
-                "userId"
-                );
+      alert(
+        "Lead Added Successfully"
+      );
 
-                console.log(
-                "User ID:",
-                userId
-                );
+      setLeadData({
+        company_name: "",
+        contact_person: "",
+        phone: "",
+        email: "",
+        address: "",
+        special_event: "",
+        event_date: "",
+        lead_status: "",
+        remarks: "",
+      });
 
-                await axios.post(
-                "http://localhost:5000/api/leads/add",
-                {
-                ...leadData,
-                created_by:
-                    userId,
-                }
-                );
+    } catch (error) {
 
-        alert(
-          "Lead Added Successfully"
-        );
+      console.log(error);
 
-        setLeadData({
-          company_name: "",
-          contact_person: "",
-          phone: "",
-          email: "",
-          address: "",
-          website: "",
-          special_event: "",
-          event_date: "",
-          lead_status: "",
-          remarks: "",
-        });
-
-      } catch (error) {
-
-        console.log(error);
-
-        alert(
-          error.response?.data
-            ?.message ||
-          "Failed to Add Lead"
-        );
-      }
-    };
+      alert(
+        error.response?.data
+        ?.message ||
+        "Failed to Add Lead"
+      );
+    }
+  };
 
   return (
-    <EmployeeLayout>
+    <ManagerLayout>
 
       <div className="leads-container">
 
@@ -103,18 +79,18 @@ export default function EmployeeAddLeads() {
         <div className="mb-6">
 
           <h1 className="leads-header-title">
-            Add Lead
+            Add Leads
           </h1>
 
           <p className="leads-header-subtitle">
-            Add new customer leads
+            Add leads manually
           </p>
 
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
 
-          {/* Left */}
+          {/* Form */}
           <div className="xl:col-span-3 leads-card">
 
             <div className="flex items-center gap-3 mb-5">
@@ -130,7 +106,7 @@ export default function EmployeeAddLeads() {
                 </h2>
 
                 <p className="text-sm text-gray-500">
-                  Fill lead details
+                  Fill in lead details
                 </p>
 
               </div>
@@ -176,7 +152,7 @@ export default function EmployeeAddLeads() {
                 <input
                   type="text"
                   name="phone"
-                  placeholder="Phone Number *"
+                  placeholder="Phone *"
                   className="leads-input"
                   required
                   maxLength="10"
@@ -191,8 +167,9 @@ export default function EmployeeAddLeads() {
                 <input
                   type="email"
                   name="email"
-                  placeholder="Email Address"
+                  placeholder="Email *"
                   className="leads-input"
+                  required
                   value={
                     leadData.email
                   }
@@ -229,8 +206,9 @@ export default function EmployeeAddLeads() {
                 <input
                   type="text"
                   name="address"
-                  placeholder="Address"
+                  placeholder="Address *"
                   className="leads-input"
+                  required
                   value={
                     leadData.address
                   }
@@ -238,8 +216,6 @@ export default function EmployeeAddLeads() {
                     handleChange
                   }
                 />
-
-                
 
                 <select
                   name="lead_status"
@@ -309,7 +285,7 @@ export default function EmployeeAddLeads() {
 
           </div>
 
-          {/* Upload */}
+          {/* Upload Card */}
           <div className="leads-card h-fit">
 
             <div className="flex items-center gap-3 mb-5">
@@ -325,7 +301,7 @@ export default function EmployeeAddLeads() {
                 </h2>
 
                 <p className="text-sm text-gray-500">
-                  Upload Excel / CSV
+                  Upload CSV
                 </p>
 
               </div>
@@ -342,6 +318,6 @@ export default function EmployeeAddLeads() {
 
       </div>
 
-    </EmployeeLayout>
+    </ManagerLayout>
   );
 }
