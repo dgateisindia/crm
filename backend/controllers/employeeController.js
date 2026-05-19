@@ -108,10 +108,45 @@ const getEmployeeById =
     }
   );
 };
+const deleteEmployee =
+(req, res) => {
+
+  const employeeId =
+    req.params.id;
+
+  const sql =
+  "DELETE FROM users WHERE id = ?";
+
+  db.query(
+    sql,
+    [employeeId],
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500)
+        .json({
+          message:
+          "Failed to delete employee",
+        });
+      }
+
+      res.status(200)
+      .json({
+        message:
+        "Employee deleted successfully",
+      });
+    }
+  );
+};
 
 // Export
 module.exports = {
   createEmployee,
   getEmployees,
   getEmployeeById,
+  deleteEmployee
 };
+ 

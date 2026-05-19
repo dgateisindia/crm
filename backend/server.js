@@ -18,9 +18,18 @@ require("./routes/leadRoutes");
 const app =
 express();
 
+const dashboardRoutes =
+require(
+"./routes/dashboardRoutes"
+);
+
 
 // Middleware
 app.use(cors());
+app.use(
+  "/api/dashboard",
+  dashboardRoutes
+);
 
 app.use(
   express.json()

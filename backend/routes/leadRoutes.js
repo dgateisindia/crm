@@ -8,6 +8,7 @@ const {
   addLead,
   getLeads,
   getEmployeeLeads,
+  deleteLead,
 } = require(
   "../controllers/leadController"
 );
@@ -32,5 +33,11 @@ router.get(
   getEmployeeLeads
 );
 
+//delete lead
+router.delete(
+  "/delete/:id",
+  deleteLead
+);
+        
 module.exports =
 router;

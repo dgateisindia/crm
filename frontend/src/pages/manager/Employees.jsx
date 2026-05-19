@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Trash2 } from "lucide-react";
 import {useState,useEffect,} from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,44 @@ export default function Employees() {
     });
 
   }, []);
+  const handleDelete =
+async (id) => {
+
+  const confirmDelete =
+  window.confirm(
+    "Are you sure you want to delete this employee?"
+  );
+
+  if (
+    !confirmDelete
+  ) return;
+
+  try {
+
+    await axios.delete(
+      `http://localhost:5000/api/employee/delete/${id}`
+    );
+
+    alert(
+      "Employee Deleted"
+    );
+
+    setEmployees(
+      employees.filter(
+        (emp) =>
+        emp.id !== id
+      )
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Delete Failed"
+    );
+  }
+};
 
   return (
 
@@ -71,6 +110,10 @@ export default function Employees() {
 
                 <th className="text-left p-4">
                   Role
+                </th>
+
+                <th className="text-center p-4">
+                  Action
                 </th>
 
               </tr>
@@ -114,7 +157,17 @@ export default function Employees() {
                     </span>
 
                   </td>
-
+                  <td className="p-4 text-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(employee.id);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </td> 
                 </tr>
 
               ))

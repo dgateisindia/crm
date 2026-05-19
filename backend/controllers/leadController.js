@@ -71,6 +71,42 @@ const getEmployeeLeads =
 };
 
 
+// Delete Lead
+const deleteLead =
+(req, res) => {
+
+  const leadId =
+    req.params.id;
+
+  const sql =
+  "DELETE FROM leads WHERE id = ?";
+
+  db.query(
+    sql,
+    [leadId],
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500)
+        .json({
+          message:
+          "Failed to delete lead",
+        });
+      }
+
+      res.status(200)
+      .json({
+        message:
+        "Lead Deleted Successfully",
+      });
+    }
+  );
+};
+
+
 // Add Lead
 const addLead =
 (req, res) => {
@@ -87,6 +123,11 @@ const addLead =
     remarks,
     created_by,
   } = req.body;
+  const checkEmailSql =
+  "SELECT * FROM leads WHERE email = ?";
+
+  const checkPhoneSql =
+  "SELECT * FROM leads WHERE phone = ?";
 
   const sql = `
   INSERT INTO leads (
@@ -148,4 +189,5 @@ module.exports = {
   addLead,
   getLeads,
   getEmployeeLeads,
+  deleteLead,
 };

@@ -77,3 +77,9 @@
   justify-center
   gap-2;
 }
+.active-menu {
+  @apply bg-[#11224d]
+  text-white
+  border-l-4
+  border-blue-400;
+}

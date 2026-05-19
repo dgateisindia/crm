@@ -1,571 +1,319 @@
 import axios from "axios";
-import { useState , useEffect} from "react";
-import { useLocation } from "react-router-dom";
+
+import {useState,useEffect,} from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
+
 import "../../styles/leads.css";
 
 import {
-  Upload,
-  UserPlus,
+  Search,
+  Trash2,
 } from "lucide-react";
 
 export default function Leads() {
 
-  const location = useLocation();
+  const [allLeads,
+    setAllLeads] =
+    useState([]);
 
-  const isAddLead =
-    location.pathname ===
-    "/manager/add-leads";
+  const [search,
+    setSearch] =
+    useState("");
 
-  const [leadData, setLeadData] =
-    useState({
-      company_name: "",
-      contact_person: "",
-      phone: "",
-      email: "",
-      address: "",
-      website: "",
-      special_event: "",
-      event_date: "",
-      lead_status: "",
-      //assigned_employee: "",
-      remarks: "",
-    });
-      
-  const [allLeads,setAllLeads]=useState([]);
+  const [statusFilter,
+    setStatusFilter] =
+    useState("All Status");
 
-  // Handle Input Change
-  const handleChange = (e) => {
+  // Fetch Leads
+  const fetchLeads =
+  () => {
 
-    setLeadData({
-      ...leadData,
-      [e.target.name]:
-        e.target.value,
+    axios.get(
+      "http://localhost:5000/api/leads/all"
+    )
+    .then((res) => {
+
+      setAllLeads(
+        res.data
+      );
+
+    })
+    .catch((err) => {
+
+      console.log(err);
+
     });
   };
-  {/*}
+
   useEffect(() => {
 
-        axios.get(
-          "http://localhost:5000/api/employee/employees"
-        )
-        .then((res) => {
+    fetchLeads();
 
-          setEmployees(
-            res.data
-          );
+  }, []);
 
-        })
-        .catch((err) => {
+  // Delete Lead
+  const handleDelete =
+  async (id) => {
 
-          console.log(err);
-
-        });
-
-      }, []);*/}
-    useEffect(() => {
-
-  axios.get(
-    "http://localhost:5000/api/leads/all"
-  )
-  .then((res) => {
-
-    setAllLeads(
-      res.data
+    const confirmDelete =
+    window.confirm(
+      "Are you sure you want to delete this lead?"
     );
 
-  })
-  .catch((err) => {
+    if (
+      !confirmDelete
+    ) return;
 
-    console.log(err);
+    try {
 
-  });
+      await axios.delete(
+        `http://localhost:5000/api/leads/delete/${id}`
+      );
 
-}, []);
+      alert(
+        "Lead Deleted Successfully"
+      );
 
-  // Save Lead
-  const handleSubmit =
-    async (e) => {
+      fetchLeads();
 
-      e.preventDefault();
+    } catch (error) {
 
-      try {
+      console.log(error);
 
-        await axios.post(
-          "http://localhost:5000/api/leads/add",
-          leadData
-        );
+      alert(
+        "Failed to Delete Lead"
+      );
+    }
+  };
 
-        alert(
-          "Lead Added Successfully"
-        );
+  // Filter Leads
+const filteredLeads =
+allLeads.filter(
+(lead) => {
 
-        // Clear form
-        setLeadData({
-          company_name: "",
-          contact_person: "",
-          phone: "",
-          email: "",
-          address: "",
-          website: "",
-          special_event: "",
-          event_date: "",
-          lead_status: "",
-          //assigned_employee: "",
-          remarks: "",
-        });
+const company =
 
-      } catch (error) {
+lead.company_name
+? lead.company_name
+.toLowerCase()
+: "";
 
-  console.log(error);
+const contact =
 
-  alert(
-    error.response?.data?.message ||
-    "Failed to Add Lead"
-  );
-}
-    };
-  return (
+lead.contact_person
+? lead.contact_person
+.toLowerCase()
+: "";
+
+const matchesSearch =
+
+company.includes(
+search.toLowerCase()
+)
+
+||
+
+contact.includes(
+search.toLowerCase()
+);
+
+const matchesStatus =
+
+statusFilter ===
+"All Status"
+
+||
+
+lead.lead_status ===
+statusFilter;
+
+return (
+matchesSearch &&
+matchesStatus
+);
+
+});
+return (
     <ManagerLayout>
 
-      {isAddLead ? (
+      <div className="leads-container">
 
-        <div className="leads-container">
+        {/* Header */}
+        <div className="mb-6">
 
-          {/* Header */}
-          <div className="mb-6">
+          <h1 className="leads-header-title">
+            Total Leads
+          </h1>
 
-            <h1 className="leads-header-title">
-              Add Leads
-            </h1>
-
-            <p className="leads-header-subtitle">
-              Add leads manually or upload
-              bulk leads using Excel.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-
-            {/* Left Side */}
-            <div className="xl:col-span-3 leads-card">
-
-              <div className="flex items-center gap-3 mb-5">
-
-                <div className="icon-wrapper-dark">
-                  <UserPlus size={22} />
-                </div>
-
-                <div>
-
-                  <h2 className="text-xl font-semibold text-[#071739]">
-                    Lead Information
-                  </h2>
-
-                  <p className="text-sm text-gray-500">
-                    Fill in lead details manually
-                  </p>
-
-                </div>
-
-              </div>
-
-              <form
-                onSubmit={handleSubmit}
-              >
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-                  {/* Company Name */}
-                  <input
-                    type="text"
-                    name="company_name"
-                    placeholder="Company Name *"
-                    className="leads-input"
-                    required
-                    value={
-                      leadData.company_name
-                    }
-                    onChange={
-                      handleChange
-                    }
-                 
-                  />
-
-                  {/* Contact Person */}
-                  <input
-                    type="text"
-                    name="contact_person"
-                    placeholder="Contact Person Name *"
-                    className="leads-input"
-                    required
-                    value={
-                      leadData.contact_person
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    onInput={(e) => {
-                      e.target.value =
-                        e.target.value.replace(
-                          /[^A-Za-z ]/g,
-                          ""
-                        );
-                    }}
-                  />
-
-                  {/* Phone */}
-                  <input
-                    type="text"
-                    name="phone"
-                    placeholder="Phone Number *"
-                    className="leads-input"
-                    required
-                    maxLength="10"
-                    value={
-                      leadData.phone
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    onInput={(e) => {
-                      e.target.value =
-                        e.target.value.replace(
-                          /[^0-9]/g,
-                          ""
-                        );
-                    }}
-                  />
-
-                  {/* Email */}
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address *"
-                    className="leads-input"
-                    required
-                    value={
-                      leadData.email
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  />
-
-                  {/* Special Event */}
-                  <input
-                    type="text"
-                    name="special_event"
-                    placeholder="Special Event"
-                    className="leads-input"
-                    value={
-                      leadData.special_event
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  />
-
-                  {/* Event Date */}
-                  <input
-                    type="date"
-                    name="event_date"
-                    className="leads-input"
-                    value={
-                      leadData.event_date
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  />
-
-                  {/* Address */}
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Address *"
-                    className="leads-input"
-                    required
-                    value={
-                      leadData.address
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  />
-
-                  {/* Website */}
-                  <input
-                    type="text"
-                    name="website"
-                    placeholder="Website"
-                    className="leads-input"
-                    value={
-                      leadData.website
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  />
-
-                  {/* Lead Status */}
-                  <select
-                    name="lead_status"
-                    className="leads-select"
-                    required
-                    value={
-                      leadData.lead_status
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  >
-
-                    <option value="">
-                      Lead Status *
-                    </option>
-
-                    <option>
-                      New Lead
-                    </option>
-
-                    <option>
-                      Contacted
-                    </option>
-
-                    <option>
-                      Connected
-                    </option>
-
-                    <option>
-                      Interested
-                    </option>
-
-                    <option>
-                      Follow-up Required
-                    </option>
-
-                    <option>
-                      Meeting Scheduled
-                    </option>
-
-                    <option>
-                      Proposal Sent
-                    </option>
-
-                    <option>
-                      Negotiation
-                    </option>
-
-                    <option>
-                      Converted
-                    </option>
-
-                    <option>
-                      Not Interested
-                    </option>
-
-                    <option>
-                      Closed Lost
-                    </option>
-
-                  </select>
-
-                  {/* Assign Employee */}
-                  {/*
-                  <select
-                    name="assigned_employee"
-                    className="leads-select"
-                    required
-                    value={
-                      leadData.assigned_employee
-                    }
-                    onChange={
-                      handleChange
-                    }
-                  >
-
-                    <option value="">
-                      Assign Employee *
-                    </option>
-
-                     {
-                        employees.map(
-                          (employee) => (
-
-                          <option
-                            key={employee.id}
-                            value={employee.id}
-                          >
-                            {employee.name}
-                          </option>
-
-                        ))
-                      }
-
-                  </select>
-                  */}
-
-                </div>
-
-                {/* Remarks */}
-                <textarea
-                  rows="4"
-                  placeholder="Remarks"
-                  className="leads-input w-full mt-4"
-                  name="remarks"
-                  value={
-                    leadData.remarks
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
-
-                <div className="flex justify-end mt-5">
-
-                  <button
-                    type="submit"
-                    className="leads-btn-primary"
-                  >
-                    Save Lead
-                  </button>
-
-                </div>
-
-              </form>
-
-            </div>
-
-            {/* Upload Card */}
-            <div className="leads-card h-fit">
-
-              <div className="flex items-center gap-3 mb-5">
-
-                <div className="icon-wrapper-light">
-                  <Upload size={22} />
-                </div>
-
-                <div>
-
-                  <h2 className="font-semibold text-[#071739] text-lg">
-                    Import Leads
-                  </h2>
-
-                  <p className="text-sm text-gray-500">
-                    Upload Excel or CSV file
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="upload-dropzone">
-                Upload Area
-              </div>
-
-            </div>
-
-          </div>
+          <p className="leads-header-subtitle">
+            View all CRM leads
+          </p>
 
         </div>
 
-      ) : (
+        {/* Filters */}
+        <div className=" manager-filter-card md:flex-row">
 
-        <div className="leads-container">
+          {/* Search */}
+          <div className="manager-search-box md:w-[350px]">
 
-  {/* Header */}
-  <div className="mb-6">
+            <Search size={18} />
 
-    <h1 className="leads-header-title">
-      Total Leads
-    </h1>
+            <input
+              type="text"
+              placeholder="Search company or contact..."
+              className="manager-search-input"
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value
+                )
+              }
+            />
 
-    <p className="leads-header-subtitle">
-      View all leads added in CRM
-    </p>
+          </div>
 
-  </div>
-
-  {/* Table */}
-  <div className="leads-card overflow-x-auto">
-
-    <table className="w-full">
-
-      <thead>
-
-        <tr className="border-b">
-
-          <th className="text-left p-4">
-            Company
-          </th>
-
-          <th className="text-left p-4">
-            Contact
-          </th>
-
-          <th className="text-left p-4">
-            Phone
-          </th>
-
-          <th className="text-left p-4">
-            Status
-          </th>
-
-          {/*<th className="text-left p-4">
-            Assigned
-          </th>*/}
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        {
-          allLeads.map(
-          (lead) => (
-
-          <tr
-            key={lead.id}
-            className="border-b hover:bg-gray-50"
+          {/* Filter */}
+          <select
+            className="manager-filter-select"
+            value={
+              statusFilter
+            }
+            onChange={(e) =>
+              setStatusFilter(
+                e.target.value
+              )
+            }
           >
 
-            <td className="p-4">
-              {lead.company_name}
-            </td>
+            <option>
+              All Status
+            </option>
 
-            <td className="p-4">
-              {lead.contact_person}
-            </td>
+            <option>
+              New Lead
+            </option>
 
-            <td className="p-4">
-              {lead.phone}
-            </td>
+            <option>
+              Connected
+            </option>
 
-            <td className="p-4">
-              {lead.lead_status}
-            </td>
+            <option>
+              Interested
+            </option>
 
-            <td className="p-4">
-              {lead.employee_name}
-            </td>
+            <option>
+              Follow-up Required
+            </option>
 
-          </tr>
+            <option>
+              Converted
+            </option>
 
-        ))
-      }
+          </select>
 
-      </tbody>
+        </div>
 
-    </table>
+        {/* Table */}
+        <div className="leads-card overflow-x-auto">
 
-  </div>
+          <table className="w-full">
 
-</div>
-      )}
+            <thead>
+
+              <tr className="border-b">
+
+                <th className="table-head">
+                  Company
+                </th>
+
+                <th className="table-head">
+                  Contact
+                </th>
+
+                <th className="table-head">
+                  Phone
+                </th>
+
+                <th className="table-head">
+                  Status
+                </th>
+
+                <th className="table-head text-center">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {
+                filteredLeads.map(
+                (lead) => (
+
+                <tr
+                  key={lead.id}
+                  className="table-row"
+                >
+
+                  <td className="table-data">
+                    {
+                      lead.company_name
+                    }
+                  </td>
+
+                  <td className="table-data">
+                    {
+                      lead.contact_person
+                    }
+                  </td>
+
+                  <td className="table-data">
+                    {
+                      lead.phone
+                    }
+                  </td>
+
+                  <td className="table-data">
+                    {
+                      lead.lead_status
+                    }
+                  </td>
+
+                  <td className="table-data text-center">
+
+                    <button
+                      onClick={() =>
+                        handleDelete(
+                          lead.id
+                        )
+                      }
+                      className="delete-btn"
+                    >
+
+                      <Trash2
+                        size={18}
+                      />
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))
+            }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
 
     </ManagerLayout>
   );

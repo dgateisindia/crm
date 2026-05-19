@@ -1,6 +1,6 @@
 import {
   Link,
-  useNavigate,
+  useNavigate,useLocation,
 } from "react-router-dom";
 
 import logo
@@ -21,6 +21,8 @@ export default function EmployeeSidebar() {
 
   const navigate =
     useNavigate();
+  const location =
+    useLocation();
 
   const handleLogout =
     () => {
@@ -65,7 +67,7 @@ export default function EmployeeSidebar() {
           <Link
             to="/employee/dashboard"
           >
-            <div className="sidebar-menu">
+            <div className={`sidebar-menu ${location.pathname === "/employee/dashboard" ? "active-menu" : ""}`}>
 
               <LayoutDashboard
                 size={18}
@@ -79,7 +81,7 @@ export default function EmployeeSidebar() {
           <Link
             to="/employee/my-leads"
           >
-            <div className="sidebar-menu">
+            <div className={`sidebar-menu ${location.pathname === "/employee/my-leads" ? "active-menu " : ""}`}>
 
               <Users
                 size={18}
@@ -93,7 +95,7 @@ export default function EmployeeSidebar() {
           <Link
             to="/employee/add-leads"
           >
-            <div className="sidebar-menu">
+            <div className={`sidebar-menu ${location.pathname === "/employee/add-leads" ? "active-menu " : ""}`}  >
 
               <PlusCircle
                 size={18}
@@ -107,7 +109,7 @@ export default function EmployeeSidebar() {
           <Link
             to="/employee/followups"
           >
-            <div className="sidebar-menu">
+            <div className={`sidebar-menu ${location.pathname === "/employee/followups" ? "active-menu " : ""}`} >
 
               <PhoneCall
                 size={18}

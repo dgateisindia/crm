@@ -1,4 +1,4 @@
-import {Link,useNavigate,} from "react-router-dom";import { UserPlus } from "lucide-react";
+import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus } from "lucide-react";
 import "../styles/sidebar.css";
 import logo from "../assets/logo.png";
 import { useState } from "react";
@@ -21,6 +21,7 @@ import {
 export default function Sidebar() {
   const [leadDropdown, setLeadDropdown] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
   localStorage.removeItem("token");
@@ -52,7 +53,7 @@ export default function Sidebar() {
           <ul className="space-y-0.1">
 
             <Link to="/manager/dashboard">
-              <li className="sidebar-menu">
+              <li className={`sidebar-menu ${location.pathname === "/manager/dashboard" ? "active-menu " : ""}`}>
                 <LayoutDashboard size={15} />
                 Dashboard
               </li>
@@ -80,13 +81,13 @@ export default function Sidebar() {
               <div className="submenu">
 
                 <Link to="/manager/leads">
-                  <div className="submenu-item">
+                  <div className={`submenu-item ${location.pathname === "/manager/leads" ? "active-submenu" : ""}`}>
                     Total Leads
                   </div>
                 </Link>
 
                 <Link to="/manager/add-leads">
-                  <div className="submenu-item">
+                  <div className={`submenu-item ${location.pathname === "/manager/add-leads" ? "active-submenu" : ""}`}>
                     Add Leads
                   </div>
                 </Link>
@@ -95,14 +96,14 @@ export default function Sidebar() {
             )}
           </li>
             <Link to="/manager/employees">
-              <li className="sidebar-menu">
+              <li className={`sidebar-menu ${location.pathname === "/manager/employees" ? "active-menu " : ""}`}>
                 <UserCheck size={12} />
                 Employees
               </li>
             </Link>
 
             <Link to="/manager/create-employee">
-                <li className="sidebar-menu">
+                <li className={`sidebar-menu ${location.pathname === "/manager/create-employee" ? "active-menu " : ""}`}>
                     
                     <UserPlus size={12} />
 
@@ -111,21 +112,21 @@ export default function Sidebar() {
             </Link>
 
             <Link to="/manager/followups">
-              <li className="sidebar-menu">
+              <li className={`sidebar-menu ${location.pathname === "/manager/followups" ? "active-menu " : ""}`}>
                 <PhoneCall size={12} />
                 Follow Ups
               </li>
             </Link>
 
             <Link to="/manager/reports">
-              <li className="sidebar-menu">
+              <li className={`sidebar-menu ${location.pathname === "/manager/reports" ? "active-menu " : ""}`}  >
                 <FileText size={12} />
                 Reports
               </li>
             </Link>
 
             <Link to="/manager/settings">
-              <li className="sidebar-menu">
+              <li className={`sidebar-menu ${location.pathname === "/manager/settings" ? "active-menu " : ""}`}>
                 <Settings size={12} />
                 Settings
               </li>
@@ -187,7 +188,7 @@ export default function Sidebar() {
       {/* Bottom Profile */}
       <div>
 
-  *<div className="profile-card">
+  <div className="profile-card">
     <img
       src="https://i.pravatar.cc/100"
       alt="profile"
@@ -203,7 +204,7 @@ export default function Sidebar() {
         CRM Manager
       </p>
     </div>
-  </div>*
+  </div>
 
     <button
       onClick={handleLogout}

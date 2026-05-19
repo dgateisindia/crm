@@ -142,3 +142,11 @@
   @apply text-2xl
   font-bold;
 }
+
+.active-menu {
+  @apply bg-[#11224d]
+  text-white
+  rounded-lg
+  border-l-4
+  border-blue-500;
+}
