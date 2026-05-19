@@ -2,175 +2,277 @@ import { useState } from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import axios from "axios";
 
+import "../../styles/createEmployee.css";
+
 export default function CreateEmployee() {
+
   const [employee, setEmployee] = useState({
-    name: "",
+
+    manager_id: 1,
+    role_id: 1,
+    full_name: "",
     email: "",
+    phone: "",
     password: "",
-    role: "",
+    department: "",
+    designation: "",
+    status: "active"
+
   });
 
   const handleChange = (e) => {
+
     setEmployee({
+
       ...employee,
       [e.target.name]: e.target.value,
+
     });
+
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
 
-  const { name, email, password, role } =
-    employee;
+    e.preventDefault();
 
-  // Validation
-  if (
-    !name ||
-    !email ||
-    !password ||
-    !role
-  ) {
-    return alert(
-      "Please fill all fields"
-    );
-  }
+    try {
 
-  // Email validation
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(email)) {
-    return alert(
-      "Enter valid email address"
-    );
-  }
-
-  // Password length
-  if (password.length < 6) {
-    return alert(
-      "Password must be at least 6 characters"
-    );
-  }
-
-  try {
-    const response =
-      await axios.post(
-        "http://localhost:5000/api/employee/create-employee",
+      const response = await axios.post(
+        "http://localhost:5000/api/employee/create",
         employee
       );
 
-    alert(response.data.message);
+      alert(response.data.message);
 
-    setEmployee({
-      name: "",
-      email: "",
-      password: "",
-      role: "",
-    });
+    } catch (error) {
 
-  } catch (error) {
-    alert(
-      error.response?.data?.message ||
-      "Failed to create employee"
-    );
-  }
-};
+      alert(
+        error.response?.data?.message ||
+        "Failed to create employee"
+      );
+
+    }
+
+  };
 
   return (
+
     <ManagerLayout>
 
-      <div className="bg-white p-8 rounded-2xl shadow max-w-2xl">
+      <div className="createEmployeePage">
 
-        <h1 className="text-3xl font-bold mb-6">
-          Create Employee Login
-        </h1>
+        {/* Header */}
+        <div className="createEmployeeHeader">
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
+          <h1>Create Employee Login</h1>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Employee Name
-            </label>
+          <p>
+            Create an account for a new employee and send login credentials.
+          </p>
 
-            <input
-              type="text"
-              name="name"
-              value={employee.name}
-              onChange={handleChange}
-              placeholder="Enter Name"
-              className="w-full border p-3 rounded-lg"
-            />
-          </div>
+        </div>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Email
-            </label>
+        {/* Main Layout */}
+        <div className="createEmployeeGrid">
 
-            <input
-              type="email"
-              name="email"
-              value={employee.email}
-              onChange={handleChange}
-              placeholder="Enter Email"
-              className="w-full border p-3 rounded-lg"
-            />
-          </div>
+          {/* LEFT */}
+          <div className="employeeFormCard">
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Password
-            </label>
+            <h2>Employee Information</h2>
 
-            <input
-              type="password"
-              name="password"
-              value={employee.password}
-              onChange={handleChange}
-              placeholder="Enter Password"
-              className="w-full border p-3 rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Role
-            </label>
-
-            <select
-              name="role"
-              value={employee.role}
-              onChange={handleChange}
-              className="w-full border p-3 rounded-lg"
+            <form
+              onSubmit={handleSubmit}
+              className="employeeForm"
             >
-              <option value="">
-                Select Role
-              </option>
 
-              <option value="employee">
-                Employee
-              </option>
+              {/* Row */}
+              <div className="formRow">
 
-              <option value="sales">
-                Sales Executive
-              </option>
-            </select>
+                <div className="formGroup">
+
+                  <label>Full Name</label>
+
+                  <input
+                    type="text"
+                    name="full_name"
+                    value={employee.full_name}
+                    onChange={handleChange}
+                    placeholder="Enter full name"
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>Email Address</label>
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={employee.email}
+                    onChange={handleChange}
+                    placeholder="Enter email address"
+                  />
+
+                </div>
+
+              </div>
+
+              {/* Row */}
+              <div className="formRow">
+
+                <div className="formGroup">
+
+                  <label>Phone Number</label>
+
+                  <input
+                    type="text"
+                    name="phone"
+                    value={employee.phone}
+                    onChange={handleChange}
+                    placeholder="Enter phone number"
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>Department</label>
+
+                  <input
+                    type="text"
+                    name="department"
+                    value={employee.department}
+                    onChange={handleChange}
+                    placeholder="Enter department"
+                  />
+
+                </div>
+
+              </div>
+
+              {/* Row */}
+              <div className="formRow">
+
+                <div className="formGroup">
+
+                  <label>Designation</label>
+
+                  <input
+                    type="text"
+                    name="designation"
+                    value={employee.designation}
+                    onChange={handleChange}
+                    placeholder="Enter designation"
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>Role</label>
+
+                  <select
+                    name="role_id"
+                    value={employee.role_id}
+                    onChange={handleChange}
+                  >
+
+                    <option value="1">
+                      Sales Executive
+                    </option>
+
+                    <option value="2">
+                      HR
+                    </option>
+
+                    <option value="3">
+                      Telecaller
+                    </option>
+
+                  </select>
+
+                </div>
+
+              </div>
+
+              {/* Credentials */}
+              <div className="loginSection">
+
+                <h2>Login Credentials</h2>
+
+                <div className="formGroup">
+
+                  <label>Password</label>
+
+                  <input
+                    type="password"
+                    name="password"
+                    value={employee.password}
+                    onChange={handleChange}
+                    placeholder="Enter password"
+                  />
+
+                </div>
+
+              </div>
+
+              {/* Buttons */}
+              <div className="buttonRow">
+
+                <button
+                  type="button"
+                  className="cancelBtn"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="submitBtn"
+                >
+                  Create & Send Login
+                </button>
+
+              </div>
+
+            </form>
+
           </div>
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Create Employee
-          </button>
+          {/* RIGHT */}
+          <div className="previewCard">
 
-        </form>
+            <h2>Login Preview</h2>
+
+            <div className="previewProfile">
+
+              <div className="profileCircle">
+                👤
+              </div>
+
+              <h3>
+                {employee.full_name || "Employee Name"}
+              </h3>
+
+              <p>
+                {employee.designation || "Designation"}
+              </p>
+
+              <p>
+                {employee.department || "Department"}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
     </ManagerLayout>
+
   );
+
 }

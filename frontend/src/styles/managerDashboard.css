@@ -1,64 +1,188 @@
 @reference "tailwindcss";
 
-.dashboard-title {
-  @apply text-3xl
-  font-bold
-  text-[#071739]
-  mb-6;
+.dashboard-header {
+  @apply flex
+  justify-between
+  items-center
+  mb-2;
 }
 
+.dashboard-title {
+  @apply text-xl
+  font-bold
+  text-[#0F172A];
+}
+
+.dashboard-subtitle {
+  @apply text-gray-500
+  mt-1;
+}
+
+/* Grid */
 .dashboard-grid {
   @apply grid
   grid-cols-1
   md:grid-cols-2
   xl:grid-cols-4
-  gap-5
-  mb-6;
+  gap-2
+  mb-3;
 }
 
-.dashboard-card {
+/* Cards */
+.crm-card {
   @apply bg-white
-  rounded-2xl
-  shadow-md
-  p-6
+  rounded-[28px]
+  p-2
+  shadow-sm
+  border
+  border-gray-100
   hover:shadow-lg
-  transition;
+  transition-all
+  duration-300;
 }
 
-.dashboard-card h2 {
+.crm-card-top {
+  @apply flex
+  justify-between
+  items-center
+  mb-2;
+}
+
+.crm-card h3 {
   @apply text-gray-500
   text-sm
   font-medium;
 }
 
-.dashboard-number {
-  @apply text-4xl
+.crm-card h2 {
+  @apply text-2xl
   font-bold
-  text-[#071739]
-  mt-2;
+  mt-2
+  text-[#0F172A];
 }
 
-.recent-leads-card {
-  @apply bg-white
+/* Icon Circle */
+.icon-circle {
+  @apply w-14
+  h-14
   rounded-2xl
-  shadow-md
-  p-6;
+  flex
+  items-center
+  justify-center
+  text-white;
 }
 
-.table-head {
-  @apply text-left
-  p-4
+/* Colors */
+.blue-bg {
+  @apply bg-blue-500;
+}
+
+.green-bg {
+  @apply bg-green-500;
+}
+
+.orange-bg {
+  @apply bg-orange-500;
+}
+
+.purple-bg {
+  @apply bg-purple-500;
+}
+
+/* Soft Card Accent */
+.blue-card {
+  @apply border-l-[6px]
+  border-blue-500;
+}
+
+.green-card {
+  @apply border-l-[6px]
+  border-green-500;
+}
+
+.orange-card {
+  @apply border-l-[6px]
+  border-orange-500;
+}
+
+.purple-card {
+  @apply border-l-[6px]
+  border-purple-500;
+}
+
+/* Recent Table */
+.recent-card {
+  @apply bg-white
+  rounded-[28px]
+  p-6
+  shadow-sm
+  border
+  border-gray-100;
+}
+
+.recent-header {
+  @apply flex
+  justify-between
+  items-center
+  mb-6;
+}
+
+.recent-header h2 {
+  @apply text-xl
   font-semibold
-  text-[#071739];
+  text-[#0F172A];
 }
 
-.table-data {
-  @apply p-4
-  text-gray-700;
+table {
+  @apply w-full;
 }
 
-.table-row {
+thead tr {
+  @apply border-b;
+}
+
+thead th {
+  @apply text-left
+  py-4
+  px-4
+  text-sm
+  font-semibold
+  text-gray-500;
+}
+
+tbody tr {
   @apply border-b
   hover:bg-gray-50
   transition;
+}
+
+tbody td {
+  @apply py-4
+  px-4
+  text-[#334155]
+  font-medium;
+}
+
+/* Status */
+.status-badge {
+  @apply px-4
+  py-1
+  rounded-full
+  text-sm
+  font-semibold;
+}
+
+.converted {
+  @apply bg-green-100
+  text-green-700;
+}
+
+.new {
+  @apply bg-blue-100
+  text-blue-700;
+}
+
+.connected {
+  @apply bg-orange-100
+  text-orange-700;
 }

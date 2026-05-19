@@ -1,186 +1,353 @@
 const db =
 require("../db");
 
+
+// ==========================
+// MANAGER DASHBOARD
+// ==========================
 const getDashboardStats =
 (req, res) => {
 
   const stats = {};
 
+
+  // ==========================
   // Total Leads
+  // ==========================
   db.query(
-    "SELECT COUNT(*) AS totalLeads FROM leads",
+
+    `
+    SELECT COUNT(*) AS totalLeads
+    FROM leads
+    `,
+
     (err, leadsResult) => {
 
       if (err)
-        return res.status(500)
-        .json(err);
+      return res.status(500)
+      .json(err);
+
 
       stats.totalLeads =
       leadsResult[0]
       .totalLeads;
 
+
+      // ==========================
       // Total Employees
+      // ==========================
       db.query(
-        "SELECT COUNT(*) AS totalEmployees FROM users WHERE role='employee'",
+
+        `
+        SELECT COUNT(*) AS totalEmployees
+        FROM employees
+        `,
+
         (err, empResult) => {
 
           if (err)
-            return res.status(500)
-            .json(err);
+          return res.status(500)
+          .json(err);
+
 
           stats.totalEmployees =
           empResult[0]
           .totalEmployees;
 
+
+          // ==========================
           // New Leads
+          // ==========================
           db.query(
-            "SELECT COUNT(*) AS newLeads FROM leads WHERE lead_status='New Lead'",
+
+            `
+            SELECT COUNT(*) AS newLeads
+
+            FROM leads
+
+            WHERE lead_status = 'new'
+            `,
+
             (err, newLeadResult) => {
 
               if (err)
-                return res.status(500)
-                .json(err);
+              return res.status(500)
+              .json(err);
+
 
               stats.newLeads =
               newLeadResult[0]
               .newLeads;
 
+
+              // ==========================
               // Converted Leads
+              // ==========================
               db.query(
-                "SELECT COUNT(*) AS convertedLeads FROM leads WHERE lead_status='Converted'",
+
+                `
+                SELECT COUNT(*) AS convertedLeads
+
+                FROM leads
+
+                WHERE lead_status = 'converted'
+                `,
+
                 (err, convertedResult) => {
 
                   if (err)
-                    return res.status(500)
-                    .json(err);
+                  return res.status(500)
+                  .json(err);
+
 
                   stats.convertedLeads =
                   convertedResult[0]
                   .convertedLeads;
 
-                  // Recent Leads
+
+                  // ==========================
+                  // High Priority Leads
+                  // ==========================
                   db.query(
+
                     `
-                    SELECT *
+                    SELECT COUNT(*) AS highPriorityLeads
+
                     FROM leads
-                    ORDER BY id DESC
-                    LIMIT 5
+
+                    WHERE priority = 'high'
                     `,
-                    (err, recentResult) => {
+
+                    (err, priorityResult) => {
 
                       if (err)
-                        return res.status(500)
-                        .json(err);
+                      return res.status(500)
+                      .json(err);
 
-                      stats.recentLeads =
-                      recentResult;
 
-                      res.status(200)
-                      .json(stats);
+                      stats.highPriorityLeads =
+                      priorityResult[0]
+                      .highPriorityLeads;
+
+
+                      // ==========================
+                      // Recent Leads
+                      // ==========================
+                      db.query(
+
+                        `
+                        SELECT *
+
+                        FROM leads
+
+                        ORDER BY id DESC
+
+                        LIMIT 5
+                        `,
+
+                        (err, recentResult) => {
+
+                          if (err)
+                          return res.status(500)
+                          .json(err);
+
+
+                          stats.recentLeads =
+                          recentResult;
+
+
+                          res.status(200)
+                          .json(stats);
+
+                        }
+
+                      );
+
                     }
+
                   );
+
                 }
+
               );
+
             }
+
           );
+
         }
+
       );
+
     }
+
   );
+
 };
 
+
+// ==========================
+// EMPLOYEE DASHBOARD
+// ==========================
 const getEmployeeStats =
 (req, res) => {
 
-  const employeeId =
-  req.params.id;
-
   const stats = {};
 
+
+  // ==========================
+  // Total Leads
+  // ==========================
   db.query(
+
     `
     SELECT COUNT(*) AS totalLeads
     FROM leads
-    WHERE created_by = ?
     `,
-    [employeeId],
+
     (err, totalResult) => {
+
+      if (err)
+      return res.status(500)
+      .json(err);
+
 
       stats.totalLeads =
       totalResult[0]
       .totalLeads;
 
+
+      // ==========================
+      // Contacted Leads
+      // ==========================
       db.query(
+
         `
-        SELECT COUNT(*) AS connected
+        SELECT COUNT(*) AS contacted
+
         FROM leads
-        WHERE created_by = ?
-        AND lead_status = 'Connected'
+
+        WHERE lead_status = 'contacted'
         `,
-        [employeeId],
-        (err, connectedResult) => {
 
-          stats.connected =
-          connectedResult[0]
-          .connected;
+        (err, contactedResult) => {
 
+          if (err)
+          return res.status(500)
+          .json(err);
+
+
+          stats.contacted =
+          contactedResult[0]
+          .contacted;
+
+
+          // ==========================
+          // Qualified Leads
+          // ==========================
           db.query(
+
             `
-            SELECT COUNT(*) AS interested
+            SELECT COUNT(*) AS qualified
+
             FROM leads
-            WHERE created_by = ?
-            AND lead_status = 'Interested'
+
+            WHERE lead_status = 'qualified'
             `,
-            [employeeId],
-            (err, interestedResult) => {
 
-              stats.interested =
-              interestedResult[0]
-              .interested;
+            (err, qualifiedResult) => {
 
+              if (err)
+              return res.status(500)
+              .json(err);
+
+
+              stats.qualified =
+              qualifiedResult[0]
+              .qualified;
+
+
+              // ==========================
+              // Converted Leads
+              // ==========================
               db.query(
+
                 `
                 SELECT COUNT(*) AS converted
+
                 FROM leads
-                WHERE created_by = ?
-                AND lead_status = 'Converted'
+
+                WHERE lead_status = 'converted'
                 `,
-                [employeeId],
+
                 (err, convertedResult) => {
+
+                  if (err)
+                  return res.status(500)
+                  .json(err);
+
 
                   stats.converted =
                   convertedResult[0]
                   .converted;
 
+
+                  // ==========================
+                  // Recent Leads
+                  // ==========================
                   db.query(
+
                     `
                     SELECT *
+
                     FROM leads
-                    WHERE created_by = ?
+
                     ORDER BY id DESC
+
                     LIMIT 5
                     `,
-                    [employeeId],
+
                     (err, recentResult) => {
+
+                      if (err)
+                      return res.status(500)
+                      .json(err);
+
 
                       stats.recentLeads =
                       recentResult;
 
+
                       res.status(200)
                       .json(stats);
+
                     }
+
                   );
+
                 }
+
               );
+
             }
+
           );
+
         }
+
       );
+
     }
+
   );
+
 };
 
+
 module.exports = {
+
   getDashboardStats,
+
   getEmployeeStats,
+
 };
