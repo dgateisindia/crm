@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import {
   useEffect,
   useState,
@@ -8,6 +9,13 @@ import ManagerLayout
 from "../../layouts/ManagerLayout";
 
 import "../../styles/managerDashboard.css";
+
+import {
+  Users,
+  UserCheck,
+  Briefcase,
+  BadgeCheck,
+} from "lucide-react";
 
 export default function ManagerDashboard() {
 
@@ -21,7 +29,6 @@ export default function ManagerDashboard() {
       recentLeads: [],
     });
 
-  // Fetch Dashboard Data
   useEffect(() => {
 
     axios.get(
@@ -46,80 +53,149 @@ export default function ManagerDashboard() {
 
     <ManagerLayout>
 
-      <h1 className="dashboard-title">
-        Manager Dashboard
-      </h1>
+      {/* Header */}
+      <div className="dashboard-header">
 
-      {/* Top Cards */}
-      <div className="dashboard-grid">
+        <div>
 
-        <div className="dashboard-card">
+          <h1 className="dashboard-title">
 
-          <h2>
-            Total Leads
-          </h2>
+            Manager Dashboard
 
-          <p className="dashboard-number">
-            {
-              stats.totalLeads
-            }
-          </p>
+          </h1>
 
-        </div>
+          <p className="dashboard-subtitle">
 
-        <div className="dashboard-card">
+            Welcome back,
+            here's what is happening
+            in your CRM today.
 
-          <h2>
-            Employees
-          </h2>
-
-          <p className="dashboard-number">
-            {
-              stats.totalEmployees
-            }
-          </p>
-
-        </div>
-
-        <div className="dashboard-card">
-
-          <h2>
-            New Leads
-          </h2>
-
-          <p className="dashboard-number">
-            {
-              stats.newLeads
-            }
-          </p>
-
-        </div>
-
-        <div className="dashboard-card">
-
-          <h2>
-            Converted Leads
-          </h2>
-
-          <p className="dashboard-number">
-            {
-              stats.convertedLeads
-            }
           </p>
 
         </div>
 
       </div>
 
+      {/* Top Cards */}
+      <div className="dashboard-grid">
+
+        {/* Total Leads */}
+        <div className="crm-card blue-card">
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle blue-bg">
+
+              <Briefcase
+                size={26}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+            Total Leads
+          </h3>
+
+          <h2>
+            {
+              stats.totalLeads
+            }
+          </h2>
+
+        </div>
+
+        {/* Employees */}
+        <div className="crm-card green-card">
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle green-bg">
+
+              <Users
+                size={26}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+            Employees
+          </h3>
+
+          <h2>
+            {
+              stats.totalEmployees
+            }
+          </h2>
+
+        </div>
+
+        {/* New Leads */}
+        <div className="crm-card orange-card">
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle orange-bg">
+
+              <UserCheck
+                size={26}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+            New Leads
+          </h3>
+
+          <h2>
+            {
+              stats.newLeads
+            }
+          </h2>
+
+        </div>
+
+        {/* Converted */}
+        <div className="crm-card purple-card">
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle purple-bg">
+
+              <BadgeCheck
+                size={26}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+            Converted
+          </h3>
+
+          <h2>
+            {
+              stats.convertedLeads
+            }
+          </h2>
+
+        </div>
+
+      </div>
+
       {/* Recent Leads */}
-      <div className="recent-leads-card">
+      <div className="recent-card">
 
-        <div className="flex justify-between items-center mb-5">
+        <div className="recent-header">
 
-          <h2 className="text-xl font-semibold text-[#071739]">
-
+          <h2>
             Recent Leads
-
           </h2>
 
         </div>
@@ -130,21 +206,25 @@ export default function ManagerDashboard() {
 
             <thead>
 
-              <tr className="border-b">
+              <tr>
 
-                <th className="table-head">
+                <th>
                   Company
                 </th>
 
-                <th className="table-head">
+                <th>
                   Contact
                 </th>
 
-                <th className="table-head">
+                <th>
+                  Phone
+                </th>
+
+                <th>
                   Status
                 </th>
 
-                <th className="table-head">
+                <th>
                   Event
                 </th>
 
@@ -156,43 +236,60 @@ export default function ManagerDashboard() {
 
               {
                 stats.recentLeads
-                .map((lead) => (
+                ?.map((lead) => (
 
                 <tr
                   key={lead.id}
-                  className="table-row"
                 >
 
-                  <td className="table-data">
-
+                  <td>
                     {
                       lead.company_name
                     }
-
                   </td>
 
-                  <td className="table-data">
-
+                  <td>
                     {
                       lead.contact_person
                     }
-
                   </td>
 
-                  <td className="table-data">
-
+                  <td>
                     {
-                      lead.lead_status
+                      lead.phone
                     }
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={`status-badge ${
+                      lead.lead_status ===
+                      "Converted"
+
+                      ? "converted"
+
+                      : lead.lead_status ===
+                      "New Lead"
+
+                      ? "new"
+
+                      : "connected"
+                    }`}
+                    >
+
+                      {
+                        lead.lead_status
+                      }
+
+                    </span>
 
                   </td>
 
-                  <td className="table-data">
-
+                  <td>
                     {
                       lead.special_event
                     }
-
                   </td>
 
                 </tr>
