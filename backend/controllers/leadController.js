@@ -2,14 +2,16 @@ const db =
 require("../db");
 
 
+// ==========================
 // Get All Leads
+// ==========================
 const getLeads =
 (req, res) => {
 
   const sql = `
-  SELECT *
-  FROM leads
-  ORDER BY id DESC
+    SELECT *
+    FROM leads
+    ORDER BY id DESC
   `;
 
   db.query(
@@ -25,58 +27,26 @@ const getLeads =
           message:
           "Failed to fetch leads",
         });
+
       }
 
       res.status(200)
       .json(result);
+
     }
   );
+
 };
 
 
-// Get Employee Leads
-const getEmployeeLeads =
-(req, res) => {
-
-  const employeeId =
-    req.params.id;
-
-  const sql = `
-  SELECT *
-  FROM leads
-  WHERE created_by = ?
-  ORDER BY id DESC
-  `;
-
-  db.query(
-    sql,
-    [employeeId],
-    (err, result) => {
-
-      if (err) {
-
-        console.log(err);
-
-        return res.status(500)
-        .json({
-          message:
-          "Error fetching leads",
-        });
-      }
-
-      res.status(200)
-      .json(result);
-    }
-  );
-};
-
-
+// ==========================
 // Delete Lead
+// ==========================
 const deleteLead =
 (req, res) => {
 
   const leadId =
-    req.params.id;
+  req.params.id;
 
   const sql =
   "DELETE FROM leads WHERE id = ?";
@@ -84,6 +54,7 @@ const deleteLead =
   db.query(
     sql,
     [leadId],
+
     (err, result) => {
 
       if (err) {
@@ -95,6 +66,7 @@ const deleteLead =
           message:
           "Failed to delete lead",
         });
+
       }
 
       res.status(200)
@@ -102,63 +74,128 @@ const deleteLead =
         message:
         "Lead Deleted Successfully",
       });
+
     }
   );
+
 };
 
 
+// ==========================
 // Add Lead
+// ==========================
 const addLead =
 (req, res) => {
 
   const {
-    company_name,
-    contact_person,
-    phone,
-    email,
-    address,
-    special_event,
-    event_date,
-    lead_status,
-    remarks,
-    created_by,
-  } = req.body;
-  const checkEmailSql =
-  "SELECT * FROM leads WHERE email = ?";
 
-  const checkPhoneSql =
-  "SELECT * FROM leads WHERE phone = ?";
+    company_name,
+
+    contact_person_name,
+
+    contact_person_number,
+
+    email,
+
+    phone,
+
+    address,
+
+    website,
+
+    source,
+
+    priority,
+
+    city,
+
+    remarks,
+
+    lead_status
+
+  } = req.body;
+
+
+  // Validation
+  if (
+    !company_name ||
+    !contact_person_name ||
+    !phone ||
+    !email
+  ) {
+
+    return res.status(400)
+    .json({
+      message:
+      "Required fields are missing",
+    });
+
+  }
+
 
   const sql = `
-  INSERT INTO leads (
-    company_name,
-    contact_person,
-    phone,
-    email,
-    address,
-    special_event,
-    event_date,
-    lead_status,
-    remarks,
-    created_by
-  )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO leads (
+
+      company_name,
+
+      contact_person_name,
+
+      contact_person_number,
+
+      email,
+
+      phone,
+
+      address,
+
+      website,
+
+      source,
+
+      priority,
+
+      city,
+
+      remarks,
+
+      lead_status
+
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
+
 
   db.query(
     sql,
     [
+
       company_name,
-      contact_person,
-      phone,
+
+      contact_person_name,
+
+      contact_person_number,
+
       email,
+
+      phone,
+
       address,
-      special_event,
-      event_date,
-      lead_status,
+
+      website,
+
+      source,
+
+      priority,
+
+      city,
+
       remarks,
-      created_by,
+
+      lead_status
+
     ],
+
     (err, result) => {
 
       if (err) {
@@ -173,6 +210,7 @@ const addLead =
           message:
           err.message,
         });
+
       }
 
       res.status(201)
@@ -180,14 +218,22 @@ const addLead =
         message:
         "Lead Added Successfully",
       });
+
     }
   );
+
 };
 
 
+// ==========================
+// Export
+// ==========================
 module.exports = {
+
   addLead,
+
   getLeads,
-  getEmployeeLeads,
+
   deleteLead,
+
 };

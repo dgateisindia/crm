@@ -1,0 +1,125 @@
+.createEmployeePage{
+    min-height:100vh;
+    background:#f5f7fb;
+}
+
+.createEmployeeHeader h1{
+    font-size:42px;
+    font-weight:700;
+    color:#111827;
+}
+
+.createEmployeeHeader p{
+    color:#6b7280;
+    margin-top:10px;
+}
+
+.createEmployeeGrid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:24px;
+    margin-top:30px;
+}
+
+.employeeFormCard,
+.previewCard{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:20px;
+    padding:30px;
+}
+
+.employeeFormCard h2,
+.previewCard h2{
+    font-size:24px;
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+.employeeForm{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.formRow{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.formGroup{
+    display:flex;
+    flex-direction:column;
+}
+
+.formGroup label{
+    font-weight:500;
+    margin-bottom:10px;
+}
+
+.formGroup input,
+.formGroup select{
+    height:55px;
+    border:1px solid #d1d5db;
+    border-radius:14px;
+    padding:0 16px;
+    font-size:16px;
+    outline:none;
+}
+
+.loginSection{
+    border-top:1px solid #e5e7eb;
+    padding-top:25px;
+}
+
+.buttonRow{
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+}
+
+.cancelBtn{
+    padding:14px 28px;
+    border:1px solid #d1d5db;
+    border-radius:14px;
+    background:#fff;
+    cursor:pointer;
+}
+
+.submitBtn{
+    padding:14px 28px;
+    border:none;
+    border-radius:14px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+}
+
+.previewProfile{
+    text-align:center;
+    margin-top:30px;
+}
+
+.profileCircle{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#ede9fe;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    font-size:40px;
+}
+
+.previewProfile h3{
+    margin-top:20px;
+    font-size:28px;
+    font-weight:700;
+}
+
+.previewProfile p{
+    color:#6b7280;
+    margin-top:5px;
+}

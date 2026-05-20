@@ -5,39 +5,38 @@ const router =
 express.Router();
 
 const {
+
   addLead,
+
   getLeads,
-  getEmployeeLeads,
+
   deleteLead,
+
 } = require(
   "../controllers/leadController"
 );
 
-//add lead
 
+// Add Lead
 router.post(
   "/add",
   addLead
 );
 
-//get all leads
+
+// Get All Leads
 router.get(
   "/all",
   getLeads
-
-);
-  
-//get employee leads
-router.get(
-  "/my-leads/:id",
-  getEmployeeLeads
 );
 
-//delete lead
+
+// Delete Lead
 router.delete(
   "/delete/:id",
   deleteLead
 );
-        
+
+
 module.exports =
 router;

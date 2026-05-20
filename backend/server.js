@@ -6,6 +6,16 @@ require("express");
 const cors =
 require("cors");
 
+const app =
+express();
+
+
+// Database Connection
+const db =
+require("./db");
+
+
+// Routes
 const authRoutes =
 require("./routes/authRoutes");
 
@@ -15,28 +25,17 @@ require("./routes/employeeRoutes");
 const leadRoutes =
 require("./routes/leadRoutes");
 
-const app =
-express();
-
 const dashboardRoutes =
-require(
-"./routes/dashboardRoutes"
-);
+require("./routes/dashboardRoutes");
 
 
 // Middleware
 app.use(cors());
-app.use(
-  "/api/dashboard",
-  dashboardRoutes
-);
 
-app.use(
-  express.json()
-);
+app.use(express.json());
 
 
-// Routes
+// API Routes
 app.use(
   "/api/auth",
   authRoutes
@@ -52,6 +51,11 @@ app.use(
   leadRoutes
 );
 
+app.use(
+  "/api/dashboard",
+  dashboardRoutes
+);
+
 
 // Test Route
 app.get(
@@ -59,8 +63,43 @@ app.get(
   (req, res) => {
 
     res.send(
-      "Backend Running"
+      "Backend Running Successfully"
     );
+
+  }
+);
+
+
+// Database Test Route
+app.get(
+  "/api/test-db",
+  (req, res) => {
+
+    db.query(
+      "SELECT * FROM employee_roles",
+      (err, result) => {
+
+        if (err) {
+
+          console.log(err);
+
+          return res.status(500).json({
+            success: false,
+            message: "Database Error",
+            error: err
+          });
+
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "Database Connected Successfully",
+          data: result
+        });
+
+      }
+    );
+
   }
 );
 
@@ -77,5 +116,6 @@ app.listen(
     console.log(
       `Server running on port ${PORT}`
     );
+
   }
 );

@@ -1,37 +1,47 @@
 import axios from "axios";
 import { useState } from "react";
+
 import ManagerLayout from "../../layouts/ManagerLayout";
-import "../../styles/leads.css";
-import {Upload,UserPlus,} from "lucide-react";
 
-export default function AddLeads() {
+import "../../styles/Leads.css";
 
-  const [leadData,
-    setLeadData] =
-    useState({
-      company_name: "",
-      contact_person: "",
-      phone: "",
-      email: "",
-      address: "",
-      special_event: "",
-      event_date: "",
-      lead_status: "",
-      remarks: "",
-    });
+import {
+  Upload,
+  UserPlus,
+  ArrowLeft,
+} from "lucide-react";
 
-  const handleChange =
-  (e) => {
+function AddLeads() {
+
+  const [leadData,setLeadData] = useState({
+
+    company_name:"",
+    contact_person_name:"",
+    contact_person_number:"",
+    email:"",
+    phone:"",
+    address:"",
+    website:"",
+    source:"",
+    priority:"",
+    city:"",
+    lead_status:"",
+    remarks:"",
+
+  });
+
+  const handleChange = (e) => {
 
     setLeadData({
+
       ...leadData,
-      [e.target.name]:
-      e.target.value,
+      [e.target.name]:e.target.value,
+
     });
+
   };
 
-  const handleSubmit =
-  async (e) => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -42,239 +52,380 @@ export default function AddLeads() {
         leadData
       );
 
-      alert(
-        "Lead Added Successfully"
-      );
+      alert("Lead Added Successfully");
 
       setLeadData({
-        company_name: "",
-        contact_person: "",
-        phone: "",
-        email: "",
-        address: "",
-        special_event: "",
-        event_date: "",
-        lead_status: "",
-        remarks: "",
+
+        company_name:"",
+        contact_person_name:"",
+        contact_person_number:"",
+        email:"",
+        phone:"",
+        address:"",
+        website:"",
+        source:"",
+        priority:"",
+        city:"",
+        lead_status:"",
+        remarks:"",
+
       });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.log(error);
 
       alert(
-        error.response?.data
-        ?.message ||
+        error.response?.data?.message ||
         "Failed to Add Lead"
       );
+
     }
+
   };
 
   return (
+
     <ManagerLayout>
 
-      <div className="leads-container">
+      <div className="addLeadPage">
+
+       <div className="addLeadContainer">
 
         {/* Header */}
-        <div className="mb-6">
+        <div className="addLeadHeader">
 
-          <h1 className="leads-header-title">
-            Add Leads
-          </h1>
+          <div>
 
-          <p className="leads-header-subtitle">
-            Add leads manually
-          </p>
+            <h1>
+              ADD LEAD
+            </h1>
+
+            <p>
+              Add lead manually
+            </p>
+
+          </div>
+
+          <button className="backBtn">
+
+            <ArrowLeft size={16} />
+
+            Back to Leads
+
+          </button>
 
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        {/* Main Grid */}
+        <div className="addLeadGrid">
 
-          {/* Form */}
-          <div className="xl:col-span-3 leads-card">
+          {/* Left Form */}
+          <div className="leadFormCard">
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="leadInfoHeader">
 
-              <div className="icon-wrapper-dark">
-                <UserPlus size={22} />
+              <div className="leadIcon">
+
+                <UserPlus size={20} />
+
               </div>
 
               <div>
 
-                <h2 className="text-xl font-semibold text-[#071739]">
+                <h2>
                   Lead Information
                 </h2>
 
-                <p className="text-sm text-gray-500">
-                  Fill in lead details
+                <p>
+                  Fill in the details to add a new lead
                 </p>
 
               </div>
 
             </div>
 
-            <form
-              onSubmit={
-                handleSubmit
-              }
-            >
+            <form onSubmit={handleSubmit}>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="formGrid">
 
-                <input
-                  type="text"
-                  name="company_name"
-                  placeholder="Company Name *"
-                  className="leads-input"
-                  required
-                  value={
-                    leadData.company_name
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                <div className="formGroup">
 
-                <input
-                  type="text"
-                  name="contact_person"
-                  placeholder="Contact Person *"
-                  className="leads-input"
-                  required
-                  value={
-                    leadData.contact_person
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                  <label>
+                    Company Name *
+                  </label>
 
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Phone *"
-                  className="leads-input"
-                  required
-                  maxLength="10"
-                  value={
-                    leadData.phone
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                  <input
+                    type="text"
+                    name="company_name"
+                    placeholder="Enter company name"
+                    value={leadData.company_name}
+                    onChange={handleChange}
+                    required
+                  />
 
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email *"
-                  className="leads-input"
-                  required
-                  value={
-                    leadData.email
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                </div>
 
-                <input
-                  type="text"
-                  name="special_event"
-                  placeholder="Special Event"
-                  className="leads-input"
-                  value={
-                    leadData.special_event
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                <div className="formGroup">
 
-                <input
-                  type="date"
-                  name="event_date"
-                  className="leads-input"
-                  value={
-                    leadData.event_date
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                  <label>
+                    Contact Person Name *
+                  </label>
 
-                <input
-                  type="text"
-                  name="address"
-                  placeholder="Address *"
-                  className="leads-input"
-                  required
-                  value={
-                    leadData.address
-                  }
-                  onChange={
-                    handleChange
-                  }
-                />
+                  <input
+                    type="text"
+                    name="contact_person_name"
+                    placeholder="Enter contact person"
+                    value={leadData.contact_person_name}
+                    onChange={handleChange}
+                    required
+                  />
 
-                <select
-                  name="lead_status"
-                  className="leads-select"
-                  required
-                  value={
-                    leadData.lead_status
-                  }
-                  onChange={
-                    handleChange
-                  }
-                >
+                </div>
 
-                  <option value="">
-                    Lead Status *
-                  </option>
+                <div className="formGroup">
 
-                  <option>
-                    New Lead
-                  </option>
+                  <label>
+                    Contact Person Number
+                  </label>
 
-                  <option>
-                    Connected
-                  </option>
+                  <input
+                    type="text"
+                    name="contact_person_number"
+                    placeholder="Enter contact number"
+                    value={leadData.contact_person_number}
+                    onChange={handleChange}
+                  />
 
-                  <option>
-                    Interested
-                  </option>
+                </div>
 
-                  <option>
-                    Follow-up Required
-                  </option>
+                <div className="formGroup">
 
-                  <option>
-                    Converted
-                  </option>
+                  <label>
+                    Phone *
+                  </label>
 
-                </select>
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="Enter phone"
+                    value={leadData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    Email *
+                  </label>
+
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter email"
+                    value={leadData.email}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    Website
+                  </label>
+
+                  <input
+                    type="text"
+                    name="website"
+                    placeholder="Enter website"
+                    value={leadData.website}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    City
+                  </label>
+
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="Enter city"
+                    value={leadData.city}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    Address
+                  </label>
+
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Enter address"
+                    value={leadData.address}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    Select Source
+                  </label>
+
+                  <select
+                    name="source"
+                    value={leadData.source}
+                    onChange={handleChange}
+                  >
+
+                    <option value="">
+                      Select Source
+                    </option>
+
+                    <option value="website">
+                      Website
+                    </option>
+
+                    <option value="facebook">
+                      Facebook
+                    </option>
+
+                    <option value="instagram">
+                      Instagram
+                    </option>
+
+                    <option value="linkedin">
+                      LinkedIn
+                    </option>
+
+                    <option value="referral">
+                      Referral
+                    </option>
+
+                    <option value="walk_in">
+                      Walk In
+                    </option>
+
+                  </select>
+
+                </div>
+
+                <div className="formGroup">
+
+                  <label>
+                    Select Priority
+                  </label>
+
+                  <select
+                    name="priority"
+                    value={leadData.priority}
+                    onChange={handleChange}
+                  >
+
+                    <option value="">
+                      Select Priority
+                    </option>
+
+                    <option value="low">
+                      Low
+                    </option>
+
+                    <option value="medium">
+                      Medium
+                    </option>
+
+                    <option value="high">
+                      High
+                    </option>
+
+                  </select>
+
+                </div>
+
+                <div className="formGroup fullWidth">
+
+                  <label>
+                    Lead Status
+                  </label>
+
+                  <select
+                    name="lead_status"
+                    value={leadData.lead_status}
+                    onChange={handleChange}
+                  >
+
+                    <option value="">
+                      Select Lead Status
+                    </option>
+
+                    <option value="new">
+                      New
+                    </option>
+
+                    <option value="contacted">
+                      Contacted
+                    </option>
+
+                    <option value="qualified">
+                      Qualified
+                    </option>
+
+                    <option value="proposal_sent">
+                      Proposal Sent
+                    </option>
+
+                    <option value="converted">
+                      Converted
+                    </option>
+
+                    <option value="lost">
+                      Lost
+                    </option>
+
+                  </select>
+
+                </div>
 
               </div>
 
-              <textarea
-                rows="4"
-                placeholder="Remarks"
-                className="leads-input w-full mt-4"
-                name="remarks"
-                value={
-                  leadData.remarks
-                }
-                onChange={
-                  handleChange
-                }
-              />
+              <div className="formGroup remarksBox">
 
-              <div className="flex justify-end mt-5">
+                <label>
+                  Remarks
+                </label>
+
+                <textarea
+                  rows="4"
+                  name="remarks"
+                  placeholder="Enter remarks"
+                  value={leadData.remarks}
+                  onChange={handleChange}
+                />
+
+              </div>
+
+              <div className="submitArea">
 
                 <button
                   type="submit"
-                  className="leads-btn-primary"
+                  className="saveLeadBtn"
                 >
                   Save Lead
                 </button>
@@ -285,39 +436,104 @@ export default function AddLeads() {
 
           </div>
 
-          {/* Upload Card */}
-          <div className="leads-card h-fit">
+          {/* Right Sidebar */}
+          <div className="leadSidebar">
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="sidebarCard">
 
-              <div className="icon-wrapper-light">
-                <Upload size={22} />
+              <div className="sidebarHeader">
+
+                <Upload size={18} />
+
+                <h3>
+                  IMPORT LEADS
+                </h3>
+
               </div>
 
-              <div>
+              <p className="sidebarText">
+                Upload CSV or Excel file
+              </p>
 
-                <h2 className="font-semibold text-[#071739] text-lg">
-                  Import Leads
-                </h2>
+              <div className="uploadDropzone">
 
-                <p className="text-sm text-gray-500">
-                  Upload CSV
-                </p>
+                Drag & Drop File Here
+
+                <button>
+                  Choose File
+                </button>
 
               </div>
 
             </div>
 
-            <div className="upload-dropzone">
-              Upload Area
+            <div className="sidebarCard">
+
+              <h3>
+                Lead Source
+              </h3>
+
+              <div className="radioGroup">
+
+                <label>
+                  <input type="radio" />
+                  Website
+                </label>
+
+                <label>
+                  <input type="radio" />
+                  Facebook
+                </label>
+
+                <label>
+                  <input type="radio" />
+                  Instagram
+                </label>
+
+                <label>
+                  <input type="radio" />
+                  Referral
+                </label>
+
+              </div>
+
+            </div>
+
+            <div className="sidebarCard">
+
+              <h3>
+                Tips
+              </h3>
+
+              <ul className="tipsList">
+
+                <li>
+                  All required fields are mandatory
+                </li>
+
+                <li>
+                  Verify phone number and email
+                </li>
+
+                <li>
+                  Use correct lead source
+                </li>
+
+              </ul>
+
             </div>
 
           </div>
 
         </div>
 
-      </div>
+        </div>
+
+    </div>
 
     </ManagerLayout>
+
   );
+
 }
+export default AddLeads;

@@ -1,6 +1,9 @@
 import axios from "axios";
 
-import {useState,useEffect,} from "react";
+import {
+  useState,
+  useEffect,
+} from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
@@ -10,6 +13,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+
 
 export default function Leads() {
 
@@ -23,28 +27,40 @@ export default function Leads() {
 
   const [statusFilter,
     setStatusFilter] =
-    useState("All Status");
+    useState("all");
 
+
+  // ==========================
   // Fetch Leads
+  // ==========================
   const fetchLeads =
-  () => {
+  async () => {
 
-    axios.get(
-      "http://localhost:5000/api/leads/all"
-    )
-    .then((res) => {
+    try {
 
-      setAllLeads(
-        res.data
+      const response =
+      await axios.get(
+        "http://localhost:5000/api/leads/all"
       );
 
-    })
-    .catch((err) => {
+      setAllLeads(
+        response.data
+      );
 
-      console.log(err);
+    }
 
-    });
+    catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Failed to fetch leads"
+      );
+
+    }
+
   };
+
 
   useEffect(() => {
 
@@ -52,7 +68,10 @@ export default function Leads() {
 
   }, []);
 
+
+  // ==========================
   // Delete Lead
+  // ==========================
   const handleDelete =
   async (id) => {
 
@@ -61,99 +80,124 @@ export default function Leads() {
       "Are you sure you want to delete this lead?"
     );
 
-    if (
-      !confirmDelete
-    ) return;
+    if (!confirmDelete)
+    return;
+
 
     try {
 
       await axios.delete(
+
         `http://localhost:5000/api/leads/delete/${id}`
+
       );
+
 
       alert(
         "Lead Deleted Successfully"
       );
 
+
       fetchLeads();
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.log(error);
 
       alert(
         "Failed to Delete Lead"
       );
+
     }
+
   };
 
+
+  // ==========================
   // Filter Leads
-const filteredLeads =
-allLeads.filter(
-(lead) => {
+  // ==========================
+  const filteredLeads =
+  allLeads.filter(
+  (lead) => {
 
-const company =
+    const company =
 
-lead.company_name
-? lead.company_name
-.toLowerCase()
-: "";
+    lead.company_name
+    ? lead.company_name
+    .toLowerCase()
+    : "";
 
-const contact =
 
-lead.contact_person
-? lead.contact_person
-.toLowerCase()
-: "";
+    const contact =
 
-const matchesSearch =
+    lead.contact_person_name
+    ? lead.contact_person_name
+    .toLowerCase()
+    : "";
 
-company.includes(
-search.toLowerCase()
-)
 
-||
+    const matchesSearch =
 
-contact.includes(
-search.toLowerCase()
-);
+    company.includes(
+      search.toLowerCase()
+    )
 
-const matchesStatus =
+    ||
 
-statusFilter ===
-"All Status"
+    contact.includes(
+      search.toLowerCase()
+    );
 
-||
 
-lead.lead_status ===
-statusFilter;
+    const matchesStatus =
 
-return (
-matchesSearch &&
-matchesStatus
-);
+    statusFilter ===
+    "all"
 
-});
-return (
+    ||
+
+    lead.lead_status ===
+    statusFilter;
+
+
+    return (
+      matchesSearch &&
+      matchesStatus
+    );
+
+  });
+
+
+  return (
+
     <ManagerLayout>
 
       <div className="leads-container">
+
 
         {/* Header */}
         <div className="mb-6">
 
           <h1 className="leads-header-title">
+
             Total Leads
+
           </h1>
 
           <p className="leads-header-subtitle">
+
             View all CRM leads
+
           </p>
 
         </div>
 
+
         {/* Filters */}
-        <div className=" manager-filter-card md:flex-row">
+        <div className="manager-filter-card md:flex-row">
+
 
           {/* Search */}
           <div className="manager-search-box md:w-[350px]">
@@ -161,65 +205,81 @@ return (
             <Search size={18} />
 
             <input
+
               type="text"
+
               placeholder="Search company or contact..."
+
               className="manager-search-input"
+
               value={search}
+
               onChange={(e) =>
                 setSearch(
                   e.target.value
                 )
               }
+
             />
 
           </div>
 
-          {/* Filter */}
+
+          {/* Status Filter */}
           <select
+
             className="manager-filter-select"
-            value={
-              statusFilter
-            }
+
+            value={statusFilter}
+
             onChange={(e) =>
               setStatusFilter(
                 e.target.value
               )
             }
+
           >
 
-            <option>
+            <option value="all">
               All Status
             </option>
 
-            <option>
-              New Lead
+            <option value="new">
+              New
             </option>
 
-            <option>
-              Connected
+            <option value="contacted">
+              Contacted
             </option>
 
-            <option>
-              Interested
+            <option value="qualified">
+              Qualified
             </option>
 
-            <option>
-              Follow-up Required
+            <option value="proposal_sent">
+              Proposal Sent
             </option>
 
-            <option>
+            <option value="converted">
               Converted
+            </option>
+
+            <option value="lost">
+              Lost
             </option>
 
           </select>
 
         </div>
 
+
         {/* Table */}
         <div className="leads-card overflow-x-auto">
 
           <table className="w-full">
 
+
+            {/* Table Header */}
             <thead>
 
               <tr className="border-b">
@@ -229,11 +289,23 @@ return (
                 </th>
 
                 <th className="table-head">
-                  Contact
+                  Contact Person
                 </th>
 
                 <th className="table-head">
                   Phone
+                </th>
+
+                <th className="table-head">
+                  Email
+                </th>
+
+                <th className="table-head">
+                  Source
+                </th>
+
+                <th className="table-head">
+                  Priority
                 </th>
 
                 <th className="table-head">
@@ -248,63 +320,116 @@ return (
 
             </thead>
 
+
+            {/* Table Body */}
             <tbody>
 
               {
-                filteredLeads.map(
-                (lead) => (
 
-                <tr
-                  key={lead.id}
-                  className="table-row"
-                >
+                filteredLeads.length > 0 ? (
 
-                  <td className="table-data">
-                    {
-                      lead.company_name
-                    }
-                  </td>
+                  filteredLeads.map(
+                  (lead) => (
 
-                  <td className="table-data">
-                    {
-                      lead.contact_person
-                    }
-                  </td>
+                  <tr
 
-                  <td className="table-data">
-                    {
-                      lead.phone
-                    }
-                  </td>
+                    key={lead.id}
 
-                  <td className="table-data">
-                    {
-                      lead.lead_status
-                    }
-                  </td>
+                    className="table-row"
 
-                  <td className="table-data text-center">
+                  >
 
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          lead.id
-                        )
-                      }
-                      className="delete-btn"
-                    >
 
-                      <Trash2
-                        size={18}
-                      />
+                    <td className="table-data">
 
-                    </button>
+                      {lead.company_name}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.contact_person_name}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.phone}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.email}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.source}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.priority}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.lead_status}
+
+                    </td>
+
+
+                    <td className="table-data text-center">
+
+                      <button
+
+                        onClick={() =>
+                          handleDelete(
+                            lead.id
+                          )
+                        }
+
+                        className="delete-btn"
+
+                      >
+
+                        <Trash2 size={18} />
+
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                <tr>
+
+                  <td
+                    colSpan="8"
+                    className="text-center p-6 text-gray-500"
+                  >
+
+                    No Leads Found
 
                   </td>
 
                 </tr>
 
-              ))
+              )
+
             }
 
             </tbody>
@@ -316,5 +441,7 @@ return (
       </div>
 
     </ManagerLayout>
+
   );
+
 }
