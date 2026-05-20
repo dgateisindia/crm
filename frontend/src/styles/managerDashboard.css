@@ -1,64 +1,202 @@
 @reference "tailwindcss";
 
-.dashboard-title {
-  @apply text-3xl
-  font-bold
-  text-[#071739]
-  mb-6;
+/* Main Container */
+
+.dashboard-container {
+  @apply p-2;
 }
+
+/* Dashboard Title */
+
+.dashboard-title {
+  @apply text-4xl font-extrabold mb-8;
+  color: #071739;
+  letter-spacing: -0.5px;
+}
+
+/* Dashboard Grid */
 
 .dashboard-grid {
-  @apply grid
-  grid-cols-1
-  md:grid-cols-2
-  xl:grid-cols-4
-  gap-5
-  mb-6;
+  @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8;
 }
+
+/* Dashboard Card */
 
 .dashboard-card {
-  @apply bg-white
-  rounded-2xl
-  shadow-md
-  p-6
-  hover:shadow-lg
-  transition;
+  @apply flex items-center gap-5 p-6 rounded-3xl shadow-lg transition-all duration-300 relative overflow-hidden;
+  background: linear-gradient(
+    135deg,
+    #f7f9ff,
+    #f7f9ff
+  );
+
+  border: 1px solid #221961;
 }
 
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 15px 35px rgba(0,0,0,0.12);
+}
+
+.dashboard-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 130px;
+  height: 130px;
+  background: rgba(7, 23, 57, 0.05);
+  border-radius: 50%;
+}
+
+/* Icon */
+
+.card-icon {
+  @apply flex items-center justify-center rounded-2xl text-white text-3xl;
+  width: 70px;
+  height: 70px;
+}
+
+.card-icon.blue {
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+}
+
+.card-icon.purple {
+  background: linear-gradient(
+    135deg,
+    #a76e9b,
+    #ce22ae
+  );
+}
+
+.card-icon.orange {
+  background: linear-gradient(
+    135deg,
+    #f97316,
+    #ea580c
+  );
+}
+
+.card-icon.green {
+  background: linear-gradient(
+    135deg,
+    #16a34a,
+    #15803d
+  );
+}
+
+/* Card Text */
+
 .dashboard-card h2 {
-  @apply text-gray-500
-  text-sm
-  font-medium;
+  @apply text-sm font-semibold uppercase tracking-wide;
+  color: #6b7280;
 }
 
 .dashboard-number {
-  @apply text-4xl
-  font-bold
-  text-[#071739]
-  mt-2;
+  @apply text-4xl font-extrabold mt-2;
+  color: #071739;
 }
 
+/* Recent Leads Card */
+
 .recent-leads-card {
-  @apply bg-white
-  rounded-2xl
-  shadow-md
-  p-6;
+  @apply bg-white rounded-3xl shadow-lg p-6;
+  border: 1px solid #e5e7eb;
+}
+
+/* Recent Header */
+
+.recent-header {
+  @apply flex justify-between items-center mb-5;
+}
+
+.recent-header h2 {
+  @apply text-2xl font-bold;
+  color: #071739;
+}
+
+/* Table */
+
+.table-wrapper {
+  @apply overflow-x-auto;
+}
+
+.dashboard-table {
+  @apply w-full;
+  border-collapse: collapse;
 }
 
 .table-head {
-  @apply text-left
-  p-4
-  font-semibold
-  text-[#071739];
-}
-
-.table-data {
-  @apply p-4
-  text-gray-700;
+  @apply text-left p-4 text-sm uppercase tracking-wide;
+  background-color: #f8fafc;
+  color: #071739;
+  font-weight: 700;
 }
 
 .table-row {
-  @apply border-b
-  hover:bg-gray-50
-  transition;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: #f8fbff;
+}
+
+.table-data {
+  @apply p-4 text-sm;
+  color: #374151;
+}
+
+/* Status Badge */
+
+.status-badge {
+  @apply px-4 py-2 rounded-full text-xs font-bold;
+}
+
+.status-new {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-converted {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+  .dashboard-title {
+    @apply text-3xl;
+  }
+
+  .dashboard-number {
+    @apply text-3xl;
+  }
+
+  .dashboard-card {
+    @apply p-5;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .table-head,
+  .table-data {
+    @apply p-3 text-xs;
+  }
+
 }

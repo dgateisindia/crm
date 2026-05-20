@@ -5,7 +5,7 @@ export default function FollowUps() {
     <ManagerLayout>
 
       <h1 className="text-3xl font-bold">
-        Folloup Page
+        Followup Page
       </h1>
 
     </ManagerLayout>

@@ -4,6 +4,13 @@ import {
   useState,
 } from "react";
 
+import {
+  FaUsers,
+  FaUserTie,
+  FaChartLine,
+  FaCheckCircle,
+} from "react-icons/fa";
+
 import ManagerLayout
 from "../../layouts/ManagerLayout";
 
@@ -46,163 +53,222 @@ export default function ManagerDashboard() {
 
     <ManagerLayout>
 
-      <h1 className="dashboard-title">
-        Manager Dashboard
-      </h1>
+      <div className="dashboard-container">
 
-      {/* Top Cards */}
-      <div className="dashboard-grid">
+        <h1 className="dashboard-title">
+          Manager Dashboard
+        </h1>
 
-        <div className="dashboard-card">
+        {/* Top Cards */}
+        <div className="dashboard-grid">
 
-          <h2>
-            Total Leads
-          </h2>
+          {/* Total Leads */}
+          <div className="dashboard-card">
 
-          <p className="dashboard-number">
-            {
-              stats.totalLeads
-            }
-          </p>
+            <div className="card-icon blue">
+
+              <FaUsers />
+
+            </div>
+
+            <div>
+
+              <h2>
+                Total Leads
+              </h2>
+
+              <p className="dashboard-number">
+                {
+                  stats.totalLeads
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* Employees */}
+          <div className="dashboard-card">
+
+            <div className="card-icon purple">
+
+              <FaUserTie />
+
+            </div>
+
+            <div>
+
+              <h2>
+                Employees
+              </h2>
+
+              <p className="dashboard-number">
+                {
+                  stats.totalEmployees
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* New Leads */}
+          <div className="dashboard-card">
+
+            <div className="card-icon orange">
+
+              <FaChartLine />
+
+            </div>
+
+            <div>
+
+              <h2>
+                New Leads
+              </h2>
+
+              <p className="dashboard-number">
+                {
+                  stats.newLeads
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* Converted Leads */}
+          <div className="dashboard-card">
+
+            <div className="card-icon green">
+
+              <FaCheckCircle />
+
+            </div>
+
+            <div>
+
+              <h2>
+                Converted Leads
+              </h2>
+
+              <p className="dashboard-number">
+                {
+                  stats.convertedLeads
+                }
+              </p>
+
+            </div>
+
+          </div>
 
         </div>
 
-        <div className="dashboard-card">
+        {/* Recent Leads */}
+        <div className="recent-leads-card">
 
-          <h2>
-            Employees
-          </h2>
+          <div className="recent-header">
 
-          <p className="dashboard-number">
-            {
-              stats.totalEmployees
-            }
-          </p>
+            <h2>
+              Recent Leads
+            </h2>
 
-        </div>
+          </div>
 
-        <div className="dashboard-card">
+          <div className="table-wrapper">
 
-          <h2>
-            New Leads
-          </h2>
+            <table className="dashboard-table">
 
-          <p className="dashboard-number">
-            {
-              stats.newLeads
-            }
-          </p>
+              <thead>
 
-        </div>
+                <tr>
 
-        <div className="dashboard-card">
+                  <th className="table-head">
+                    Company
+                  </th>
 
-          <h2>
-            Converted Leads
-          </h2>
+                  <th className="table-head">
+                    Contact
+                  </th>
 
-          <p className="dashboard-number">
-            {
-              stats.convertedLeads
-            }
-          </p>
+                  <th className="table-head">
+                    Status
+                  </th>
 
-        </div>
-
-      </div>
-
-      {/* Recent Leads */}
-      <div className="recent-leads-card">
-
-        <div className="flex justify-between items-center mb-5">
-
-          <h2 className="text-xl font-semibold text-[#071739]">
-
-            Recent Leads
-
-          </h2>
-
-        </div>
-
-        <div className="overflow-x-auto">
-
-          <table className="w-full">
-
-            <thead>
-
-              <tr className="border-b">
-
-                <th className="table-head">
-                  Company
-                </th>
-
-                <th className="table-head">
-                  Contact
-                </th>
-
-                <th className="table-head">
-                  Status
-                </th>
-
-                <th className="table-head">
-                  Event
-                </th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {
-                stats.recentLeads
-                .map((lead) => (
-
-                <tr
-                  key={lead.id}
-                  className="table-row"
-                >
-
-                  <td className="table-data">
-
-                    {
-                      lead.company_name
-                    }
-
-                  </td>
-
-                  <td className="table-data">
-
-                    {
-                      lead.contact_person
-                    }
-
-                  </td>
-
-                  <td className="table-data">
-
-                    {
-                      lead.lead_status
-                    }
-
-                  </td>
-
-                  <td className="table-data">
-
-                    {
-                      lead.special_event
-                    }
-
-                  </td>
+                  <th className="table-head">
+                    Event
+                  </th>
 
                 </tr>
 
-              ))
-            }
+              </thead>
 
-            </tbody>
+              <tbody>
 
-          </table>
+                {
+                  stats.recentLeads
+                  .map((lead) => (
+
+                  <tr
+                    key={lead.id}
+                    className="table-row"
+                  >
+
+                    <td className="table-data">
+
+                      {
+                        lead.company_name
+                      }
+
+                    </td>
+
+                    <td className="table-data">
+
+                      {
+                        lead.contact_person
+                      }
+
+                    </td>
+
+                    <td className="table-data">
+
+                      <span
+                        className={`status-badge
+                        ${
+                          lead.lead_status === "Converted"
+                          ? "status-converted"
+                          : lead.lead_status === "New"
+                          ? "status-new"
+                          : "status-pending"
+                        }`}
+                      >
+
+                        {
+                          lead.lead_status
+                        }
+
+                      </span>
+
+                    </td>
+
+                    <td className="table-data">
+
+                      {
+                        lead.special_event
+                      }
+
+                    </td>
+
+                  </tr>
+
+                ))
+              }
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         </div>
 
