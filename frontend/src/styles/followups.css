@@ -1,0 +1,81 @@
+.followupPage{
+  padding:30px;
+  background:#f5f7fb;
+  min-height:100vh;
+}
+
+.followupContainer{
+  max-width:650px;
+  background:#fff;
+  border-radius:14px;
+  padding:30px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+.followupTitle{
+  background:#0b2873;
+  color:#fff;
+  display:inline-block;
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:30px;
+}
+
+.followupForm{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.formGroup{
+  display:flex;
+  flex-direction:column;
+}
+
+.formGroup label{
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:8px;
+  color:#222;
+}
+
+.formGroup label span{
+  color:red;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea{
+  border:1px solid #dcdfe4;
+  border-radius:8px;
+  padding:12px;
+  font-size:15px;
+  outline:none;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus{
+  border-color:#2563eb;
+}
+
+textarea{
+  resize:none;
+}
+
+.saveBtn{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  padding:14px;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.saveBtn:hover{
+  background:#1d4ed8;
+}
