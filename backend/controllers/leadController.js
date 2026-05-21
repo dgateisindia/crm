@@ -15,7 +15,9 @@ const getLeads =
   `;
 
   db.query(
+
     sql,
+
     (err, result) => {
 
       if (err) {
@@ -24,8 +26,10 @@ const getLeads =
 
         return res.status(500)
         .json({
+
           message:
           "Failed to fetch leads",
+
         });
 
       }
@@ -34,10 +38,62 @@ const getLeads =
       .json(result);
 
     }
+
   );
 
 };
+// ==========================
+// Get Employee Leads
+// ==========================
+const getEmployeeLeads =
+(req, res) => {
 
+  const employeeId =
+  req.params.employeeId;
+
+  const sql = `
+
+    SELECT *
+
+    FROM leads
+
+    WHERE
+    created_by_id = ?
+
+    ORDER BY id DESC
+
+  `;
+
+  db.query(
+
+    sql,
+
+    [employeeId],
+
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500)
+        .json({
+
+          message:
+          "Failed to fetch employee leads"
+
+        });
+
+      }
+
+      res.status(200)
+      .json(result);
+
+    }
+
+  );
+
+};
 
 // ==========================
 // Delete Lead
@@ -52,6 +108,7 @@ const deleteLead =
   "DELETE FROM leads WHERE id = ?";
 
   db.query(
+
     sql,
     [leadId],
 
@@ -63,19 +120,24 @@ const deleteLead =
 
         return res.status(500)
         .json({
+
           message:
           "Failed to delete lead",
+
         });
 
       }
 
       res.status(200)
       .json({
+
         message:
         "Lead Deleted Successfully",
+
       });
 
     }
+
   );
 
 };
@@ -90,136 +152,212 @@ const addLead =
   const {
 
     company_name,
-
     contact_person_name,
-
-    contact_person_number,
-
     email,
-
     phone,
-
     address,
-
     website,
-
     source,
-
-    priority,
-
     city,
-
     remarks,
-
-    lead_status
+    lead_status,
+    lead_mode,
+    important_lead,
+    created_by_id
 
   } = req.body;
 
 
   // Validation
   if (
+
     !company_name ||
     !contact_person_name ||
     !phone ||
     !email
+
   ) {
 
     return res.status(400)
     .json({
+
       message:
       "Required fields are missing",
+
     });
 
   }
 
 
-  const sql = `
-    INSERT INTO leads (
+  // ==========================
+  // Duplicate Check
+  // ==========================
+  const duplicateSql = `
 
-      company_name,
+    SELECT *
 
-      contact_person_name,
+    FROM leads
 
-      contact_person_number,
+    WHERE
 
-      email,
+    phone = ?
 
-      phone,
+    OR email = ?
 
-      address,
+    OR (
 
-      website,
+      company_name = ?
 
-      source,
+      AND
 
-      priority,
-
-      city,
-
-      remarks,
-
-      lead_status
+      contact_person_name = ?
 
     )
 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
 
   db.query(
-    sql,
+
+    duplicateSql,
+
     [
 
-      company_name,
-
-      contact_person_name,
-
-      contact_person_number,
-
-      email,
-
       phone,
-
-      address,
-
-      website,
-
-      source,
-
-      priority,
-
-      city,
-
-      remarks,
-
-      lead_status
+      email,
+      company_name,
+      contact_person_name
 
     ],
 
-    (err, result) => {
+    (
 
-      if (err) {
+      duplicateErr,
+      duplicateResult
+
+    ) => {
+
+      if (
+        duplicateErr
+      ) {
 
         console.log(
-          "SQL ERROR:",
-          err
+          duplicateErr
         );
 
         return res.status(500)
         .json({
+
           message:
-          err.message,
+          "Duplicate check failed"
+
         });
 
       }
 
-      res.status(201)
-      .json({
-        message:
-        "Lead Added Successfully",
-      });
+
+      // Duplicate Found
+      if (
+        duplicateResult
+        .length > 0
+      ) {
+
+        return res.status(409)
+        .json({
+
+          message:
+          "Duplicate lead already exists",
+
+          duplicateLead:
+          duplicateResult[0]
+
+        });
+
+      }
+
+
+      // ==========================
+      // Insert Lead
+      // ==========================
+      const sql = `
+        INSERT INTO leads (
+
+          company_name,
+          contact_person_name,
+          email,
+          phone,
+          address,
+          website,
+          source,
+          city,
+          remarks,
+          lead_status,
+          lead_mode,
+          important_lead,
+          created_by_id
+
+        )
+
+        VALUES (
+          ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?)
+      `;
+
+
+      db.query(
+
+        sql,
+
+        [
+
+          company_name,
+          contact_person_name,
+          email,
+          phone,
+          address,
+          website,
+          source,
+          city,
+          remarks,
+          lead_status,
+          lead_mode,
+          important_lead || false,
+          created_by_id
+
+        ],
+
+        (err, result) => {
+
+          if (err) {
+
+            console.log(
+              "SQL ERROR:",
+              err
+            );
+
+            return res.status(500)
+            .json({
+
+              message:
+              err.message,
+
+            });
+
+          }
+
+          res.status(201)
+          .json({
+
+            message:
+            "Lead Added Successfully",
+
+          });
+
+        }
+
+      );
 
     }
+
   );
 
 };
@@ -231,9 +369,7 @@ const addLead =
 module.exports = {
 
   addLead,
-
   getLeads,
-
   deleteLead,
-
+  getEmployeeLeads
 };

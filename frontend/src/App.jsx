@@ -17,7 +17,7 @@ import EmployeeMyLeads from "./pages/employee/EmployeeLeads";
 import EmployeeDetails from "./pages/manager/EmployeeDetails";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
 import AddLeads from "./pages/manager/AddLeads";
-
+import CreateManager from "./pages/manager/CreateManager";
 
 function App() {
   return (
@@ -142,6 +142,14 @@ function App() {
         element={
           <ProtectedRoute>
             <EmployeeProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/manager/create-manager"
+        element={
+          <ProtectedRoute>
+            <CreateManager />
           </ProtectedRoute>
         }
       />

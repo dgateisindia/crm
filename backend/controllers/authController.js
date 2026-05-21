@@ -112,8 +112,18 @@ const login =
           role:
           "manager",
 
-          user:
-          manager,
+         user: {
+
+            id:
+            manager.manager_id,
+
+            full_name:
+            manager.full_name,
+
+            email:
+            manager.email,
+
+          },
 
         });
 
@@ -177,6 +187,18 @@ const login =
 
           const employee =
           employeeResult[0];
+          if (
+                employee.status ===
+                "inactive"
+              ) {
+
+                return res.status(403)
+                .json({
+                  message:
+                  "Employee account is inactive",
+                });
+
+              }
 
 
           // Password Check
@@ -231,8 +253,24 @@ const login =
             role:
             "employee",
 
-            user:
-            employee,
+            user: {
+
+                id:
+                employee.employee_id,
+
+                employee_code:
+                employee.employee_code,
+
+                full_name:
+                employee.full_name,
+
+                email:
+                employee.email,
+
+                role:
+                employee.role_name,
+
+              },
 
           });
 

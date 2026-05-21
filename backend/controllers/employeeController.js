@@ -11,21 +11,13 @@ const createEmployee =
   const {
 
     manager_id,
-
     role_id,
-
     full_name,
-
     email,
-
     phone,
-
     password,
-
     department,
-
     designation,
-
     status
 
   } = req.body;
@@ -53,21 +45,13 @@ const createEmployee =
     INSERT INTO employees (
 
       manager_id,
-
       role_id,
-
       full_name,
-
       email,
-
       phone,
-
       password,
-
       department,
-
       designation,
-
       status
 
     )
@@ -81,21 +65,13 @@ const createEmployee =
     [
 
       manager_id,
-
       role_id,
-
       full_name,
-
       email,
-
       phone,
-
       password,
-
       department,
-
       designation,
-
       status || "active"
 
     ],
@@ -114,17 +90,59 @@ const createEmployee =
 
       }
 
-      res.status(201)
-      .json({
-        message:
-        "Employee created successfully",
-      });
+      // Generate EMP001
+      const employeeCode =
+      `EMP${String(
+        result.insertId
+      ).padStart(3, "0")}`;
+
+      // Save employee code
+      const updateSql = `
+        UPDATE employees
+        SET employee_code = ?
+        WHERE employee_id = ?
+      `;
+
+      db.query(
+        updateSql,
+        [
+          employeeCode,
+          result.insertId
+        ],
+
+        (updateErr) => {
+
+          if (updateErr) {
+
+            console.log(updateErr);
+
+            return res.status(500)
+            .json({
+              message:
+              "Employee created but code generation failed",
+            });
+
+          }
+
+          res.status(201)
+          .json({
+
+            message:
+            "Employee created successfully",
+
+            employee_code:
+            employeeCode,
+
+          });
+
+        }
+      );
 
     }
+
   );
 
 };
-
 
 // ==========================
 // Get All Employees
@@ -133,33 +151,9 @@ const getEmployees =
 (req, res) => {
 
   const sql = `
-    SELECT
-
-      employees.employee_id,
-
-      employees.full_name,
-
-      employees.email,
-
-      employees.phone,
-
-      employees.department,
-
-      employees.designation,
-
-      employees.status,
-
-      employee_roles.role_name
-
+    SELECT *
     FROM employees
-
-    JOIN employee_roles
-
-    ON employees.role_id = employee_roles.role_id
-
-    ORDER BY employees.employee_id DESC
   `;
-
 
   db.query(
     sql,
@@ -167,7 +161,10 @@ const getEmployees =
 
       if (err) {
 
-        console.log(err);
+        console.log(
+          "SQL Error:",
+          err
+        );
 
         return res.status(500)
         .json({
@@ -177,6 +174,11 @@ const getEmployees =
 
       }
 
+      console.log(
+        "Employees Data:",
+        result
+      );
+
       res.status(200)
       .json(result);
 
@@ -185,24 +187,32 @@ const getEmployees =
 
 };
 
-
 // ==========================
 // Get Employee By ID
 // ==========================
 const getEmployeeById =
 (req, res) => {
+  
 
   const employeeId =
   req.params.id;
 
   const sql = `
-    SELECT *
+    SELECT
+
+      employees.*,
+
+      employee_roles.role_name
 
     FROM employees
 
+    JOIN employee_roles
+
+    ON employees.role_id =
+    employee_roles.role_id
+
     WHERE employee_id = ?
   `;
-
 
   db.query(
     sql,

@@ -1,4 +1,4 @@
-import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus } from "lucide-react";
+import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus,UserCog } from "lucide-react";
 import "../styles/sidebar.css";
 import logo from "../assets/logo.png";
 import { useState } from "react";
@@ -108,6 +108,15 @@ export default function Sidebar() {
                     <UserPlus size={12} />
 
                     Create Employee
+                </li>
+            </Link>
+
+            <Link to="/manager/create-manager">
+                <li className={`sidebar-menu ${location.pathname === "/manager/create-manager" ? "active-menu " : ""}`}>
+                    
+                    <UserCog size={12} />
+
+                    Create Manager
                 </li>
             </Link>
 

@@ -7,53 +7,38 @@ express.Router();
 const {
 
   createEmployee,
-
   getEmployees,
-
   getEmployeeById,
-
   deleteEmployee
 
 } = require(
   "../controllers/employeeController"
 );
 
-
-// ==========================
 // Create Employee
-// ==========================
 router.post(
   "/create",
   createEmployee
 );
 
-
-// ==========================
-// Get All Employees
-// ==========================
+// IMPORTANT:
+// Put fixed routes first
 router.get(
   "/all",
   getEmployees
 );
 
-
-// ==========================
-// Get Employee By ID
-// ==========================
+// Dynamic route LAST
 router.get(
   "/:id",
   getEmployeeById
 );
 
-
-// ==========================
-// Delete Employee
-// ==========================
+// Delete
 router.delete(
   "/delete/:id",
   deleteEmployee
 );
-
 
 module.exports =
 router;

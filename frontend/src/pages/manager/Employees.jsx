@@ -1,29 +1,44 @@
 import axios from "axios";
 import { Trash2 } from "lucide-react";
-import { useState,useEffect } from "react";
+import {
+  useState,
+  useEffect
+} from "react";
 
-import ManagerLayout from "../../layouts/ManagerLayout";
+import ManagerLayout
+from "../../layouts/ManagerLayout";
 
 import "../../styles/employees.css";
 
 export default function Employees() {
 
-  const [employees,setEmployees] =
-  useState([]);
+  const [
+    employees,
+    setEmployees
+  ] = useState([]);
 
+  // ==========================
+  // Fetch Employees
+  // ==========================
   useEffect(() => {
 
-    fetchEmployees();
-
-  }, []);
-
-  const fetchEmployees = async () => {
+  const fetchEmployees =
+  async () => {
 
     try {
+
+      console.log(
+        "Fetching employees..."
+      );
 
       const response =
       await axios.get(
         "http://localhost:5000/api/employee/all"
+      );
+
+      console.log(
+        "API Response:",
+        response.data
       );
 
       setEmployees(
@@ -34,16 +49,21 @@ export default function Employees() {
 
     catch (error) {
 
-      console.log(error);
-
-      alert(
-        "Failed to fetch employees"
+      console.log(
+        "Fetch Error:",
+        error
       );
 
     }
 
   };
 
+  fetchEmployees();
+
+}, []);
+  // ==========================
+  // Delete Employee
+  // ==========================
   const handleDelete =
   async (employee_id) => {
 
@@ -71,7 +91,8 @@ export default function Employees() {
 
           (emp) =>
 
-          emp.employee_id !== employee_id
+          emp.employee_id !==
+          employee_id
 
         )
 
@@ -97,7 +118,6 @@ export default function Employees() {
 
       <div className="employeesPage">
 
-        {/* Header */}
         <div className="employeesHeader">
 
           <div>
@@ -114,7 +134,6 @@ export default function Employees() {
 
         </div>
 
-        {/* Table Card */}
         <div className="employeesTableCard">
 
           <div className="employeesTableWrapper">
@@ -145,41 +164,68 @@ export default function Employees() {
 
                   employees.length > 0 ? (
 
-                    employees.map((employee) => (
+                    employees.map(
+                      (employee) => (
 
                       <tr
-                        key={employee.employee_id}
+                        key={
+                          employee.employee_id
+                        }
                       >
 
                         <td>
-                          {employee.employee_id}
+                          {
+                            employee.employee_code
+                          }
                         </td>
 
                         <td className="employeeName">
-                          {employee.full_name}
+
+                          {
+                            employee.full_name
+                          }
+
                         </td>
 
                         <td>
-                          {employee.email}
+
+                          {
+                            employee.email
+                          }
+
                         </td>
 
                         <td>
-                          {employee.phone}
+
+                          {
+                            employee.phone
+                          }
+
                         </td>
 
                         <td>
-                          {employee.department}
+
+                          {
+                            employee.department
+                          }
+
                         </td>
 
                         <td>
-                          {employee.designation}
+
+                          {
+                            employee.designation
+                          }
+
                         </td>
 
                         <td>
 
                           <span className="roleBadge">
 
-                            {employee.role_name}
+                            {
+                              employee.role_name
+                            }
 
                           </span>
 
@@ -189,7 +235,9 @@ export default function Employees() {
 
                           <span className="statusBadge">
 
-                            {employee.status}
+                            {
+                              employee.status
+                            }
 
                           </span>
 
@@ -206,7 +254,9 @@ export default function Employees() {
                             className="deleteBtn"
                           >
 
-                            <Trash2 size={18} />
+                            <Trash2
+                              size={18}
+                            />
 
                           </button>
 

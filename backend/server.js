@@ -28,9 +28,16 @@ require("./routes/leadRoutes");
 const dashboardRoutes =
 require("./routes/dashboardRoutes");
 
+const managerRoutes =
+require("./routes/managerRoutes");
+
+const uploadRoutes =
+require("./routes/uploadRoutes");
+
 
 // Middleware
 app.use(cors());
+app.use('/uploads', express.static('uploads'));
 
 app.use(express.json());
 
@@ -54,6 +61,12 @@ app.use(
 app.use(
   "/api/dashboard",
   dashboardRoutes
+);
+
+
+app.use(
+  "/api/managers",
+  managerRoutes
 );
 
 

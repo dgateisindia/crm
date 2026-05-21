@@ -12,6 +12,8 @@ const {
 
   deleteLead,
 
+  getEmployeeLeads
+
 } = require(
   "../controllers/leadController"
 );
@@ -28,6 +30,13 @@ router.post(
 router.get(
   "/all",
   getLeads
+);
+router.get(
+
+  "/employee/:employeeId",
+
+  getEmployeeLeads
+
 );
 
 

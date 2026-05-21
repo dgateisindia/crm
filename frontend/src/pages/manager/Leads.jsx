@@ -62,11 +62,18 @@ export default function Leads() {
   };
 
 
-  useEffect(() => {
+useEffect(() => {
 
-    fetchLeads();
+  const loadLeads =
+  async () => {
 
-  }, []);
+    await fetchLeads();
+
+  };
+
+  loadLeads();
+
+}, []);
 
 
   // ==========================
@@ -305,7 +312,7 @@ export default function Leads() {
                 </th>
 
                 <th className="table-head">
-                  Priority
+                  Lead Mode
                 </th>
 
                 <th className="table-head">
@@ -377,7 +384,7 @@ export default function Leads() {
 
                     <td className="table-data">
 
-                      {lead.priority}
+                      {lead.lead_mode}
 
                     </td>
 

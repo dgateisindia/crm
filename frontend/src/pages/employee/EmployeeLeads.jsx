@@ -5,18 +5,20 @@ import {
   useEffect,
 } from "react";
 
-import EmployeeLayout
-from "../../layouts/EmployeeLayout";
+import EmployeLayout from "../../layouts/EmployeeLayout";
+
+import "../../styles/leads.css";
 
 import {
   Search,
-  Filter,
+  Trash2,
 } from "lucide-react";
 
-export default function EmployeeMyLeads() {
 
-  const [leads,
-    setLeads] =
+export default function Leads() {
+
+  const [allLeads,
+    setAllLeads] =
     useState([]);
 
   const [search,
@@ -25,258 +27,423 @@ export default function EmployeeMyLeads() {
 
   const [statusFilter,
     setStatusFilter] =
-    useState("All Status");
+    useState("all");
 
-  useEffect(() => {
 
-    const userId =
-    localStorage.getItem(
-      "userId"
-    );
+  // ==========================
+  // Fetch Leads
+  // ==========================
+  const fetchLeads =
+async () => {
 
-    axios.get(
-      `http://localhost:5000/api/leads/my-leads/${userId}`
-    )
-    .then((res) => {
+  try {
 
-      setLeads(
-        res.data
-      );
+    const user =
+    JSON.parse(
 
-    })
-    .catch((err) => {
-
-      console.log(err);
-
-    });
-
-  }, []);
-
-  // Filter Logic
-  const filteredLeads =
-    leads.filter(
-      (lead) => {
-
-      const matchesSearch =
-
-      lead.company_name
-      ?.toLowerCase()
-      .includes(
-        search.toLowerCase()
+      localStorage.getItem(
+        "user"
       )
 
-      ||
+    );
 
-      lead.contact_person
-      ?.toLowerCase()
-      .includes(
-        search.toLowerCase()
+    const response =
+    await axios.get(
+
+      `http://localhost:5000/api/leads/employee/${user.id}`
+
+    );
+
+    setAllLeads(
+      response.data
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+
+useEffect(() => {
+
+  const loadLeads =
+  async () => {
+
+    await fetchLeads();
+
+  };
+
+  loadLeads();
+
+}, []);
+
+
+  // ==========================
+  // Delete Lead
+  // ==========================
+  const handleDelete =
+  async (id) => {
+
+    const confirmDelete =
+    window.confirm(
+      "Are you sure you want to delete this lead?"
+    );
+
+    if (!confirmDelete)
+    return;
+
+
+    try {
+
+      await axios.delete(
+
+        `http://localhost:5000/api/leads/delete/${id}`
+
       );
 
-      const matchesStatus =
 
-      statusFilter ===
-      "All Status"
-
-      ||
-
-      lead.lead_status ===
-      statusFilter;
-
-      return (
-        matchesSearch &&
-        matchesStatus
+      alert(
+        "Lead Deleted Successfully"
       );
-    });
+
+
+      fetchLeads();
+
+    }
+
+    catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Failed to Delete Lead"
+      );
+
+    }
+
+  };
+
+
+  // ==========================
+  // Filter Leads
+  // ==========================
+  const filteredLeads =
+  allLeads.filter(
+  (lead) => {
+
+    const company =
+
+    lead.company_name
+    ? lead.company_name
+    .toLowerCase()
+    : "";
+
+
+    const contact =
+
+    lead.contact_person_name
+    ? lead.contact_person_name
+    .toLowerCase()
+    : "";
+
+
+    const matchesSearch =
+
+    company.includes(
+      search.toLowerCase()
+    )
+
+    ||
+
+    contact.includes(
+      search.toLowerCase()
+    );
+
+
+    const matchesStatus =
+
+    statusFilter ===
+    "all"
+
+    ||
+
+    lead.lead_status ===
+    statusFilter;
+
+
+    return (
+      matchesSearch &&
+      matchesStatus
+    );
+
+  });
+
 
   return (
-    <EmployeeLayout>
 
-      <div className="employee-leads-container">
+    <EmployeLayout>
+
+      <div className="leads-container">
+
 
         {/* Header */}
         <div className="mb-6">
 
-          <h1 className="text-3xl font-bold text-[#071739]">
-            My Leads
+          <h1 className="leads-header-title">
+
+            Total Leads
+
           </h1>
 
-          <p className="text-gray-500 mt-1">
-            View and manage your leads
+          <p className="leads-header-subtitle">
+
+            View all CRM leads
+
           </p>
 
         </div>
 
+
         {/* Filters */}
-        <div className="employee-filter-card">
+        <div className="manager-filter-card md:flex-row">
+
 
           {/* Search */}
-          <div className="employee-search-box">
+          <div className="manager-search-box md:w-[350px]">
 
             <Search size={18} />
 
             <input
+
               type="text"
+
               placeholder="Search company or contact..."
-              className="employee-search-input"
+
+              className="manager-search-input"
+
               value={search}
+
               onChange={(e) =>
                 setSearch(
                   e.target.value
                 )
               }
+
             />
 
           </div>
 
+
           {/* Status Filter */}
-          <div className="employee-filter-box">
+          <select
 
-            <Filter size={18} />
+            className="manager-filter-select"
 
-            <select
-              className="employee-filter-select"
-              value={
-                statusFilter
-              }
-              onChange={(e) =>
-                setStatusFilter(
-                  e.target.value
-                )
-              }
-            >
+            value={statusFilter}
 
-              <option>
-                All Status
-              </option>
+            onChange={(e) =>
+              setStatusFilter(
+                e.target.value
+              )
+            }
 
-              <option>
-                New Lead
-              </option>
+          >
 
-              <option>
-                Connected
-              </option>
+            <option value="all">
+              All Status
+            </option>
 
-              <option>
-                Interested
-              </option>
+            <option value="new">
+              New
+            </option>
 
-              <option>
-                Follow-up Required
-              </option>
+            <option value="contacted">
+              Contacted
+            </option>
 
-              <option>
-                Converted
-              </option>
+            <option value="qualified">
+              Qualified
+            </option>
 
-            </select>
+            <option value="proposal_sent">
+              Proposal Sent
+            </option>
 
-          </div>
+            <option value="converted">
+              Converted
+            </option>
+
+            <option value="lost">
+              Lost
+            </option>
+
+          </select>
 
         </div>
 
-        {/* Leads Table */}
-        <div className="employee-table-card">
+
+        {/* Table */}
+        <div className="leads-card overflow-x-auto">
 
           <table className="w-full">
 
+
+            {/* Table Header */}
             <thead>
 
               <tr className="border-b">
 
-                <th className="employee-table-head">
+                <th className="table-head">
                   Company
                 </th>
 
-                <th className="employee-table-head">
-                  Contact
+                <th className="table-head">
+                  Contact Person
                 </th>
 
-                <th className="employee-table-head">
+                <th className="table-head">
                   Phone
                 </th>
 
-                <th className="employee-table-head">
+                <th className="table-head">
+                  Email
+                </th>
+
+                <th className="table-head">
+                  Source
+                </th>
+
+                <th className="table-head">
+                  Lead Mode
+                </th>
+
+                <th className="table-head">
                   Status
                 </th>
 
-                <th className="employee-table-head">
-                  Event
-                </th>
-
-                <th className="employee-table-head">
-                  Date
+                <th className="table-head text-center">
+                  Action
                 </th>
 
               </tr>
 
             </thead>
 
+
+            {/* Table Body */}
             <tbody>
 
               {
-                filteredLeads.map(
-                (lead) => (
 
-                <tr
-                  key={lead.id}
-                  className="border-b hover:bg-gray-50"
-                >
+                filteredLeads.length > 0 ? (
 
-                  <td className="employee-table-data">
+                  filteredLeads.map(
+                  (lead) => (
 
-                    {
-                      lead.company_name
-                    }
+                  <tr
 
-                  </td>
+                    key={lead.id}
 
-                  <td className="employee-table-data">
+                    className="table-row"
 
-                    {
-                      lead.contact_person
-                    }
+                  >
 
-                  </td>
 
-                  <td className="employee-table-data">
+                    <td className="table-data">
 
-                    {
-                      lead.phone
-                    }
+                      {lead.company_name}
 
-                  </td>
+                    </td>
 
-                  <td className="employee-table-data">
 
-                    {
-                      lead.lead_status
-                    }
+                    <td className="table-data">
 
-                  </td>
+                      {lead.contact_person_name}
 
-                  <td className="employee-table-data">
+                    </td>
 
-                    {
-                      lead.special_event
-                      || "-"
-                    }
 
-                  </td>
+                    <td className="table-data">
 
-                  <td className="employee-table-data">
+                      {lead.phone}
 
-                    {
-                      lead.event_date
-                      || "-"
-                    }
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.email}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.source}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.lead_mode}
+
+                    </td>
+
+
+                    <td className="table-data">
+
+                      {lead.lead_status}
+
+                    </td>
+
+
+                    <td className="table-data text-center">
+
+                      <button
+
+                        onClick={() =>
+                          handleDelete(
+                            lead.id
+                          )
+                        }
+
+                        className="delete-btn"
+
+                      >
+
+                        <Trash2 size={18} />
+
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                <tr>
+
+                  <td
+                    colSpan="8"
+                    className="text-center p-6 text-gray-500"
+                  >
+
+                    No Leads Found
 
                   </td>
 
                 </tr>
 
-              ))
+              )
+
             }
 
             </tbody>
@@ -287,6 +454,8 @@ export default function EmployeeMyLeads() {
 
       </div>
 
-    </EmployeeLayout>
+    </EmployeLayout>
+
   );
+
 }

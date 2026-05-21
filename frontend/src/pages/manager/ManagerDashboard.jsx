@@ -5,13 +5,6 @@ import {
   useState,
 } from "react";
 
-import {
-  FaUsers,
-  FaUserTie,
-  FaChartLine,
-  FaCheckCircle,
-} from "react-icons/fa";
-
 import ManagerLayout
 from "../../layouts/ManagerLayout";
 
@@ -94,7 +87,7 @@ export default function ManagerDashboard() {
             <div className="icon-circle blue-bg">
 
               <Briefcase
-                size={26}
+                size={16}
               />
 
             </div>
@@ -220,7 +213,7 @@ export default function ManagerDashboard() {
                 </th>
 
                 <th>
-                  Contact
+                  Contact Person
                 </th>
 
                 <th>
@@ -232,7 +225,7 @@ export default function ManagerDashboard() {
                 </th>
 
                 <th>
-                  Event
+                  Lead Mode
                 </th>
 
               </tr>
@@ -245,101 +238,41 @@ export default function ManagerDashboard() {
                 stats.recentLeads
                 ?.map((lead) => (
 
-                <tr
-                  key={lead.id}
-                >
+                  <tr key={lead.id}>
 
-                  <td>
-                    {
-                      lead.company_name
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      lead.contact_person
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      lead.phone
-                    }
-                  </td>
-
-                  <td>
-
-                    <span
-                      className={`status-badge ${
-                      lead.lead_status ===
-                      "Converted"
-
-                      ? "converted"
-
-                      : lead.lead_status ===
-                      "New Lead"
-
-                      ? "new"
-
-                      : "connected"
-                    }`}
-                    >
-
-                      {
-                        lead.lead_status
-                      }
-
-                    </span>
-
-                  </td>
-
-                  <td>
-                    {
-                      lead.special_event
-                    }
-                  </td>
-
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {
-                  stats.recentLeads
-                  .map((lead) => (
-
-                  <tr
-                    key={lead.id}
-                    className="table-row"
-                  >
-
-                    <td className="table-data">
-
-                      {
-                        lead.company_name
-                      }
-
+                    <td>
+                      {lead.company_name}
                     </td>
 
-                    <td className="table-data">
-
+                    <td>
                       {
-                        lead.contact_person
+                        lead.contact_person_name ||
+                        "N/A"
                       }
-
                     </td>
 
-                    <td className="table-data">
+                    <td>
+                      {
+                        lead.phone ||
+                        "N/A"
+                      }
+                    </td>
+
+                    <td>
 
                       <span
-                        className={`status-badge
-                        ${
-                          lead.lead_status === "Converted"
-                          ? "status-converted"
-                          : lead.lead_status === "New"
-                          ? "status-new"
-                          : "status-pending"
+                        className={`status-badge ${
+                          lead.lead_status ===
+                          "converted"
+
+                          ? "converted"
+
+                          : lead.lead_status ===
+                          "new"
+
+                          ? "new"
+
+                          : "connected"
                         }`}
                       >
 
@@ -351,12 +284,14 @@ export default function ManagerDashboard() {
 
                     </td>
 
-                    <td className="table-data">
-
+                    <td>
                       {
-                        lead.special_event
+                        lead.lead_mode
+                        ?.replace(
+                          "_",
+                          " "
+                        ) || "N/A"
                       }
-
                     </td>
 
                   </tr>
@@ -366,9 +301,7 @@ export default function ManagerDashboard() {
 
               </tbody>
 
-            </table>
-
-          </div>
+          </table>
 
         </div>
 

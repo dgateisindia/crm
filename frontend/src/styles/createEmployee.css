@@ -1,10 +1,10 @@
 .createEmployeePage{
-    min-height:100vh;
+    min-height:100%;
     background:#f5f7fb;
 }
 
 .createEmployeeHeader h1{
-    font-size:42px;
+    font-size:12px;
     font-weight:700;
     color:#111827;
 }
@@ -25,27 +25,27 @@
 .previewCard{
     background:#fff;
     border:1px solid #e5e7eb;
-    border-radius:20px;
-    padding:30px;
+    border-radius:10px;
+    padding:20px;
 }
 
 .employeeFormCard h2,
 .previewCard h2{
-    font-size:24px;
+    font-size:12px;
     font-weight:600;
-    margin-bottom:25px;
+    margin-bottom:15px;
 }
 
 .employeeForm{
     display:flex;
     flex-direction:column;
-    gap:25px;
+    gap:15px;
 }
 
 .formRow{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:20px;
+    gap:10px;
 }
 
 .formGroup{
@@ -55,12 +55,12 @@
 
 .formGroup label{
     font-weight:500;
-    margin-bottom:10px;
+    margin-bottom:5px;
 }
 
 .formGroup input,
 .formGroup select{
-    height:55px;
+    height:45px;
     border:1px solid #d1d5db;
     border-radius:14px;
     padding:0 16px;
