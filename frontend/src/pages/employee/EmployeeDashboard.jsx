@@ -13,65 +13,100 @@ export default function EmployeeDashboard() {
   const [stats,
     setStats] =
     useState({
+
       totalLeads: 0,
-      connected: 0,
-      interested: 0,
+      contacted: 0,
+      qualified: 0,
       converted: 0,
       recentLeads: [],
+
     });
 
-  const userId =
-  localStorage.getItem(
-    "userId"
+
+  // ==========================
+  // Get Logged In User
+  // ==========================
+  const user =
+  JSON.parse(
+
+    localStorage.getItem(
+      "user"
+    )
+
   );
 
+  const userId =
+
+    user?.employee_id ||
+
+    user?.id;
+
+
+  // ==========================
+  // Fetch Dashboard Data
+  // ==========================
   useEffect(() => {
 
+    if (!userId)
+    return;
 
     console.log(
-"User ID:",
-userId
-);
+      "User ID:",
+      userId
+    );
 
-console.log(
-"Calling:",
-`http://localhost:5000/api/dashboard/employee/${userId}`
-);
+    console.log(
+      "Calling API:",
+      `http://localhost:5000/api/dashboard/employee/${userId}`
+    );
 
     axios.get(
+
       `http://localhost:5000/api/dashboard/employee/${userId}`
+
     )
+
     .then((res) => {
 
-
-      console.log("Dashboard data:", res.data);
+      console.log(
+        "Dashboard Data:",
+        res.data
+      );
 
       setStats(
         res.data
       );
 
     })
+
     .catch((err) => {
 
-      console.log(err);
+      console.log(
+        "Dashboard Error:",
+        err
+      );
 
     });
 
   }, [userId]);
 
+
   return (
 
     <EmployeeLayout>
 
+      {/* Header */}
       <h1 className="text-3xl font-bold text-[#071739] mb-6">
 
         Employee Dashboard
 
       </h1>
 
+
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
 
+        {/* My Leads */}
         <div className="bg-white rounded-2xl shadow-md p-6">
 
           <h2 className="text-gray-500 text-sm">
@@ -82,50 +117,50 @@ console.log(
 
           <p className="text-4xl font-bold text-[#071739] mt-2">
 
-            {
-              stats.totalLeads
-            }
+            {stats.totalLeads}
 
           </p>
 
         </div>
 
+
+        {/* Contacted */}
         <div className="bg-white rounded-2xl shadow-md p-6">
 
           <h2 className="text-gray-500 text-sm">
 
-            Connected
+            Contacted
 
           </h2>
 
           <p className="text-4xl font-bold text-[#071739] mt-2">
 
-            {
-              stats.connected
-            }
+            {stats.contacted}
 
           </p>
 
         </div>
 
+
+        {/* Qualified */}
         <div className="bg-white rounded-2xl shadow-md p-6">
 
           <h2 className="text-gray-500 text-sm">
 
-            Interested
+            Qualified
 
           </h2>
 
           <p className="text-4xl font-bold text-[#071739] mt-2">
 
-            {
-              stats.interested
-            }
+            {stats.qualified}
 
           </p>
 
         </div>
 
+
+        {/* Converted */}
         <div className="bg-white rounded-2xl shadow-md p-6">
 
           <h2 className="text-gray-500 text-sm">
@@ -136,15 +171,14 @@ console.log(
 
           <p className="text-4xl font-bold text-[#071739] mt-2">
 
-            {
-              stats.converted
-            }
+            {stats.converted}
 
           </p>
 
         </div>
 
       </div>
+
 
       {/* Recent Leads */}
       <div className="bg-white rounded-2xl shadow-md p-6">
@@ -161,75 +195,131 @@ console.log(
 
             <thead>
 
-              <tr className="border-b">
+              <tr className="border-b text-gray-600">
 
                 <th className="text-left p-4">
+
                   Company
+
                 </th>
 
                 <th className="text-left p-4">
-                  Contact
+
+                  Contact Person
+
                 </th>
 
                 <th className="text-left p-4">
+
+                  Phone
+
+                </th>
+
+                <th className="text-left p-4">
+
                   Status
+
                 </th>
 
                 <th className="text-left p-4">
-                  Event
+
+                  Lead Mode
+
                 </th>
 
               </tr>
 
             </thead>
 
+
             <tbody>
 
               {
+
                 stats.recentLeads
-                ?.map((lead) => (
+                ?.length > 0
 
-                <tr
-                  key={lead.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
+                ? (
 
-                  <td className="p-4">
+                  stats.recentLeads
+                  .map((lead) => (
 
-                    {
-                      lead.company_name
-                    }
+                    <tr
 
-                  </td>
+                      key={lead.id}
 
-                  <td className="p-4">
+                      className="border-b hover:bg-gray-50 transition"
 
-                    {
-                      lead.contact_person
-                    }
+                    >
 
-                  </td>
+                      <td className="p-4">
 
-                  <td className="p-4">
+                        {
+                          lead.company_name
+                        }
 
-                    {
-                      lead.lead_status
-                    }
+                      </td>
 
-                  </td>
+                      <td className="p-4">
 
-                  <td className="p-4">
+                        {
+                          lead.contact_person_name
+                        }
 
-                    {
-                      lead.special_event
-                    }
+                      </td>
 
-                  </td>
+                      <td className="p-4">
 
-                </tr>
+                        {
+                          lead.phone
+                        }
 
-              ))
-            }
+                      </td>
+
+                      <td className="p-4 capitalize">
+
+                        {
+                          lead.lead_status
+                        }
+
+                      </td>
+
+                      <td className="p-4 capitalize">
+
+                        {
+                          lead.lead_mode
+                          ?.replace(
+                            "_",
+                            " "
+                          )
+                        }
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                )
+
+                : (
+
+                  <tr>
+
+                    <td
+                      colSpan="5"
+                      className="text-center p-8 text-gray-400"
+                    >
+
+                      No Leads Found
+
+                    </td>
+
+                  </tr>
+
+                )
+
+              }
 
             </tbody>
 
@@ -240,5 +330,7 @@ console.log(
       </div>
 
     </EmployeeLayout>
+
   );
+
 }

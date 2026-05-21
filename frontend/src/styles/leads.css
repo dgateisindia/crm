@@ -1,67 +1,482 @@
-@reference "tailwindcss";
-
-.manager-filter-card {
-  @apply bg-white
-  rounded-2xl
-  shadow-md
-  p-4
-  mb-5
-  flex
-  flex-col
-  gap-4
-  justify-between;
+.addLeadPage {
+  padding: 1px;
 }
 
-.manager-search-box {
-  @apply flex
-  items-center
-  gap-2
-  border
-  rounded-xl
-  px-4
-  py-2
-  w-full
-  md:w-[350px];
+.addLeadContainer {
+  width: 100%;
+  max-width: 1450px;
+  margin: auto;
+  overflow-x: hidden;
 }
 
-.manager-search-input {
-  @apply outline-none
-  w-full
-  text-sm;
+.addLeadHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.manager-filter-select {
-  @apply border
-  rounded-xl
-  px-4
-  py-2
-  text-sm
-  outline-none;
+.addLeadHeader h1 {
+  font-size: 18px;
+  font-weight: 500;
+  color: #071739;
 }
 
-.table-head {
-  @apply text-left
-  p-4
-  font-semibold
-  text-[#071739];
+.addLeadHeader p {
+  color: #64748b;
+  margin-top: 2px;
 }
 
-.table-data {
-  @apply p-4
-  text-gray-700;
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 10px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.table-row {
-  @apply border-b
-  hover:bg-gray-50
-  transition;
+.backBtn:hover {
+  background: #f8fafc;
 }
 
-.delete-btn {
-  @apply p-2
-  rounded-lg
-  text-gray-400
-  hover:text-red-500
-  hover:bg-red-50
-  transition;
+.addLeadGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+.leadFormCard {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.06);
+  width: 100%;
+  overflow: hidden;
+}
+.sidebarCard {
+  background: white;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.06);
+}
+
+.leadInfoHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.leadInfoHeader h2 {
+  font-size: 12px;
+  color: #071739;
+  font-weight: 700;
+}
+
+.leadInfoHeader p {
+  color: #64748b;
+  font-size: 7px;
+}
+
+.leadIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #071739;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dbe2ea;
+  border-radius: 12px;
+  padding: 5px px;
+  font-size: 13px;
+  outline: none;
+  transition: 0.3s;
+  max-width: 100%;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: #071739;
+}
+
+.fullWidth {
+  grid-column: span 2;
+}
+
+.importantCheck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  margin-bottom: 24px;
+}
+
+.importantCheck input {
+  width: 18px;
+  height: 18px;
+}
+
+.submitArea {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.saveLeadBtn {
+  background: #071739;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.saveLeadBtn:hover {
+  opacity: 0.9;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sidebarHeader h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #071739;
+}
+
+.uploadBox {
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 50px 20px;
+  text-align: center;
+  color: #64748b;
+  margin-top: 16px;
+}
+
+.leadSidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+@media (max-width: 1200px) {
+
+  .addLeadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .leadSidebar {
+    max-width: 100%;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: span 1;
+  }
+
+  .addLeadHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+}
+
+
+
+/* ==========================
+   Table Layout
+========================== */
+
+.leads-card{
+  background:white;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table-head{
+  text-align:left;
+  padding:14px;
+  font-size:13px;
+  font-weight:600;
+  color:#374151;
+  border-bottom:1px solid #e5e7eb;
+  background:#f9fafb;
+}
+
+.table-data{
+  padding:14px;
+  font-size:13px;
+  color:#374151;
+  border-bottom:1px solid #f3f4f6;
+}
+
+.table-row:hover{
+  background:#f9fafb;
+}
+
+/* ==========================
+   Status Badge
+========================== */
+
+.status-badge{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:500;
+}
+
+.status-badge.new{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+.status-badge.contacted{
+  background:#fef3c7;
+  color:#d97706;
+}
+
+.status-badge.qualified{
+  background:#dcfce7;
+  color:#16a34a;
+}
+
+.status-badge.converted{
+  background:#ede9fe;
+  color:#7c3aed;
+}
+
+/* ==========================
+   Delete Button
+========================== */
+
+.delete-btn{
+  border:none;
+  background:#fee2e2;
+  color:#dc2626;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.delete-btn:hover{
+  background:#fecaca;
+}
+
+
+/* ==========================
+   Filter Card
+========================== */
+
+.manager-filter-card{
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+
+  box-shadow:
+  0 2px 8px
+  rgba(0,0,0,0.04);
+}
+
+/* ==========================
+   Search Box
+========================== */
+
+.manager-search-box{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  background:#f9fafb;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+
+  padding:0 14px;
+  height:38px;
+
+  transition:0.2s;
+}
+
+.manager-search-box:focus-within{
+  border-color:#2563eb;
+  box-shadow:
+  0 0 0 4px
+  rgba(37,99,235,0.08);
+}
+
+.manager-search-box svg{
+  color:#6b7280;
+}
+
+.manager-search-input{
+  border:none;
+  outline:none;
+  width:80%;
+  background:transparent;
+  font-size:14px;
+  color:#374151;
+}
+
+.manager-search-input::placeholder{
+  color:#9ca3af;
+}
+
+/* ==========================
+   Select Filter
+========================== */
+
+.manager-filter-select{
+  width:100%;
+  height:38px;
+
+  border:1px solid #d1d5db;
+  border-radius:12px;
+
+  padding:0 14px;
+
+  font-size:14px;
+  color:#374151;
+
+  background:#f9fafb;
+  cursor:pointer;
+  outline:none;
+
+  transition:0.2s;
+}
+
+.manager-filter-select:focus{
+  border-color:#2563eb;
+  box-shadow:
+  0 0 0 4px
+  rgba(37,99,235,0.08);
+}
+
+/* ==========================
+   Upload Section
+========================== */
+
+.uploadBox{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  align-items:center;
+
+  border:2px dashed #d1d5db;
+  border-radius:14px;
+
+  padding:24px;
+  background:#f9fafb;
+}
+
+/* Choose File Button */
+
+.fileUploadLabel{
+  background:#2563eb;
+  color:white;
+
+  padding:10px 18px;
+
+  border-radius:10px;
+  cursor:pointer;
+
+  font-size:13px;
+  font-weight:500;
+
+  transition:0.2s;
+}
+
+.fileUploadLabel:hover{
+  background:#1d4ed8;
+}
+
+/* File Name */
+
+.fileName{
+  font-size:12px;
+  color:#374151;
+  text-align:center;
+  word-break:break-word;
+}
+
+/* Upload Button */
+
+.uploadBtn{
+  width:100%;
+
+  border:none;
+  border-radius:10px;
+
+  background:#071739;
+  color:white;
+
+  padding:12px;
+  cursor:pointer;
+
+  font-size:13px;
+  font-weight:600;
+
+  transition:0.2s;
+}
+
+.uploadBtn:hover{
+  background:#0b2455;
 }

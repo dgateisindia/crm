@@ -1,0 +1,122 @@
+.employeesPage{
+  height:calc(100vh - 20px);
+  overflow-y:auto;
+  background:#f5f7fb;
+  padding:10px;
+}
+
+.employeesHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.employeesHeader h1{
+  font-size:26px;
+  font-weight:700;
+  color:#071739;
+}
+
+.employeesHeader p{
+  color:#6b7280;
+  margin-top:2px;
+  font-size:13px;
+}
+
+.employeesTableCard{
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.employeesTableWrapper{
+  overflow-x:auto;
+}
+
+.employeesTable{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.employeesTable thead{
+  background:#f9fafb;
+}
+
+.employeesTable th{
+  text-align:left;
+  padding:14px;
+  font-size:13px;
+  font-weight:600;
+  color:#071739;
+  border-bottom:1px solid #e5e7eb;
+}
+
+.employeesTable td{
+  padding:14px;
+  font-size:13px;
+  color:#374151;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.employeesTable tbody tr:hover{
+  background:#f9fafb;
+}
+
+.employeeName{
+  font-weight:600;
+  color:#111827;
+}
+
+.roleBadge{
+  background:#dbeafe;
+  color:#2563eb;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:500;
+}
+
+.statusBadge{
+  background:#dcfce7;
+  color:#16a34a;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:500;
+}
+
+.actionCell{
+  text-align:center;
+}
+
+.deleteBtn{
+  border:none;
+  background:none;
+  color:#ef4444;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.deleteBtn:hover{
+  color:#dc2626;
+}
+
+.noData{
+  text-align:center;
+  padding:20px;
+  color:#6b7280;
+}
+
+@media(max-width:768px){
+
+  .employeesPage{
+    padding:6px;
+  }
+
+  .employeesHeader h1{
+    font-size:22px;
+  }
+
+}

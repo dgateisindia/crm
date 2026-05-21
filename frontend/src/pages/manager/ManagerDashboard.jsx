@@ -87,7 +87,7 @@ export default function ManagerDashboard() {
             <div className="icon-circle blue-bg">
 
               <Briefcase
-                size={26}
+                size={16}
               />
 
             </div>
@@ -213,7 +213,7 @@ export default function ManagerDashboard() {
                 </th>
 
                 <th>
-                  Contact
+                  Contact Person
                 </th>
 
                 <th>
@@ -225,7 +225,7 @@ export default function ManagerDashboard() {
                 </th>
 
                 <th>
-                  Event
+                  Lead Mode
                 </th>
 
               </tr>
@@ -238,66 +238,68 @@ export default function ManagerDashboard() {
                 stats.recentLeads
                 ?.map((lead) => (
 
-                <tr
-                  key={lead.id}
-                >
+                  <tr key={lead.id}>
 
-                  <td>
-                    {
-                      lead.company_name
-                    }
-                  </td>
+                    <td>
+                      {lead.company_name}
+                    </td>
 
-                  <td>
-                    {
-                      lead.contact_person
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      lead.phone
-                    }
-                  </td>
-
-                  <td>
-
-                    <span
-                      className={`status-badge ${
-                      lead.lead_status ===
-                      "Converted"
-
-                      ? "converted"
-
-                      : lead.lead_status ===
-                      "New Lead"
-
-                      ? "new"
-
-                      : "connected"
-                    }`}
-                    >
-
+                    <td>
                       {
-                        lead.lead_status
+                        lead.contact_person_name ||
+                        "N/A"
                       }
+                    </td>
 
-                    </span>
+                    <td>
+                      {
+                        lead.phone ||
+                        "N/A"
+                      }
+                    </td>
 
-                  </td>
+                    <td>
 
-                  <td>
-                    {
-                      lead.special_event
-                    }
-                  </td>
+                      <span
+                        className={`status-badge ${
+                          lead.lead_status ===
+                          "converted"
 
-                </tr>
+                          ? "converted"
 
-              ))
-            }
+                          : lead.lead_status ===
+                          "new"
 
-            </tbody>
+                          ? "new"
+
+                          : "connected"
+                        }`}
+                      >
+
+                        {
+                          lead.lead_status
+                        }
+
+                      </span>
+
+                    </td>
+
+                    <td>
+                      {
+                        lead.lead_mode
+                        ?.replace(
+                          "_",
+                          " "
+                        ) || "N/A"
+                      }
+                    </td>
+
+                  </tr>
+
+                ))
+              }
+
+              </tbody>
 
           </table>
 

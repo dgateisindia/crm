@@ -1,32 +1,44 @@
-const express = require("express");
+const express =
+require("express");
 
-const router = express.Router();
+const router =
+express.Router();
 
 const {
+
   createEmployee,
   getEmployees,
   getEmployeeById,
   deleteEmployee
-} = require("../controllers/employeeController");
-//create employee
-router.post(
-  "/create-employee",
-  createEmployee
- 
+
+} = require(
+  "../controllers/employeeController"
 );
-//get all employees
+
+// Create Employee
+router.post(
+  "/create",
+  createEmployee
+);
+
+// IMPORTANT:
+// Put fixed routes first
 router.get(
-  "/employees",
+  "/all",
   getEmployees
 );
-router.delete(
-  "/delete/:id",
-  deleteEmployee
-);
+
+// Dynamic route LAST
 router.get(
   "/:id",
   getEmployeeById
 );
 
+// Delete
+router.delete(
+  "/delete/:id",
+  deleteEmployee
+);
 
-module.exports = router;
+module.exports =
+router;
