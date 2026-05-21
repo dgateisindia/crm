@@ -276,6 +276,72 @@ CREATE TABLE leads (
 
 );
 
+
+#FollowUp
+CREATE TABLE follow_ups (
+
+    followup_id INT
+    PRIMARY KEY AUTO_INCREMENT,
+
+    lead_id INT
+    NOT NULL,
+
+    employee_id INT
+    NULL,
+
+    contact_date DATETIME
+    DEFAULT CURRENT_TIMESTAMP,
+
+    followup_mode ENUM(
+
+        'call',
+        'whatsapp',
+        'email',
+        'meeting',
+        'other'
+
+    )
+    DEFAULT 'call',
+
+    remarks TEXT,
+
+    next_followup_date
+    DATETIME,
+
+    status ENUM(
+
+        'pending',
+        'completed',
+        'missed'
+
+    )
+    DEFAULT 'pending',
+
+    created_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (
+      lead_id
+    )
+
+    REFERENCES leads(id)
+
+    ON DELETE CASCADE,
+
+    FOREIGN KEY (
+      employee_id
+    )
+
+    REFERENCES employees(
+      employee_id
+    )
+
+    ON DELETE SET NULL
+
+);
+
+
+
 #Duplicate Restrictions
 ALTER TABLE leads
 ADD UNIQUE(phone);
