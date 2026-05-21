@@ -219,12 +219,37 @@ export default function Employees() {
 
                         </td>
 
-                        <td>
+                       <td>
 
-                          <span className="roleBadge">
+                          <span
+                            className={
+
+                        `px-3 py-1
+
+                        rounded-full
+
+                        text-xs font-semibold
+
+                        ${
+                        employee.role ===
+                        "manager"
+
+                        ? "bg-purple-100 text-purple-700"
+
+                        : "bg-emerald-100 text-emerald-700"
+
+                        }`
+
+                            }
+
+                          >
 
                             {
-                              employee.role_name
+
+                        employee.role ||
+
+                        "Employee"
+
                             }
 
                           </span>

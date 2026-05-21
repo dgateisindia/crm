@@ -1,12 +1,8 @@
 import axios from "axios";
 
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect,useState,} from "react";
 
-import ManagerLayout
-from "../../layouts/ManagerLayout";
+import ManagerLayout from "../../layouts/ManagerLayout";
 
 import "../../styles/managerDashboard.css";
 

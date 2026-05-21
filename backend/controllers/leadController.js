@@ -412,5 +412,6 @@ module.exports = {
   getLeads,
   deleteLead,
   getEmployeeLeads,
-  getLeadById
+  getLeadById,
+  
 };

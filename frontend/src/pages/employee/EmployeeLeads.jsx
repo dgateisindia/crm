@@ -65,33 +65,62 @@ export default function Leads() {
   // Fetch Leads
   // ==========================
   const fetchLeads =
-  async () => {
+async () => {
 
-    try {
+  try {
 
-      const response =
-      await axios.get(
-        "http://localhost:5000/api/leads/all"
-      );
+    const user =
+    JSON.parse(
 
-      setAllLeads(
-        response.data
-      );
+      localStorage.getItem(
+        "user"
+      )
 
-    }
+    );
 
-    catch (error) {
+    const employeeId =
 
-      console.log(error);
+      user?.employee_id ||
 
-      alert(
-        "Failed to fetch leads"
-      );
+      user?.id;
 
-    }
 
-  };
+    console.log(
+      "Employee ID:",
+      employeeId
+    );
 
+
+    const response =
+    await axios.get(
+
+`http://localhost:5000/api/leads/employee/${employeeId}`
+
+    );
+
+
+    console.log(
+      "Employee Leads:",
+      response.data
+    );
+
+    setAllLeads(
+      response.data
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Failed to fetch leads"
+    );
+
+  }
+
+};
 
 useEffect(() => {
 
