@@ -34,6 +34,9 @@ require("./routes/managerRoutes");
 const uploadRoutes =
 require("./routes/uploadRoutes");
 
+const followupRoutes =
+require("./routes/followupRoutes");
+
 
 // Middleware
 app.use(cors());
@@ -58,11 +61,17 @@ app.use(
   leadRoutes
 );
 
+
 app.use(
   "/api/dashboard",
   dashboardRoutes
 );
 
+//followup routes
+app.use(
+  "/api/followups",
+  followupRoutes
+);
 
 app.use(
   "/api/managers",

@@ -18,6 +18,9 @@ import EmployeeDetails from "./pages/manager/EmployeeDetails";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
 import AddLeads from "./pages/manager/AddLeads";
 import CreateManager from "./pages/manager/CreateManager";
+import LeadDetails from "./pages/manager/LeadDetails";  
+
+
 
 function App() {
   return (
@@ -153,6 +156,20 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/manager/lead/:id"
+        element={
+          <ProtectedRoute>
+            <LeadDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route 
+      path="/manager/edit-lead/:id" 
+      element={
+      <ProtectedRoute>
+        <AddLeads />
+        </ProtectedRoute>} />
 
     </Routes>
   );

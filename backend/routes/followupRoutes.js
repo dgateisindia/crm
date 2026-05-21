@@ -1,79 +1,42 @@
-const express = require("express");
+const express =
+require("express");
 
-const router = express.Router();
+const router =
+express.Router();
 
-const db = require("../db");
+const {
+
+  addFollowup,
+  getFollowups,
+getEmployeeFollowups
+
+} = require(
+
+"../controllers/followupController"
+    
+);
 
 
-// Save Follow-up
-router.post("/", (req, res) => {
 
-    const {
 
-        lead_id,
-        followup_date,
-        followup_type,
-        remark,
-        status
+// Add Followup
+router.post(
+  "/add",
+  addFollowup
+);
 
-    } = req.body;
 
-    const sql = `
+// Get Followups
+router.get(
+  "/all",
+  getFollowups
+);
 
-        INSERT INTO followups (
+// Get Employee Followups
+router.get(
+  "/employee/:employeeId",
+  getEmployeeFollowups
+);
 
-            lead_id,
-            followup_date,
-            followup_type,
-            remark,
-            status
-
-        )
-
-        VALUES (?, ?, ?, ?, ?)
-
-    `;
-
-    db.query(
-
-        sql,
-
-        [
-
-            lead_id,
-            followup_date,
-            followup_type,
-            remark,
-            status
-
-        ],
-
-        (err, result) => {
-
-            if (err) {
-
-                console.log(err);
-
-                return res.status(500).json({
-
-                    success: false,
-                    message: "Database Error"
-
-                });
-
-            }
-
-            res.status(200).json({
-
-                success: true,
-                message: "Follow-up Saved Successfully"
-
-            });
-
-        }
-
-    );
-
-});
-
-module.exports = router;
+module.exports =
+router;

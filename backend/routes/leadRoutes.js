@@ -12,7 +12,8 @@ const {
 
   deleteLead,
 
-  getEmployeeLeads
+  getEmployeeLeads,
+  getLeadById
 
 } = require(
   "../controllers/leadController"
@@ -46,6 +47,11 @@ router.delete(
   deleteLead
 );
 
+//LEad Details
+router.get(
+  "/:id",
+  getLeadById
+);
 
 module.exports =
 router;

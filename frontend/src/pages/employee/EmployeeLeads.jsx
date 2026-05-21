@@ -5,13 +5,20 @@ import {
   useEffect,
 } from "react";
 
-import EmployeLayout from "../../layouts/EmployeeLayout";
+import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import "../../styles/leads.css";
+import {useNavigate} from "react-router-dom";
 
 import {
   Search,
+
+  Eye,
+  Pencil,
+  PhoneCall,
   Trash2,
+  MoreVertical
+
 } from "lucide-react";
 
 
@@ -29,44 +36,61 @@ export default function Leads() {
     setStatusFilter] =
     useState("all");
 
+  const [showFollowupModal,
+    setShowFollowupModal] =
+    useState(false);  
+
+  const [selectedLead,
+    setSelectedLead] =
+    useState(null);
+
+  const [followupData,
+    setFollowupData] =
+    useState({
+      followup_mode:
+      "call",
+      remarks:
+    "",
+    next_followup_date:
+    "",
+    status:
+    "pending"
+    });
+
+  const navigate =
+  useNavigate();
+
 
   // ==========================
   // Fetch Leads
   // ==========================
   const fetchLeads =
-async () => {
+  async () => {
 
-  try {
+    try {
 
-    const user =
-    JSON.parse(
+      const response =
+      await axios.get(
+        "http://localhost:5000/api/leads/all"
+      );
 
-      localStorage.getItem(
-        "user"
-      )
+      setAllLeads(
+        response.data
+      );
 
-    );
+    }
 
-    const response =
-    await axios.get(
+    catch (error) {
 
-      `http://localhost:5000/api/leads/employee/${user.id}`
+      console.log(error);
 
-    );
+      alert(
+        "Failed to fetch leads"
+      );
 
-    setAllLeads(
-      response.data
-    );
+    }
 
-  }
-
-  catch (error) {
-
-    console.log(error);
-
-  }
-
-};
+  };
 
 
 useEffect(() => {
@@ -128,6 +152,41 @@ useEffect(() => {
 
   };
 
+  const openFollowupModal =
+  (lead) => { 
+    setSelectedLead(lead);
+    setShowFollowupModal(true);
+  };
+
+  const handleFollowupSubmit =
+  async()=>{
+    try{
+      const user = JSON.parse(localStorage.getItem("user"));
+      await axios.post(
+        "http://localhost:5000/api/followups/add",
+        {
+          lead_id: selectedLead.id,
+          employee_id:
+          user?.employee_id
+          || user?.id,
+          ...followupData
+        }
+      );
+      alert("Follow-up added successfully");
+      setShowFollowupModal(false);
+      setFollowupData({
+        followup_mode: "call",
+        remarks: "",
+        next_followup_date: "",
+        status: "pending"
+      });
+    }
+    catch (error) {
+      console.log(error);
+      alert("Failed to submit follow-up");
+    }
+  };
+   
 
   // ==========================
   // Filter Leads
@@ -186,7 +245,7 @@ useEffect(() => {
 
   return (
 
-    <EmployeLayout>
+    <EmployeeLayout>
 
       <div className="leads-container">
 
@@ -210,11 +269,11 @@ useEffect(() => {
 
 
         {/* Filters */}
-        <div className="manager-filter-card md:flex-row">
+        <div className="employee-filter-card md:flex-row">
 
 
           {/* Search */}
-          <div className="manager-search-box md:w-[350px]">
+          <div className="employee-search-box ">
 
             <Search size={18} />
 
@@ -224,7 +283,7 @@ useEffect(() => {
 
               placeholder="Search company or contact..."
 
-              className="manager-search-input"
+              className="employee -search-input"
 
               value={search}
 
@@ -242,7 +301,7 @@ useEffect(() => {
           {/* Status Filter */}
           <select
 
-            className="manager-filter-select"
+            className="employee-filter-select"
 
             value={statusFilter}
 
@@ -288,7 +347,7 @@ useEffect(() => {
 
 
         {/* Table */}
-        <div className="leads-card overflow-x-auto">
+        <div className="leads-card tableWrapper">
 
           <table className="w-full">
 
@@ -403,25 +462,115 @@ useEffect(() => {
                     </td>
 
 
-                    <td className="table-data text-center">
+                    <td className="p-4 relative">
 
-                      <button
+                        <details
+                          className="dropdownMenu"
+                        >
 
-                        onClick={() =>
-                          handleDelete(
-                            lead.id
-                          )
-                        }
+                          <summary
+                            className="actionBtn"
+                          >
 
-                        className="delete-btn"
+                            <MoreVertical
+                              size={20}
+                            />
 
-                      >
+                          </summary>
 
-                        <Trash2 size={18} />
+                          <div
+                            className="actionMenu"
+                          >
 
-                      </button>
+                            {/* View */}  
+                            <button
 
-                    </td>
+                                onClick={() =>
+                                navigate(
+
+                                `/manager/lead/${lead.id}`
+
+                                )
+                                }
+
+                                className="menuItem"
+
+                                >
+
+                                <Eye size={16} />
+
+                                View Lead
+
+                            </button>
+
+                            {/* Edit */}
+                            <button
+
+                            onClick={() =>
+                              navigate(
+                                `/manager/edit-lead/${lead.id}`
+                              )
+                            }
+                              className="menuItem"
+                            >
+
+                              <Pencil
+                                size={16}
+                              />
+
+                              Edit Lead
+
+                            </button>
+
+
+                            {/* Followup */}
+                            <button
+                              className="menuItem"
+
+                              onClick={() =>
+                                openFollowupModal(
+                                  lead
+                                )
+                              }
+                            >
+
+                              <PhoneCall
+                                size={16}
+                              />
+
+                              Add Followup
+
+                            </button>
+
+                            
+
+
+                            {/* Delete */}
+                            <button
+
+                              onClick={() =>
+                                handleDelete(
+                                  lead.id
+                                )
+                              }
+
+                              className="menuItem deleteBtn"
+
+                            >
+
+                              <Trash2
+                                size={16}
+                              />
+
+                              Delete Lead
+
+                            </button>
+
+                          </div>
+
+                        </details>
+
+                      </td>
 
                   </tr>
 
@@ -454,7 +603,270 @@ useEffect(() => {
 
       </div>
 
-    </EmployeLayout>
+
+      {
+
+
+showFollowupModal && (
+
+<div className="crmModalOverlay">
+
+  <div className="crmModalCard">
+
+    {/* Header */}
+    <div className="crmModalHeader">
+
+      <div>
+
+        <h2>
+
+          Add Followup
+
+        </h2>
+
+        <p>
+
+          {
+selectedLead?.company_name
+          }
+
+        </p>
+
+      </div>
+
+      <button
+
+        className="closeBtn"
+
+        onClick={() =>
+setShowFollowupModal(false)
+        }
+
+      >
+
+        ✕
+
+      </button>
+
+    </div>
+
+
+    {/* Form */}
+    <div className="crmModalForm">
+
+      {/* Mode */}
+      <div className="crmInputGroup">
+
+        <label>
+
+          Followup Mode
+
+        </label>
+
+        <select
+
+          value={
+followupData.followup_mode
+          }
+
+          onChange={(e) =>
+
+setFollowupData({
+
+...followupData,
+
+followup_mode:
+e.target.value
+
+})
+
+          }
+
+        >
+
+          <option value="call">
+            Call
+          </option>
+
+          <option value="whatsapp">
+            WhatsApp
+          </option>
+
+          <option value="email">
+            Email
+          </option>
+
+          <option value="meeting">
+            Meeting
+          </option>
+
+        </select>
+
+      </div>
+
+
+      {/* Date */}
+      <div className="crmInputGroup">
+
+        <label>
+
+          Next Followup
+
+        </label>
+
+        <input
+
+          type="datetime-local"
+
+          value={
+followupData.next_followup_date
+          }
+
+          onChange={(e) =>
+
+setFollowupData({
+
+...followupData,
+
+next_followup_date:
+e.target.value
+
+})
+
+          }
+
+        />
+
+      </div>
+
+
+      {/* Status */}
+      <div className="crmInputGroup">
+
+        <label>
+
+          Status
+
+        </label>
+
+        <select
+
+          value={
+followupData.status
+          }
+
+          onChange={(e) =>
+
+setFollowupData({
+
+...followupData,
+
+status:
+e.target.value
+
+})
+
+          }
+
+        >
+
+          <option value="pending">
+
+            Pending
+
+          </option>
+
+          <option value="completed">
+
+            Completed
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      {/* Remarks */}
+      <div className="crmInputGroup fullWidth">
+
+        <label>
+
+          Remarks
+
+        </label>
+
+        <textarea
+
+          rows="4"
+
+          placeholder="Write followup remarks..."
+
+          value={
+followupData.remarks
+          }
+
+          onChange={(e) =>
+
+setFollowupData({
+
+...followupData,
+
+remarks:
+e.target.value
+
+})
+
+          }
+
+        />
+
+      </div>
+
+    </div>
+
+
+    {/* Footer */}
+    <div className="crmModalFooter">
+
+      <button
+
+        className="cancelButton"
+
+        onClick={() =>
+setShowFollowupModal(false)
+        }
+
+      >
+
+        Cancel
+
+      </button>
+
+      <button
+
+        className="saveButton"
+
+        onClick={
+handleFollowupSubmit
+        }
+
+      >
+
+        Save Followup
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+)
+}
+
+    </EmployeeLayout>
 
   );
 

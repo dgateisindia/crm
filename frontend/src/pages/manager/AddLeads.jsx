@@ -1,9 +1,8 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
-
 import "../../styles/leads.css";
 
 function AddLeads() {
@@ -30,31 +29,63 @@ function AddLeads() {
 
   const navigate = useNavigate();
 
-  const handleChange =
-  (e) => {
+  const{id} = useParams();
+
+    useEffect(() => {
+
+    if (!id) {
+      return;
+    }
+
+    const fetchLead = async () => {
+
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/leads/${id}`
+          );
+
+          setLeadData({
+            company_name: response.data.company_name || "",
+            contact_person_name: response.data.contact_person_name || "",
+            email: response.data.email || "",
+            phone: response.data.phone || "",
+            address: response.data.address || "",
+            website: response.data.website || "", 
+            city: response.data.city || "",
+            source: response.data.source || "",
+            lead_mode: response.data.lead_mode || "",
+            lead_status: response.data.lead_status || "",
+            remarks: response.data.remarks || "",
+            important_lead: response.data.important_lead || false,
+          });
+        }
+        catch (error) {
+          console.log(error);
+          
+        }
+      };
+
+      fetchLead();  
+    },
+    [id]);
+
+  function handleChange(e) {
 
     const {
 
-      name,
-      value,
-      type,
-      checked
+      name, value, type, checked
 
     } = e.target;
 
     setLeadData({
-
       ...leadData,
 
-      [name]:
-
-      type === "checkbox"
-      ? checked
-      : value,
-
+      [name]: type === "checkbox"
+        ? checked
+        : value,
     });
 
-  };
+  }
 
   const handleFileChange =
   (e) => {
@@ -79,6 +110,36 @@ function AddLeads() {
         )
       );
 
+      if (id) {
+
+  await axios.put(
+
+`http://localhost:5000/api/leads/update/${id}`,
+
+    {
+
+      ...leadData,
+
+      created_by_id:
+
+      user?.employee_id ||
+
+      user?.id ||
+
+      1
+
+    }
+
+  );
+
+  alert(
+    "Lead Updated Successfully"
+  );
+
+}
+
+else {
+
       await axios.post(
 
         "http://localhost:5000/api/leads/add",
@@ -88,7 +149,12 @@ function AddLeads() {
           ...leadData,
 
           created_by_id:
-          user?.id || 1,
+
+          user?.employee_id ||
+
+          user?.id ||
+
+          1
 
         }
 
@@ -98,6 +164,7 @@ function AddLeads() {
         "Lead Added Successfully"
       );
 
+    }
       setLeadData({
 
         company_name: "",
@@ -219,6 +286,7 @@ function AddLeads() {
         }
 
       };
+      
 
   return (
 
@@ -559,9 +627,7 @@ function AddLeads() {
                   <button
                     type="submit"
                     className="saveLeadBtn"
-                  >
-
-                    Save Lead
+                  >{id ? "Update Lead" : "Save Lead"}
 
                   </button>
 

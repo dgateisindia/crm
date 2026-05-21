@@ -142,7 +142,47 @@ const deleteLead =
 
 };
 
+// ==========================
+// Get Lead By ID
+// ==========================
+const getLeadById =
+(req, res) => {
 
+  const leadId =
+  req.params.id;
+
+  const sql = `
+    SELECT *
+    FROM leads
+    WHERE id = ?
+  `;
+
+  db.query(
+
+    sql,
+
+    [leadId],
+
+    (err, result) => {
+
+      if (err) {
+
+        return res
+        .status(500)
+        .json(err);
+
+      }
+
+      res.status(200)
+      .json(
+        result[0]
+      );
+
+    }
+
+  );
+
+};
 // ==========================
 // Add Lead
 // ==========================
@@ -371,5 +411,6 @@ module.exports = {
   addLead,
   getLeads,
   deleteLead,
-  getEmployeeLeads
+  getEmployeeLeads,
+  getLeadById
 };
