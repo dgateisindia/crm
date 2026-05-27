@@ -1,7 +1,6 @@
 const db =
 require("../db");
 
-
 // ==========================
 // Get All Leads
 // ==========================
@@ -42,6 +41,7 @@ const getLeads =
   );
 
 };
+
 // ==========================
 // Get Employee Leads
 // ==========================
@@ -183,6 +183,7 @@ const getLeadById =
   );
 
 };
+
 // ==========================
 // Add Lead
 // ==========================
@@ -207,7 +208,6 @@ const addLead =
 
   } = req.body;
 
-
   // Validation
   if (
 
@@ -228,7 +228,6 @@ const addLead =
 
   }
 
-
   // ==========================
   // Duplicate Check
   // ==========================
@@ -244,18 +243,7 @@ const addLead =
 
     OR email = ?
 
-    OR (
-
-      company_name = ?
-
-      AND
-
-      contact_person_name = ?
-
-    )
-
   `;
-
 
   db.query(
 
@@ -265,8 +253,6 @@ const addLead =
 
       phone,
       email,
-      company_name,
-      contact_person_name
 
     ],
 
@@ -295,7 +281,6 @@ const addLead =
 
       }
 
-
       // Duplicate Found
       if (
         duplicateResult
@@ -314,7 +299,6 @@ const addLead =
         });
 
       }
-
 
       // ==========================
       // Insert Lead
@@ -339,9 +323,9 @@ const addLead =
         )
 
         VALUES (
-          ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?)
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )
       `;
-
 
       db.query(
 
@@ -402,6 +386,103 @@ const addLead =
 
 };
 
+// ==========================
+// Update Lead
+// ==========================
+const updateLead =
+(req, res) => {
+
+  const leadId =
+  req.params.id;
+
+  const {
+
+    company_name,
+    contact_person_name,
+    phone,
+    email,
+    website,
+    city,
+    address,
+    source,
+    lead_mode,
+    lead_status,
+    remarks,
+    important_lead
+
+  } = req.body;
+
+  const sql = `
+    UPDATE leads
+    SET
+
+      company_name = ?,
+      contact_person_name = ?,
+      phone = ?,
+      email = ?,
+      website = ?,
+      city = ?,
+      address = ?,
+      source = ?,
+      lead_mode = ?,
+      lead_status = ?,
+      remarks = ?,
+      important_lead = ?
+
+    WHERE id = ?
+  `;
+
+  db.query(
+
+    sql,
+
+    [
+
+      company_name,
+      contact_person_name,
+      phone,
+      email,
+      website,
+      city,
+      address,
+      source,
+      lead_mode,
+      lead_status,
+      remarks,
+      important_lead || false,
+      leadId
+
+    ],
+
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500)
+        .json({
+
+          message:
+          "Failed to update lead"
+
+        });
+
+      }
+
+      res.status(200)
+      .json({
+
+        message:
+        "Lead updated successfully"
+
+      });
+
+    }
+
+  );
+
+};
 
 // ==========================
 // Export
@@ -413,5 +494,6 @@ module.exports = {
   deleteLead,
   getEmployeeLeads,
   getLeadById,
-  
+  updateLead
+
 };

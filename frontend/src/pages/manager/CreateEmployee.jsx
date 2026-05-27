@@ -44,6 +44,18 @@ export default function CreateEmployee() {
 
       alert(response.data.message);
 
+      setEmployee({
+          manager_id: 1,
+          role_id: 1,
+          full_name: "",
+          email: "",
+          phone: "",
+          password: "",
+          department: "",
+          designation: "",
+          status: "active"
+        });
+
     } catch (error) {
 
       alert(
@@ -165,32 +177,6 @@ export default function CreateEmployee() {
                     onChange={handleChange}
                     placeholder="Enter designation"
                   />
-
-                </div>
-
-                <div className="formGroup">
-
-                  <label>Role</label>
-
-                  <select
-                    name="role_id"
-                    value={employee.role_id}
-                    onChange={handleChange}
-                  >
-
-                    <option value="1">
-                      Sales Executive
-                    </option>
-
-                    <option value="2">
-                      HR
-                    </option>
-
-                    <option value="3">
-                      Telecaller
-                    </option>
-
-                  </select>
 
                 </div>
 

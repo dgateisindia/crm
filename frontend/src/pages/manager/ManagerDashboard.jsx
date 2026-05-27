@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useNavigate }
+from "react-router-dom";
 
 import {useEffect,useState,} from "react";
 
@@ -18,12 +20,15 @@ export default function ManagerDashboard() {
   const [stats,
     setStats] =
     useState({
+      
       totalLeads: 0,
       totalEmployees: 0,
       newLeads: 0,
       convertedLeads: 0,
       recentLeads: [],
     });
+    const navigate =
+    useNavigate();
 
   useEffect(() => {
 
@@ -76,7 +81,19 @@ export default function ManagerDashboard() {
       <div className="dashboard-grid">
 
         {/* Total Leads */}
-        <div className="crm-card blue-card">
+        <div
+
+      className="crm-card blue-card"
+
+      style={{
+        cursor: "pointer"
+      }}
+
+      onClick={() =>
+      navigate("/manager/leads")
+      }
+
+      >
 
           <div className="crm-card-top">
 
@@ -103,7 +120,19 @@ export default function ManagerDashboard() {
         </div>
 
         {/* Employees */}
-        <div className="crm-card green-card">
+       <div
+
+        className="crm-card green-card"
+
+        style={{
+          cursor: "pointer"
+        }}
+
+        onClick={() =>
+        navigate("/manager/employees")
+        }
+
+        >
 
           <div className="crm-card-top">
 
@@ -130,7 +159,19 @@ export default function ManagerDashboard() {
         </div>
 
         {/* New Leads */}
-        <div className="crm-card orange-card">
+        <div
+
+        className="crm-card orange-card"
+
+        style={{
+          cursor: "pointer"
+        }}
+
+        onClick={() =>
+        navigate("/manager/leads?status=new")
+        }
+
+        >
 
           <div className="crm-card-top">
 
@@ -157,7 +198,19 @@ export default function ManagerDashboard() {
         </div>
 
         {/* Converted */}
-        <div className="crm-card purple-card">
+        <div
+
+        className="crm-card purple-card"
+
+        style={{
+          cursor: "pointer"
+        }}
+
+        onClick={() =>
+        navigate("/manager/leads?status=converted")
+        }
+
+        >
 
           <div className="crm-card-top">
 

@@ -47,7 +47,7 @@ const getDashboardStats =
             `
             SELECT COUNT(*) AS newLeads
             FROM leads
-            WHERE lead_status = 'New Lead'
+            WHERE LOWER(TRIM(lead_status)) = 'new'
             `,
             (err, newLeadResult) => {
 
@@ -64,7 +64,7 @@ const getDashboardStats =
                 `
                 SELECT COUNT(*) AS convertedLeads
                 FROM leads
-                WHERE lead_status = 'Converted'
+                WHERE LOWER(TRIM(lead_status)) = 'converted'
                 `,
                 (err, convertedResult) => {
 

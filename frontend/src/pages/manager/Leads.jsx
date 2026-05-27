@@ -8,7 +8,10 @@ import {
 import ManagerLayout from "../../layouts/ManagerLayout";
 
 import "../../styles/leads.css";
-import {useNavigate} from "react-router-dom";
+import {
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 
 import {
   Search,
@@ -59,6 +62,17 @@ export default function Leads() {
 
   const navigate =
   useNavigate();
+
+  const location =
+  useLocation();
+
+  const queryParams =
+  new URLSearchParams(
+    location.search
+  );
+
+  const queryStatus =
+  queryParams.get("status");
 
 
   // ==========================
@@ -187,60 +201,81 @@ useEffect(() => {
     }
   };
    
-
   // ==========================
-  // Filter Leads
-  // ==========================
-  const filteredLeads =
-  allLeads.filter(
-  (lead) => {
+// Filter Leads
+// ==========================
+const filteredLeads =
+allLeads.filter(
+(lead) => {
 
-    const company =
+  const company =
 
-    lead.company_name
-    ? lead.company_name
-    .toLowerCase()
-    : "";
-
-
-    const contact =
-
-    lead.contact_person_name
-    ? lead.contact_person_name
-    .toLowerCase()
-    : "";
+  lead.company_name
+  ? lead.company_name
+  .toLowerCase()
+  : "";
 
 
-    const matchesSearch =
+  const contact =
 
-    company.includes(
-      search.toLowerCase()
-    )
-
-    ||
-
-    contact.includes(
-      search.toLowerCase()
-    );
+  lead.contact_person_name
+  ? lead.contact_person_name
+  .toLowerCase()
+  : "";
 
 
-    const matchesStatus =
+  const phone =
 
-    statusFilter ===
-    "all"
-
-    ||
-
-    lead.lead_status ===
-    statusFilter;
+  lead.phone
+  ? lead.phone.toString()
+  : "";
 
 
-    return (
-      matchesSearch &&
-      matchesStatus
-    );
+  const matchesSearch =
 
-  });
+  company.includes(
+    search.toLowerCase()
+  )
+
+  ||
+
+  contact.includes(
+    search.toLowerCase()
+  )
+
+  ||
+
+  phone.includes(
+    search
+  );
+
+
+  const activeStatus =
+
+  queryStatus ||
+  statusFilter;
+
+
+  const matchesStatus =
+
+  activeStatus ===
+  "all"
+
+  ||
+
+  lead.lead_status
+  ?.toLowerCase() ===
+
+  activeStatus
+  ?.toLowerCase();
+
+
+  return (
+    matchesSearch &&
+    matchesStatus
+  );
+
+});
 
 
   return (
