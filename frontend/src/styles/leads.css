@@ -822,3 +822,65 @@ td{
 
   cursor:pointer;
 }
+.followupStatus{
+
+  padding:8px 14px;
+
+  border-radius:12px;
+
+  font-size:13px;
+
+  font-weight:600;
+
+  text-transform:
+  capitalize;
+}
+
+/* Connected */
+.connected{
+
+  background:#dcfce7;
+  color:#15803d;
+}
+
+/* Interested */
+.interested{
+
+  background:#ffedd5;
+  color:#ea580c;
+}
+
+/* Proposal */
+.proposal{
+
+  background:#f3e8ff;
+  color:#9333ea;
+}
+
+/* Offered */
+.offered{
+
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+/* Not Interested */
+.not_interested{
+
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* Converted */
+.converted{
+
+  background:#dcfce7;
+  color:#16a34a;
+}
+
+/* Lost */
+.lost{
+
+  background:#e5e7eb;
+  color:#4b5563;
+}

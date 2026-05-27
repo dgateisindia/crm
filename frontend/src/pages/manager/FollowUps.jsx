@@ -1,11 +1,8 @@
-import axios
-from "axios";
+import axios from "axios";
 
 import {
-
   useEffect,
   useState
-
 } from "react";
 
 import ManagerLayout
@@ -13,21 +10,17 @@ from "../../layouts/ManagerLayout";
 
 import "../../styles/leads.css";
 
-
 export default function FollowUps() {
 
   const [
-
     followups,
-
     setFollowups
-
-  ] =
-  useState([]);
+  ] = useState([]);
 
 
-
-
+  // ==========================
+  // Fetch Followups
+  // ==========================
   const fetchFollowups =
   async () => {
 
@@ -59,21 +52,18 @@ export default function FollowUps() {
   };
 
 
-
   useEffect(() => {
 
     const loadFollowups =
-    async () => { 
+    async () => {
+
       await fetchFollowups();
+
     };
 
     loadFollowups();
-    
-
-  
 
   }, []);
-
 
 
   return (
@@ -82,6 +72,7 @@ export default function FollowUps() {
 
       <div className="leads-container">
 
+        {/* Header */}
         <div className="mb-6">
 
           <h1 className="leads-header-title">
@@ -99,37 +90,44 @@ export default function FollowUps() {
         </div>
 
 
-
+        {/* Table */}
         <div className="leads-card tableWrapper">
 
           <table className="w-full">
 
+            {/* Table Header */}
             <thead>
 
               <tr className="border-b">
 
                 <th className="table-head">
+
                   Company
+
                 </th>
 
                 <th className="table-head">
+
                   Employee
+
                 </th>
 
                 <th className="table-head">
+
                   Mode
+
                 </th>
 
                 <th className="table-head">
+
                   Remarks
+
                 </th>
 
                 <th className="table-head">
-                  Next Followup
-                </th>
 
-                <th className="table-head">
-                  Status
+                  Lead Status
+
                 </th>
 
               </tr>
@@ -137,102 +135,97 @@ export default function FollowUps() {
             </thead>
 
 
+            {/* Table Body */}
             <tbody>
 
               {
 
-followups.length > 0
+            followups.length > 0
 
-? (
+            ? (
 
-followups.map(
+            followups.map(
 
-(item) => (
+            (item) => (
 
-<tr
+            <tr
 
-key={
-item.followup_id
-}
+            key={
+            item.followup_id
+            }
 
-className="table-row"
+            className="table-row"
 
->
+            >
 
-<td className="table-data">
+              {/* Company */}
+              <td className="table-data">
 
-{
-item.company_name
-}
+                {
+            item.company_name
+                }
 
-</td>
+              </td>
 
-<td className="table-data">
 
-{
+              {/* Employee */}
+              <td className="table-data">
 
-item.full_name ||
+                {
 
-"N/A"
+            item.full_name ||
 
-}
+            "N/A"
 
-</td>
+                }
 
-<td className="table-data">
+              </td>
 
-{
-item.followup_mode
-}
 
-</td>
+              {/* Mode */}
+              <td className="table-data">
 
-<td className="table-data">
+                {
+            item.followup_mode
+                }
 
-{
-item.remarks
-}
+              </td>
 
-</td>
 
-<td className="table-data">
+              {/* Remarks */}
+              <td className="table-data">
 
-{
+                {
 
-item
-.next_followup_date
+            item.remarks ||
 
-?
+            "No remarks"
 
-new Date(
+                }
 
-item
-.next_followup_date
+              </td>
 
-)
-.toLocaleString()
 
-:
+  {/* Lead Status */}
+  <td className="table-data">
 
-"N/A"
+    <span
+      className={`followupStatus ${item.lead_status}`}
+    >
 
-}
+      {
 
-</td>
+      item.lead_status
+      ?.replace(
+      "_",
+      " "
+      )
 
-<td className="table-data">
+      }
 
-<span
-className="status-badge"
->
+    </span>
 
-{
-item.status
-}
-
-</span>
-
-</td>
+  </td>
 
 </tr>
 
@@ -246,13 +239,7 @@ item.status
 
 <tr>
 
-<td
-
-colSpan="6"
-
-className="text-center p-6 text-gray-500"
-
->
+<td colSpan="5"className="text-center p-6 text-gray-500">
 
 No Followups Found
 

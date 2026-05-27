@@ -23,7 +23,11 @@ const {
 
   getEmployeeLeads,
 
-  getLeadById
+  getLeadById,
+
+  updateLead
+
+
 
 } = require(
   "../controllers/leadController"
@@ -63,6 +67,12 @@ router.get(
 router.get(
   "/:id",
   getLeadById
+);
+
+// Update Lead
+router.put(
+  "/update/:id",
+  updateLead
 );
 
 // Upload Excel

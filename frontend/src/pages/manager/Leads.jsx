@@ -44,18 +44,25 @@ export default function Leads() {
     setSelectedLead] =
     useState(null);
 
-  const [followupData,
-    setFollowupData] =
-    useState({
-      followup_mode:
-      "call",
-      remarks:
-    "",
-    next_followup_date:
-    "",
-    status:
-    "pending"
-    });
+  const [
+
+followupData,
+
+setFollowupData
+
+] =
+useState({
+
+  followup_mode:
+  "call",
+
+  lead_status:
+  "connected",
+
+  remarks:
+  ""
+
+});
 
   const navigate =
   useNavigate();
@@ -175,11 +182,17 @@ useEffect(() => {
       alert("Follow-up added successfully");
       setShowFollowupModal(false);
       setFollowupData({
-        followup_mode: "call",
-        remarks: "",
-        next_followup_date: "",
-        status: "pending"
-      });
+
+          followup_mode:
+          "call",
+
+          lead_status:
+          "connected",
+
+          remarks:
+          ""
+
+        });
     }
     catch (error) {
       console.log(error);
@@ -192,55 +205,95 @@ useEffect(() => {
   // Filter Leads
   // ==========================
   const filteredLeads =
-  allLeads.filter(
-  (lead) => {
+allLeads.filter(
+(lead) => {
 
-    const company =
+const searchText =
+search.toLowerCase();
 
-    lead.company_name
-    ? lead.company_name
-    .toLowerCase()
-    : "";
+const company =
+lead.company_name
+?.toLowerCase() || "";
 
+const contact =
+lead.contact_person_name
+?.toLowerCase() || "";
 
-    const contact =
+const phone =
+lead.phone
+?.toString()
+.toLowerCase() || "";
 
-    lead.contact_person_name
-    ? lead.contact_person_name
-    .toLowerCase()
-    : "";
+const email =
+lead.email
+?.toLowerCase() || "";
 
+const city =
+lead.city
+?.toLowerCase() || "";
 
-    const matchesSearch =
+const source =
+lead.source
+?.toLowerCase() || "";
 
-    company.includes(
-      search.toLowerCase()
-    )
+const leadMode =
+lead.lead_mode
+?.toLowerCase() || "";
 
-    ||
-
-    contact.includes(
-      search.toLowerCase()
-    );
-
-
-    const matchesStatus =
-
-    statusFilter ===
-    "all"
-
-    ||
-
-    lead.lead_status ===
-    statusFilter;
+const status =
+lead.lead_status
+?.toLowerCase() || "";
 
 
-    return (
-      matchesSearch &&
-      matchesStatus
-    );
+const matchesSearch =
 
-  });
+company.includes(searchText)
+
+||
+
+contact.includes(searchText)
+
+||
+
+phone.includes(searchText)
+
+||
+
+email.includes(searchText)
+
+||
+
+city.includes(searchText)
+
+||
+
+source.includes(searchText)
+
+||
+
+leadMode.includes(searchText)
+
+||
+
+status.includes(searchText);
+
+
+const matchesStatus =
+
+statusFilter ===
+"all"
+
+||
+
+lead.lead_status ===
+statusFilter;
+
+return (
+matchesSearch &&
+matchesStatus
+);
+
+});
 
 
   return (
@@ -347,13 +400,15 @@ useEffect(() => {
 
 
         {/* Table */}
-        <div className="leads-card tableWrapper">
+        <div className="leads-card tableWrapper overflow-hidden">
 
-          <table className="w-full">
+          <div className="max-h-[500px] overflow-y-auto">
+
+            <table className="w-full">
 
 
             {/* Table Header */}
-            <thead>
+            < thead className="sticky top-0 bg-white z-10 shadow-sm">
 
               <tr className="border-b">
 
@@ -573,6 +628,7 @@ useEffect(() => {
                       </td>
 
                   </tr>
+                  
 
                 ))
 
@@ -598,6 +654,7 @@ useEffect(() => {
             </tbody>
 
           </table>
+          </div>
 
         </div>
 
@@ -705,87 +762,95 @@ e.target.value
       </div>
 
 
-      {/* Date */}
       <div className="crmInputGroup">
 
-        <label>
+  <label>
 
-          Next Followup
+    Lead Status
 
-        </label>
+  </label>
 
-        <input
+  <select
 
-          type="datetime-local"
+    value={
+followupData.lead_status
+    }
 
-          value={
-followupData.next_followup_date
-          }
-
-          onChange={(e) =>
+    onChange={(e) =>
 
 setFollowupData({
 
 ...followupData,
 
-next_followup_date:
+lead_status:
 e.target.value
 
 })
 
-          }
+    }
 
-        />
+  >
 
-      </div>
+    <option value="new">
+
+      New
+
+    </option>
+
+    <option value="connected">
+
+      Connected
+
+    </option>
+
+    <option value="interested">
+
+      Interested
+
+    </option>
+
+    <option value="proposal">
+
+      Proposal
+
+    </option>
+
+    <option value="offered">
+
+      Offered
+
+    </option>
+
+    <option value="meeting_scheduled">
+
+      Meeting Scheduled
+
+    </option>
+
+    <option value="not_interested">
+
+      Not Interested
+
+    </option>
+
+    <option value="converted">
+
+      Converted
+
+    </option>
+
+    <option value="lost">
+
+      Lost
+
+    </option>
+
+  </select>
+
+</div>
 
 
-      {/* Status */}
-      <div className="crmInputGroup">
-
-        <label>
-
-          Status
-
-        </label>
-
-        <select
-
-          value={
-followupData.status
-          }
-
-          onChange={(e) =>
-
-setFollowupData({
-
-...followupData,
-
-status:
-e.target.value
-
-})
-
-          }
-
-        >
-
-          <option value="pending">
-
-            Pending
-
-          </option>
-
-          <option value="completed">
-
-            Completed
-
-          </option>
-
-        </select>
-
-      </div>
-
+     
 
       {/* Remarks */}
       <div className="crmInputGroup fullWidth">
@@ -862,6 +927,7 @@ handleFollowupSubmit
   </div>
 
 </div>
+
 
 )
 }

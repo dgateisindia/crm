@@ -227,6 +227,108 @@ const addLead =
     });
 
   }
+  // ==========================
+// Update Lead
+// ==========================
+const updateLead =
+(req, res) => {
+
+  const leadId =
+  req.params.id;
+
+  const {
+
+    company_name,
+    contact_person_name,
+    email,
+    phone,
+    address,
+    website,
+    source,
+    city,
+    remarks,
+    lead_status,
+    lead_mode,
+    important_lead
+
+  } = req.body;
+
+
+  const sql = `
+
+    UPDATE leads
+
+    SET
+
+      company_name = ?,
+      contact_person_name = ?,
+      email = ?,
+      phone = ?,
+      address = ?,
+      website = ?,
+      source = ?,
+      city = ?,
+      remarks = ?,
+      lead_status = ?,
+      lead_mode = ?,
+      important_lead = ?
+
+    WHERE id = ?
+
+  `;
+
+
+  db.query(
+
+    sql,
+
+    [
+
+      company_name,
+      contact_person_name,
+      email,
+      phone,
+      address,
+      website,
+      source,
+      city,
+      remarks,
+      lead_status,
+      lead_mode,
+      important_lead,
+      leadId
+
+    ],
+
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res.status(500)
+        .json({
+
+message:
+"Failed to update lead"
+
+        });
+
+      }
+
+      res.status(200)
+      .json({
+
+message:
+"Lead Updated Successfully"
+
+      });
+
+    }
+
+  );
+
+};
 
 
   // ==========================
