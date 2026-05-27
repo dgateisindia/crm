@@ -1,5 +1,18 @@
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import {
+
+Trash2,
+
+Users,
+
+UserCheck,
+
+Briefcase,
+
+UserCog
+
+}
+from "lucide-react";
 import {
   useState,
   useEffect
@@ -133,6 +146,162 @@ export default function Employees() {
           </div>
 
         </div>
+        {/* Top Cards */}
+        <div className="dashboard-grid">
+
+          {/* Total Employees */}
+          <div className="crm-card blue-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle blue-bg">
+
+                <Users
+                  size={20}
+                />
+
+              </div>
+
+            </div>
+
+            <h3>
+
+              Total Employees
+
+            </h3>
+
+            <h2>
+
+              {
+                employees.length
+              }
+
+            </h2>
+
+          </div>
+
+
+          {/* Active Employees */}
+          <div className="crm-card green-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle green-bg">
+
+                <UserCheck
+                  size={20}
+                />
+
+              </div>
+
+            </div>
+
+            <h3>
+
+              Active Employees
+
+            </h3>
+
+            <h2>
+
+              {
+
+        employees.filter(
+        emp =>
+        emp.status ===
+        "active"
+        ).length
+
+              }
+
+            </h2>
+
+          </div>
+
+
+          {/* Managers */}
+          <div className="crm-card orange-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle orange-bg">
+
+                <UserCog
+                  size={20}
+                />
+
+              </div>
+
+            </div>
+
+            <h3>
+
+              Managers
+
+            </h3>
+
+            <h2>
+
+              {
+
+        employees.filter(
+        emp =>
+
+        emp.designation
+        ?.toLowerCase()
+        === "manager"
+
+        ).length
+
+              }
+
+            </h2>
+
+          </div>
+
+
+          {/* Employees */}
+          <div className="crm-card purple-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle purple-bg">
+
+                <Briefcase
+                  size={20}
+                />
+
+              </div>
+
+            </div>
+
+            <h3>
+
+              Employees
+
+            </h3>
+
+            <h2>
+
+              {
+
+        employees.filter(
+        emp =>
+
+        emp.designation
+        ?.toLowerCase()
+        !== "manager"
+
+        ).length
+
+              }
+
+            </h2>
+
+          </div>
+
+        </div>
+
 
         <div className="employeesTableCard">
 

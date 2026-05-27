@@ -21,31 +21,50 @@ const createEmployee =
     status
 
   } = req.body;
+ console.log(req.body);
 
+if (
 
-  // ==========================
-  // Validation
-  // ==========================
-  if (
+  !manager_id ||
 
-    !manager_id ||
-    !role_id ||
-    !full_name ||
-    !email ||
-    !password
+  
 
-  ) {
+  !full_name ||
 
-    return res.status(400)
-    .json({
+  !email ||
 
-      message:
-      "Required fields are missing",
+  !password
 
-    });
+) {
 
-  }
+  console.log({
 
+    manager_id,
+    full_name,
+    email,
+    password
+
+  });
+
+  return res.status(400)
+  .json({
+
+    message:
+    "Required fields are missing",
+
+    data: {
+
+      manager_id,
+      role_id,
+      full_name,
+      email,
+      password
+
+    }
+
+  });
+
+}
 
   // ==========================
   // Duplicate Check
@@ -70,6 +89,14 @@ const createEmployee =
     duplicateSql,
 
     [
+
+      manager_id,
+      designation?.toLowerCase() === "manager"
+
+        ? 2
+
+        : 1,
+      full_name,
       email,
       phone
     ],

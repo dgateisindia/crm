@@ -7,22 +7,28 @@ import {
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
-import "../../styles/leads.css";
+import "../../styles/totallead.css";
 import {
-  useNavigate,
-  useLocation
+  useNavigate
 } from "react-router-dom";
 
 import {
-  Search,
 
-  Eye,
-  Pencil,
-  PhoneCall,
-  Trash2,
-  MoreVertical
+Search,
 
-} from "lucide-react";
+Eye,
+Pencil,
+PhoneCall,
+Trash2,
+MoreVertical,
+
+Briefcase,
+UserPlus,
+BadgeCheck,
+UserX
+
+}
+from "lucide-react";
 
 
 export default function Leads() {
@@ -47,32 +53,28 @@ export default function Leads() {
     setSelectedLead] =
     useState(null);
 
-  const [followupData,
-    setFollowupData] =
-    useState({
-      followup_mode:
-      "call",
-      remarks:
-    "",
-    next_followup_date:
-    "",
-    status:
-    "pending"
-    });
+  const [
+
+followupData,
+
+setFollowupData
+
+] =
+useState({
+
+  followup_mode:
+  "call",
+
+  lead_status:
+  "connected",
+
+  remarks:
+  ""
+
+});
 
   const navigate =
   useNavigate();
-
-  const location =
-  useLocation();
-
-  const queryParams =
-  new URLSearchParams(
-    location.search
-  );
-
-  const queryStatus =
-  queryParams.get("status");
 
 
   // ==========================
@@ -189,11 +191,17 @@ useEffect(() => {
       alert("Follow-up added successfully");
       setShowFollowupModal(false);
       setFollowupData({
-        followup_mode: "call",
-        remarks: "",
-        next_followup_date: "",
-        status: "pending"
-      });
+
+          followup_mode:
+          "call",
+
+          lead_status:
+          "connected",
+
+          remarks:
+          ""
+
+        });
     }
     catch (error) {
       console.log(error);
@@ -202,80 +210,92 @@ useEffect(() => {
   };
    
   // ==========================
-// Filter Leads
-// ==========================
-const filteredLeads =
-allLeads.filter(
-(lead) => {
+  // Filter Leads
+  // ==========================
+  const filteredLeads =
 
-  const company =
+    allLeads.filter((lead) => {
 
-  lead.company_name
-  ? lead.company_name
-  .toLowerCase()
-  : "";
-
-
-  const contact =
-
-  lead.contact_person_name
-  ? lead.contact_person_name
-  .toLowerCase()
-  : "";
-
-
-  const phone =
-
-  lead.phone
-  ? lead.phone.toString()
-  : "";
-
+    const searchText =
+    search
+    .trim()
+    .toLowerCase();
 
   const matchesSearch =
 
-  company.includes(
-    search.toLowerCase()
-  )
+    lead.company_name
+    ?.toLowerCase()
+    .includes(searchText)
 
-  ||
+    ||
 
-  contact.includes(
-    search.toLowerCase()
-  )
+    lead.contact_person_name
+    ?.toLowerCase()
+    .includes(searchText)
 
-  ||
+    ||
 
-  phone.includes(
-    search
-  );
+    lead.phone
+    ?.toString()
+    .includes(searchText)
 
+    ||
 
-  const activeStatus =
+    lead.email
+    ?.toLowerCase()
+    .includes(searchText)
 
-  queryStatus ||
-  statusFilter;
+    ||
+
+    lead.city
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.source
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.lead_mode
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.lead_status
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.designation
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.full_name
+    ?.toLowerCase()
+    .includes(searchText);
 
 
   const matchesStatus =
 
-  activeStatus ===
-  "all"
+  statusFilter === "all"
 
   ||
 
-  lead.lead_status
-  ?.toLowerCase() ===
+  lead.lead_status === statusFilter;
 
-  activeStatus
-  ?.toLowerCase();
-
-
-  return (
+    return (
     matchesSearch &&
     matchesStatus
-  );
+    );
 
-});
+    });
 
 
   return (
@@ -284,111 +304,265 @@ allLeads.filter(
 
       <div className="leads-container">
 
-
         {/* Header */}
-        <div className="mb-6">
+        <div className="leadsHeader">
 
-          <h1 className="leads-header-title">
+          <div>
 
-            Total Leads
+            <h1 className="leads-header-title">
 
-          </h1>
+              Leads
 
-          <p className="leads-header-subtitle">
+            </h1>
 
-            View all CRM leads
+            <p className="leads-header-subtitle">
 
-          </p>
+              View and manage all CRM leads
 
-        </div>
-
-
-        {/* Filters */}
-        <div className="manager-filter-card md:flex-row">
-
-
-          {/* Search */}
-          <div className="manager-search-box ">
-
-            <Search size={18} />
-
-            <input
-
-              type="text"
-
-              placeholder="Search company or contact..."
-
-              className="manager-search-input"
-
-              value={search}
-
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-
-            />
+            </p>
 
           </div>
 
+        </div>
+        {/* Top Cards */}
+<div className="dashboard-grid">
 
-          {/* Status Filter */}
-          <select
+  <div className="crm-card blue-card">
 
-            className="manager-filter-select"
+    <div className="crm-card-top">
 
-            value={statusFilter}
+      <div className="icon-circle blue-bg">
 
-            onChange={(e) =>
-              setStatusFilter(
-                e.target.value
-              )
-            }
+        <Briefcase size={18} />
 
-          >
+      </div>
 
-            <option value="all">
-              All Status
-            </option>
+    </div>
 
-            <option value="new">
-              New
-            </option>
+    <h3>Total Leads</h3>
 
-            <option value="contacted">
-              Contacted
-            </option>
+    <h2>
+      {allLeads.length}
+    </h2>
 
-            <option value="qualified">
-              Qualified
-            </option>
+  </div>
 
-            <option value="proposal_sent">
-              Proposal Sent
-            </option>
 
-            <option value="converted">
-              Converted
-            </option>
+  <div className="crm-card green-card">
 
-            <option value="lost">
-              Lost
-            </option>
+    <div className="crm-card-top">
 
-          </select>
+      <div className="icon-circle green-bg">
 
+        <UserPlus size={18} />
+
+      </div>
+
+    </div>
+
+    <h3>New Leads</h3>
+
+    <h2>
+
+      {
+
+allLeads.filter(
+lead =>
+lead.lead_status ===
+"new"
+).length
+
+      }
+
+    </h2>
+
+  </div>
+
+
+  <div className="crm-card purple-card">
+
+    <div className="crm-card-top">
+
+      <div className="icon-circle purple-bg">
+
+        <BadgeCheck size={18} />
+
+      </div>
+
+    </div>
+
+    <h3>Converted</h3>
+
+    <h2>
+
+      {
+
+allLeads.filter(
+lead =>
+lead.lead_status ===
+"converted"
+).length
+
+      }
+
+    </h2>
+
+  </div>
+
+
+  <div className="crm-card orange-card">
+
+    <div className="crm-card-top">
+
+      <div className="icon-circle orange-bg">
+
+        <UserX size={18} />
+
+      </div>
+
+    </div>
+
+    <h3>Not Interested</h3>
+
+    <h2>
+
+      {
+
+allLeads.filter(
+lead =>
+lead.lead_status ===
+"not_interested"
+).length
+
+      }
+
+    </h2>
+
+  </div>
+
+</div>
+          {/* Toolbar */}
+          <div className="leadToolbar">
+
+            {/* Search */}
+            <div className="searchContainer">
+
+              <Search
+                size={18}
+                className="searchIcon"
+              />
+
+              <input
+                type="text"
+                placeholder="Search by company, contact, phone..."
+                className="leadSearchInput"
+                value={search}
+                onChange={(e) =>
+                  setSearch(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+
+            {/* Status Filter */}
+            <select
+              className="leadSelect"
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value
+                )
+              }
+            >
+
+              <option value="all">
+
+                All Status
+
+              </option>
+
+              <option value="new">
+
+                New
+
+              </option>
+
+              <option value="connected">
+
+                Connected
+
+              </option>
+
+              <option value="interested">
+
+                Interested
+
+              </option>
+
+              <option value="proposal">
+
+                Proposal
+
+              </option>
+
+              <option value="offered">
+
+                Offered
+
+              </option>
+
+              <option value="meeting_scheduled">
+
+                Meeting Scheduled
+
+              </option>
+
+              <option value="not_interested">
+
+                Not Interested
+
+              </option>
+
+              <option value="converted">
+
+                Converted
+
+              </option>
+
+            </select>
+
+
+            {/* Add Lead */}
+            <button
+              className="leadAddBtn"
+              onClick={() =>
+                navigate(
+                  "/manager/add-lead"
+                )
+              }
+            >
+
+              + Add Lead
+
+            </button>
+
+          </div>
+         
         </div>
 
-
         {/* Table */}
-        <div className="leads-card tableWrapper">
+        <div className="leads-card tableWrapper overflow-hidden">
 
-          <table className="w-full">
+          <div className="max-h-[500px] overflow-y-auto">
+
+            <table className="w-full">
 
 
             {/* Table Header */}
-            <thead>
+            <thead className="sticky top-0 bg-white z-10 shadow-sm">
 
               <tr className="border-b">
 
@@ -398,6 +572,10 @@ allLeads.filter(
 
                 <th className="table-head">
                   Contact Person
+                </th>
+
+                <th className="table-head">
+                  Designation
                 </th>
 
                 <th className="table-head">
@@ -420,6 +598,10 @@ allLeads.filter(
                   Status
                 </th>
 
+                <th className="table-head">
+                  Created By
+                </th>
+
                 <th className="table-head text-center">
                   Action
                 </th>
@@ -434,210 +616,237 @@ allLeads.filter(
 
               {
 
-                filteredLeads.length > 0 ? (
+              filteredLeads.length > 0 ? (
 
-                  filteredLeads.map(
-                  (lead) => (
+              filteredLeads.map(
+              (lead) => (
 
-                  <tr
+              <tr
 
-                    key={lead.id}
+              key={lead.id}
 
-                    className="table-row"
+              className="table-row"
 
+              >
+
+                <td className="table-data">
+
+                  {lead.company_name}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {lead.contact_person_name}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {
+
+              lead.designation ||
+
+              "N/A"
+
+                  }
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {lead.phone}
+
+                </td>
+
+
+
+                <td className="table-data">
+
+                  {lead.email}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {lead.source}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {lead.lead_mode}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {lead.lead_status}
+
+                </td>
+
+
+                <td className="table-data">
+
+                  {
+
+              lead.full_name ||
+
+              "Manager"
+
+                  }
+
+                </td>
+
+
+                <td className="p-4 relative">
+
+                  <details
+                    className="dropdownMenu"
                   >
 
+                    <summary
+                      className="actionBtn"
+                    >
 
-                    <td className="table-data">
+                      <MoreVertical
+                        size={20}
+                      />
 
-                      {lead.company_name}
+                    </summary>
 
-                    </td>
+                    <div
+                      className="actionMenu"
+                    >
 
+                      <button
 
-                    <td className="table-data">
+                        onClick={() =>
+                        navigate(
 
-                      {lead.contact_person_name}
+                        `/manager/lead/${lead.id}`
 
-                    </td>
+                        )
+                        }
 
+                        className="menuItem"
 
-                    <td className="table-data">
+                      >
 
-                      {lead.phone}
+                        <Eye size={16} />
 
-                    </td>
+                        View Lead
 
+                      </button>
 
-                    <td className="table-data">
 
-                      {lead.email}
+                      <button
 
-                    </td>
+                        onClick={() =>
+                          navigate(
+                            `/manager/edit-lead/${lead.id}`
+                          )
+                        }
 
+                        className="menuItem"
 
-                    <td className="table-data">
+                      >
 
-                      {lead.source}
+                        <Pencil
+                          size={16}
+                        />
 
-                    </td>
+                        Edit Lead
 
+                      </button>
 
-                    <td className="table-data">
 
-                      {lead.lead_mode}
+                      <button
 
-                    </td>
+                        className="menuItem"
 
+                        onClick={() =>
+                          openFollowupModal(
+                            lead
+                          )
+                        }
 
-                    <td className="table-data">
+                      >
 
-                      {lead.lead_status}
+                        <PhoneCall
+                          size={16}
+                        />
 
-                    </td>
+                        Add Followup
 
+                      </button>
 
-                    <td className="p-4 relative">
 
-                        <details
-                          className="dropdownMenu"
-                        >
+                      <button
 
-                          <summary
-                            className="actionBtn"
-                          >
+                        onClick={() =>
+                          handleDelete(
+                            lead.id
+                          )
+                        }
 
-                            <MoreVertical
-                              size={20}
-                            />
+                        className="menuItem deleteBtn"
 
-                          </summary>
+                      >
 
-                          <div
-                            className="actionMenu"
-                          >
+                        <Trash2
+                          size={16}
+                        />
 
-                            {/* View */}  
-                            <button
+                        Delete Lead
 
-                                onClick={() =>
-                                navigate(
+                      </button>
 
-                                `/manager/lead/${lead.id}`
+                    </div>
 
-                                )
-                                }
+                  </details>
 
-                                className="menuItem"
+                </td>
 
-                                >
+              </tr>
 
-                                <Eye size={16} />
-
-                                View Lead
-
-                            </button>
-
-                            {/* Edit */}
-                            <button
-
-                            onClick={() =>
-                              navigate(
-                                `/manager/edit-lead/${lead.id}`
-                              )
-                            }
-                              className="menuItem"
-                            >
-
-                              <Pencil
-                                size={16}
-                              />
-
-                              Edit Lead
-
-                            </button>
-
-
-                            {/* Followup */}
-                            <button
-                              className="menuItem"
-
-                              onClick={() =>
-                                openFollowupModal(
-                                  lead
-                                )
-                              }
-                            >
-
-                              <PhoneCall
-                                size={16}
-                              />
-
-                              Add Followup
-
-                            </button>
-
-                            
-
-
-                            {/* Delete */}
-                            <button
-
-                              onClick={() =>
-                                handleDelete(
-                                  lead.id
-                                )
-                              }
-
-                              className="menuItem deleteBtn"
-
-                            >
-
-                              <Trash2
-                                size={16}
-                              />
-
-                              Delete Lead
-
-                            </button>
-
-                          </div>
-
-                        </details>
-
-                      </td>
-
-                  </tr>
-
-                ))
+              ))
 
               ) : (
 
-                <tr>
+              <tr>
 
-                  <td
-                    colSpan="8"
-                    className="text-center p-6 text-gray-500"
-                  >
+              <td
 
-                    No Leads Found
+              colSpan="10"
 
-                  </td>
+              className="text-center p-6 text-gray-500"
 
-                </tr>
+              >
+
+              No Leads Found
+
+              </td>
+
+              </tr>
 
               )
 
-            }
+              }
 
             </tbody>
-
           </table>
+          </div>
 
         </div>
 
-      </div>
-
+     
 
       {
 
@@ -740,87 +949,95 @@ e.target.value
       </div>
 
 
-      {/* Date */}
       <div className="crmInputGroup">
 
-        <label>
+  <label>
 
-          Next Followup
+    Lead Status
 
-        </label>
+  </label>
 
-        <input
+  <select
 
-          type="datetime-local"
+    value={
+followupData.lead_status
+    }
 
-          value={
-followupData.next_followup_date
-          }
-
-          onChange={(e) =>
+    onChange={(e) =>
 
 setFollowupData({
 
 ...followupData,
 
-next_followup_date:
+lead_status:
 e.target.value
 
 })
 
-          }
+    }
 
-        />
+  >
 
-      </div>
+    <option value="new">
+
+      New
+
+    </option>
+
+    <option value="connected">
+
+      Connected
+
+    </option>
+
+    <option value="interested">
+
+      Interested
+
+    </option>
+
+    <option value="proposal">
+
+      Proposal
+
+    </option>
+
+    <option value="offered">
+
+      Offered
+
+    </option>
+
+    <option value="meeting_scheduled">
+
+      Meeting Scheduled
+
+    </option>
+
+    <option value="not_interested">
+
+      Not Interested
+
+    </option>
+
+    <option value="converted">
+
+      Converted
+
+    </option>
+
+    <option value="lost">
+
+      Lost
+
+    </option>
+
+  </select>
+
+</div>
 
 
-      {/* Status */}
-      <div className="crmInputGroup">
-
-        <label>
-
-          Status
-
-        </label>
-
-        <select
-
-          value={
-followupData.status
-          }
-
-          onChange={(e) =>
-
-setFollowupData({
-
-...followupData,
-
-status:
-e.target.value
-
-})
-
-          }
-
-        >
-
-          <option value="pending">
-
-            Pending
-
-          </option>
-
-          <option value="completed">
-
-            Completed
-
-          </option>
-
-        </select>
-
-      </div>
-
+     
 
       {/* Remarks */}
       <div className="crmInputGroup fullWidth">
@@ -897,6 +1114,7 @@ handleFollowupSubmit
   </div>
 
 </div>
+
 
 )
 }

@@ -25,7 +25,13 @@ const {
 
   getLeadById,
 
-  updateLead
+  updateLead,
+
+  getImportantLeads,
+
+  getConvertedLeads,
+
+  getNotInterestedLeads
 
 } = require(
   "../controllers/leadController"
@@ -60,6 +66,26 @@ router.get(
   "/employee/:employeeId",
   getEmployeeLeads
 );
+// Important Leads
+
+router.get(
+
+"/important",
+
+getImportantLeads
+
+);
+//converted leads
+router.get(
+"/converted",
+getConvertedLeads
+);
+//not interested leads
+
+router.get(
+"/not-interested",
+getNotInterestedLeads
+);
 
 // Lead Details
 router.get(
@@ -67,13 +93,12 @@ router.get(
   getLeadById
 );
 
-//
+// Update Lead
 router.put(
-  "/update/:id", 
+  "/update/:id",
   updateLead
 );
 
-// Upload Excel
 // Upload Excel
 router.post(
   "/upload",

@@ -1,4 +1,4 @@
-import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus,UserCog } from "lucide-react";
+import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus, } from "lucide-react";
 import "../styles/sidebar.css";
 import logo from "../assets/logo.png";
 import { useState } from "react";
@@ -14,8 +14,9 @@ import {
   Settings,
   AlertCircle,
   Clock,
-  ClipboardList,
-  StickyNote,
+  BadgeCheck
+  //ClipboardList,
+  //StickyNote,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -109,8 +110,9 @@ export default function Sidebar() {
 
                     Create Employee
                 </li>
-            </Link>
 
+            </Link>
+            {/*
             <Link to="/manager/create-manager">
                 <li className={`sidebar-menu ${location.pathname === "/manager/create-manager" ? "active-menu " : ""}`}>
                     
@@ -118,7 +120,7 @@ export default function Sidebar() {
 
                     Create Manager
                 </li>
-            </Link>
+            </Link>*/}
 
             <Link to="/manager/followups">
               <li className={`sidebar-menu ${location.pathname === "/manager/followups" ? "active-menu " : ""}`}>
@@ -126,6 +128,7 @@ export default function Sidebar() {
                 Follow Ups
               </li>
             </Link>
+            
 
             <Link to="/manager/reports">
               <li className={`sidebar-menu ${location.pathname === "/manager/reports" ? "active-menu " : ""}`}  >
@@ -153,41 +156,54 @@ export default function Sidebar() {
 
           <div className="space-y-2">
 
-            <div className="sidebar-important-card">
-              <div className="flex items-center gap-2">
-                <AlertCircle size={20} />
-                Important Leads
+            <Link to="/manager/important-leads">
+
+              <div className="sidebar-important-card">
+
+                <div className="flex items-center gap-2">
+
+                  <AlertCircle size={20} />
+
+                  Important Leads
+
+                </div>
+
               </div>
 
-              
-            </div>
+            </Link>
 
-            <div className="sidebar-important-card">
-              <div className="flex items-center gap-2">
-                <Clock size={20} />
-                Pending Follow-ups
+            <Link to="/manager/converted-leads">
+
+              <div className="sidebar-important-card">
+
+                <div className="flex items-center gap-2">
+
+                  <BadgeCheck size={20} />
+
+                  Converted Leads
+
+                </div>
+
               </div>
 
-              
-            </div>
+            </Link>
 
-            <div className="sidebar-important-card">
-              <div className="flex items-center gap-2">
-                <ClipboardList size={20} />
-                Overdue Tasks
+
+            <Link to="/manager/not-interested">
+
+              <div className="sidebar-important-card">
+
+                <div className="flex items-center gap-2">
+
+                  <Clock size={20} />
+
+                  Not Interested
+
+                </div>
+
               </div>
 
-              
-            </div>
-
-            <div className="sidebar-important-card">
-              <div className="flex items-center gap-2">
-                <StickyNote size={20} />
-                Important Notes
-              </div>
-
-              
-            </div>
+            </Link>
 
           </div>
         </div>

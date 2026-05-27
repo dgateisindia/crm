@@ -1,35 +1,52 @@
-import {useEffect,useState} from "react";
+import {
+  useEffect,
+  useState
+} from "react";
 
-import {useParams,useNavigate} from"react-router-dom";
+import {
+  useParams,
+  useNavigate
+} from "react-router-dom";
 
 import axios from "axios";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
-import {ArrowLeft,Building2,Phone,Mail,Globe,MapPin,FileText,User} from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  Phone,
+  Mail,
+  Globe,
+  MapPin,
+  FileText,
+  User
+} from "lucide-react";
 
 export default function LeadDetails() {
 
-  const {
-
-    id
-
-  } =
+  const { id } =
   useParams();
 
   const navigate =
   useNavigate();
 
-  const [lead,
-    setLead] =
-    useState(
-      null
-    );
+  const [
+    lead,
+    setLead
+  ] =
+  useState(null);
+
+  const [
+    followups,
+    setFollowups
+  ] =
+  useState([]);
 
 
- 
-
-
+  // ==========================
+  // Fetch Lead
+  // ==========================
   const fetchLead =
   async () => {
 
@@ -57,41 +74,83 @@ export default function LeadDetails() {
     }
 
   };
-   useEffect(() => {
 
-  const loadLead =
+
+  // ==========================
+  // Fetch Followups
+  // ==========================
+  const fetchFollowups =
   async () => {
 
-    await fetchLead();
+    try {
+
+      const response =
+      await axios.get(
+
+`http://localhost:5000/api/followups/lead/${id}`
+
+      );
+
+      setFollowups(
+        response.data
+      );
+
+    }
+
+    catch (error) {
+
+      console.log(
+        error
+      );
+
+    }
 
   };
 
-  loadLead();
 
-}, [id]);
+  // ==========================
+  // Load Data
+  // ==========================
+  useEffect(() => {
+
+    const loadData =
+    async () => {
+
+      await fetchLead();
+
+      await fetchFollowups();
+
+    };
+
+    loadData();
+
+  }, [id]);
 
 
+  // ==========================
+  // Loading State
+  // ==========================
   if (!lead) {
 
-  return (
+    return (
 
-    <ManagerLayout>
+      <ManagerLayout>
 
-      <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex justify-center items-center h-[60vh]">
 
-        <p className="text-lg text-gray-500">
+          <p className="text-lg text-gray-500">
 
-          Loading Lead Details...
+            Loading Lead Details...
 
-        </p>
+          </p>
 
-      </div>
+        </div>
 
-    </ManagerLayout>
+      </ManagerLayout>
 
-  );
+    );
 
-}
+  }
 
 
   return (
@@ -120,9 +179,7 @@ export default function LeadDetails() {
         <button
 
           onClick={() =>
-            navigate(
-"/manager/leads"
-            )
+navigate("/manager/leads")
           }
 
           className="flex items-center gap-2 border px-4 py-2 rounded-xl hover:bg-gray-100"
@@ -140,7 +197,7 @@ export default function LeadDetails() {
       </div>
 
 
-      {/* Card */}
+      {/* Lead Details Card */}
       <div className="bg-white rounded-3xl shadow-md p-8">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,65 +205,49 @@ export default function LeadDetails() {
           <InfoCard
             icon={<Building2 />}
             label="Company"
-            value={
-              lead.company_name
-            }
+            value={lead.company_name}
           />
 
           <InfoCard
             icon={<User />}
             label="Contact Person"
-            value={
-lead.contact_person_name
-            }
+            value={lead.contact_person_name}
           />
 
           <InfoCard
             icon={<Phone />}
             label="Phone"
-            value={
-              lead.phone
-            }
+            value={lead.phone}
           />
 
           <InfoCard
             icon={<Mail />}
             label="Email"
-            value={
-              lead.email
-            }
+            value={lead.email}
           />
 
           <InfoCard
             icon={<MapPin />}
             label="City"
-            value={
-              lead.city
-            }
+            value={lead.city}
           />
 
           <InfoCard
             icon={<Globe />}
             label="Website"
-            value={
-              lead.website
-            }
+            value={lead.website}
           />
 
           <InfoCard
             icon={<FileText />}
             label="Lead Status"
-            value={
-              lead.lead_status
-            }
+            value={lead.lead_status}
           />
 
           <InfoCard
             icon={<Phone />}
             label="Lead Mode"
-            value={
-              lead.lead_mode
-            }
+            value={lead.lead_mode}
           />
 
         </div>
@@ -225,11 +266,166 @@ lead.contact_person_name
 
             {
 
-              lead.remarks ||
+lead.remarks ||
 
-              "No remarks added"
+"No remarks added"
 
             }
+
+          </div>
+
+        </div>
+
+
+        {/* Followup History */}
+        <div className="mt-10">
+
+          <h2 className="font-semibold text-xl mb-4">
+
+            Followup History
+
+          </h2>
+
+          <div className="border rounded-2xl overflow-hidden">
+
+            <table className="w-full">
+
+              <thead className="bg-gray-50">
+
+                <tr>
+
+                  <th className="p-4 text-left">
+
+                    Mode
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Status
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Remarks
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Employee
+
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {
+
+followups.length > 0
+
+? (
+
+followups.map(
+
+(item) => (
+
+<tr
+
+key={
+item.followup_id
+}
+
+className="border-b"
+
+>
+
+<td className="p-4">
+
+{
+item.followup_mode
+}
+
+</td>
+
+<td className="p-4">
+
+<span
+className={`followupStatus ${item.lead_status}`}
+>
+
+{
+
+item.lead_status
+?.replace(
+"_",
+" "
+)
+
+}
+
+</span>
+
+</td>
+
+<td className="p-4">
+
+{
+
+item.remarks ||
+
+"No remarks"
+
+}
+
+</td>
+
+<td className="p-4">
+
+{
+
+item.full_name ||
+
+"N/A"
+
+}
+
+</td>
+
+</tr>
+
+)
+
+)
+
+)
+
+: (
+
+<tr>
+
+<td
+colSpan="4"
+className="text-center p-6 text-gray-500"
+>
+
+No Followups Found
+
+</td>
+
+</tr>
+
+)
+
+}
+
+              </tbody>
+
+            </table>
 
           </div>
 
@@ -244,6 +440,9 @@ lead.contact_person_name
 }
 
 
+// ==========================
+// Info Card
+// ==========================
 function InfoCard({
 
   icon,

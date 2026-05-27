@@ -14,8 +14,7 @@ const addFollowup =
     employee_id,
     followup_mode,
     remarks,
-    next_followup_date,
-    status
+    lead_status
 
   } = req.body;
 
@@ -28,12 +27,11 @@ const addFollowup =
       employee_id,
       followup_mode,
       remarks,
-      next_followup_date,
-      status
+      lead_status
 
     )
 
-    VALUES (?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?)
 
   `;
 
@@ -48,8 +46,7 @@ const addFollowup =
       employee_id,
       followup_mode,
       remarks,
-      next_followup_date || null,
-      status || "pending"
+      lead_status
 
     ],
 
@@ -69,19 +66,62 @@ const addFollowup =
 
       }
 
-      res.status(201)
-      .json({
 
-        message:
-        "Followup Added Successfully"
+      // ==========================
+      // Update Lead Status
+      // ==========================
+      const updateLeadSql = `
 
-      });
+        UPDATE leads
+
+        SET lead_status = ?
+
+        WHERE id = ?
+
+      `;
+
+
+      db.query(
+
+        updateLeadSql,
+
+        [
+
+          lead_status,
+
+          lead_id
+
+        ],
+
+        (updateErr) => {
+
+          if (updateErr) {
+
+            console.log(
+              updateErr
+            );
+
+          }
+
+          res.status(201)
+          .json({
+
+            message:
+            "Followup Added Successfully"
+
+          });
+
+        }
+
+      );
 
     }
 
   );
 
 };
+
+
 
 
 // ==========================
@@ -204,12 +244,76 @@ message:
 
 };
 
+// ==========================
+// Get Lead Followups
+// ==========================
+const getLeadFollowups =
+(req, res) => {
+
+  const leadId =
+  req.params.leadId;
+
+  const sql = `
+
+    SELECT
+
+      follow_ups.*,
+
+      employees.full_name
+
+    FROM follow_ups
+
+    LEFT JOIN employees
+
+    ON follow_ups.employee_id =
+    employees.employee_id
+
+    WHERE
+    follow_ups.lead_id = ?
+
+    ORDER BY
+    followup_id DESC
+
+  `;
+
+  db.query(
+
+    sql,
+
+    [leadId],
+
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res
+        .status(500)
+        .json({
+
+message:
+"Failed to fetch followups"
+
+        });
+
+      }
+
+      res.status(200)
+      .json(result);
+
+    }
+
+  );
+
+};
+
 
 module.exports = {
 
   addFollowup,
   getFollowups,
-  getEmployeeFollowups
-
+  getEmployeeFollowups,
+  getLeadFollowups
 
 };

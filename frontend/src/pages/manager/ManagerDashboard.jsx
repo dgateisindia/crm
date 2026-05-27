@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useNavigate }
 from "react-router-dom";
-
-import {useEffect,useState,} from "react";
+import {useEffect,useState} from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
@@ -17,6 +16,8 @@ import {
 
 export default function ManagerDashboard() {
 
+  const navigate = useNavigate();
+
   const [stats,
     setStats] =
     useState({
@@ -27,8 +28,6 @@ export default function ManagerDashboard() {
       convertedLeads: 0,
       recentLeads: [],
     });
-    const navigate =
-    useNavigate();
 
   useEffect(() => {
 
@@ -83,17 +82,15 @@ export default function ManagerDashboard() {
         {/* Total Leads */}
         <div
 
-      className="crm-card blue-card"
+          className="crm-card blue-card cursor-pointer"
 
-      style={{
-        cursor: "pointer"
-      }}
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
 
-      onClick={() =>
-      navigate("/manager/leads")
-      }
-
-      >
+        >
 
           <div className="crm-card-top">
 
@@ -108,29 +105,32 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Total Leads
+
           </h3>
 
           <h2>
+
             {
               stats.totalLeads
             }
+
           </h2>
 
         </div>
 
+
         {/* Employees */}
-       <div
+        <div
 
-        className="crm-card green-card"
+          className="crm-card green-card cursor-pointer"
 
-        style={{
-          cursor: "pointer"
-        }}
-
-        onClick={() =>
-        navigate("/manager/employees")
-        }
+          onClick={() =>
+            navigate(
+              "/manager/employees"
+            )
+          }
 
         >
 
@@ -147,29 +147,32 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Employees
+
           </h3>
 
           <h2>
+
             {
               stats.totalEmployees
             }
+
           </h2>
 
         </div>
 
+
         {/* New Leads */}
         <div
 
-        className="crm-card orange-card"
+          className="crm-card orange-card cursor-pointer"
 
-        style={{
-          cursor: "pointer"
-        }}
-
-        onClick={() =>
-        navigate("/manager/leads?status=new")
-        }
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
 
         >
 
@@ -186,29 +189,32 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             New Leads
+
           </h3>
 
           <h2>
+
             {
               stats.newLeads
             }
+
           </h2>
 
         </div>
 
+
         {/* Converted */}
         <div
 
-        className="crm-card purple-card"
+          className="crm-card purple-card cursor-pointer"
 
-        style={{
-          cursor: "pointer"
-        }}
-
-        onClick={() =>
-        navigate("/manager/leads?status=converted")
-        }
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
 
         >
 
@@ -225,19 +231,22 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Converted
+
           </h3>
 
           <h2>
+
             {
               stats.convertedLeads
             }
+
           </h2>
 
         </div>
 
       </div>
-
       {/* Recent Leads */}
       <div className="recent-card">
 

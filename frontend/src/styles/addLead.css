@@ -1,0 +1,405 @@
+/* ==========================
+   Add Lead Page
+========================== */
+
+.addLeadContainer {
+  width: 100%;
+  padding: 18px;
+}
+
+/* ==========================
+   Header
+========================== */
+
+.addLeadHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.addLeadTitle h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #071739;
+}
+
+.addLeadTitle p {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  border: 1px solid #dbe2ea;
+  background: #fff;
+
+  padding: 10px 18px;
+  border-radius: 14px;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.backBtn:hover {
+  background: #f8fafc;
+}
+
+/* ==========================
+   Main Layout
+========================== */
+
+/* ==========================
+   Layout Fix
+========================== */
+
+.addLeadWrapper{
+
+display:flex;
+gap:18px;
+
+align-items:flex-start;
+
+width:100%;
+max-width:100%;
+
+overflow:hidden;
+}
+
+.leadFormCard{
+
+flex:1;
+min-width:0;
+
+background:#fff;
+
+border-radius:20px;
+
+padding:18px;
+
+box-shadow:
+0 2px 12px
+rgba(0,0,0,.06);
+}
+
+.importCard{
+
+width:320px;
+flex-shrink:0;
+
+background:#fff;
+
+border-radius:20px;
+
+padding:18px;
+
+box-shadow:
+0 2px 12px
+rgba(0,0,0,.06);
+}
+
+/* ==========================
+   Form Card
+========================== */
+
+.leadFormCard {
+  background: #fff;
+  border-radius: 24px;
+  padding: 22px;
+
+  box-shadow:
+    0 4px 20px rgba(15, 23, 42, 0.06);
+
+  border: 1px solid #eef2f7;
+}
+
+/* ==========================
+   Lead Header
+========================== */
+
+.leadHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.leadHeaderIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+
+  background: #071739;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leadHeader h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #071739;
+}
+
+.leadHeader p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ==========================
+   Form Grid
+========================== */
+
+.formGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,minmax(0,1fr));
+
+gap:14px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+/* ==========================
+   Inputs
+========================== */
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea{
+
+width:100%;
+
+box-sizing:border-box;
+
+padding:11px 14px;
+
+border:
+1px solid #dbe2ea;
+
+border-radius:12px;
+
+font-size:14px;
+
+outline:none;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: #2563eb;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.formGroup textarea {
+  resize: none;
+  min-height: 70px;
+}
+
+/* Full Width */
+
+.fullWidth {
+  grid-column: 1/-1;
+}
+
+/* ==========================
+   Checkbox + Button
+========================== */
+
+.submitArea {
+  margin-top: 18px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.importantCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.importantCheck label {
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.saveLeadBtn {
+  background: #071739;
+  color: white;
+
+  border: none;
+  border-radius: 16px;
+
+  padding: 13px 28px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.saveLeadBtn:hover {
+  background: #0c2557;
+}
+
+/* ==========================
+   Import Sidebar
+========================== */
+
+.importCard {
+  background: #fff;
+  border-radius: 24px;
+  padding: 20px;
+
+  border: 1px solid #eef2f7;
+
+  box-shadow:
+    0 4px 20px rgba(15, 23, 42, 0.06);
+}
+
+.importCard h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #071739;
+}
+
+.importCard p {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.uploadBox {
+  margin-top: 16px;
+
+  border: 2px dashed #dbe2ea;
+  border-radius: 18px;
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.fileBtn {
+  background: #2563eb;
+  color: white;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 10px 18px;
+
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.uploadBtn {
+  width: 100%;
+
+  background: #071739;
+  color: white;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media (max-width: 1200px) {
+
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fullWidth {
+    grid-column: span 2;
+  }
+
+}
+
+@media (max-width: 992px) {
+
+  .addLeadGrid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: span 1;
+  }
+
+  .submitArea {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .saveLeadBtn {
+    width: 100%;
+  }
+
+  .addLeadHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+}
+.uploadBox{
+
+border:
+2px dashed #dbe2ea;
+
+border-radius:18px;
+
+padding:18px;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+gap:14px;
+
+overflow:hidden;
+}

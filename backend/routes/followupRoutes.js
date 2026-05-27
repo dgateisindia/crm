@@ -7,36 +7,47 @@ express.Router();
 const {
 
   addFollowup,
+
   getFollowups,
-getEmployeeFollowups
+
+  getEmployeeFollowups,
+
+  getLeadFollowups
 
 } = require(
 
 "../controllers/followupController"
-    
+
 );
-
-
 
 
 // Add Followup
 router.post(
-  "/add",
-  addFollowup
+"/add",
+addFollowup
 );
 
 
-// Get Followups
+// Get All Followups
 router.get(
-  "/all",
-  getFollowups
+"/all",
+getFollowups
 );
 
-// Get Employee Followups
+
+// Employee Followups
 router.get(
-  "/employee/:employeeId",
-  getEmployeeFollowups
+"/employee/:employeeId",
+getEmployeeFollowups
 );
+
+
+// Lead Followups
+router.get(
+"/lead/:leadId",
+getLeadFollowups
+);
+
 
 module.exports =
 router;
