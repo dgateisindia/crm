@@ -25,7 +25,13 @@ const {
 
   getLeadById,
 
-  updateLead
+  updateLead,
+
+  getImportantLeads,
+
+  getConvertedLeads,
+
+  getNotInterestedLeads
 
 
 
@@ -62,6 +68,26 @@ router.get(
   "/employee/:employeeId",
   getEmployeeLeads
 );
+// Important Leads
+
+router.get(
+
+"/important",
+
+getImportantLeads
+
+);
+//converted leads
+router.get(
+"/converted",
+getConvertedLeads
+);
+//not interested leads
+
+router.get(
+"/not-interested",
+getNotInterestedLeads
+);
 
 // Lead Details
 router.get(
@@ -75,7 +101,6 @@ router.put(
   updateLead
 );
 
-// Upload Excel
 // Upload Excel
 router.post(
   "/upload",

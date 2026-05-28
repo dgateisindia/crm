@@ -884,3 +884,131 @@ td{
   background:#e5e7eb;
   color:#4b5563;
 }
+/* ==========================
+   Lead Top Cards
+========================== */
+
+.leadTopCards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:22px;
+}
+
+.leadCard{
+  background:white;
+  padding:22px;
+  border-radius:22px;
+
+  box-shadow:
+  0 4px 16px
+  rgba(15,23,42,.05);
+
+  transition:.2s;
+}
+
+.clickableCard{
+  cursor:pointer;
+}
+
+.clickableCard:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 10px 24px
+  rgba(15,23,42,.08);
+}
+
+.leadCardTop{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+
+/* Icon Circle */
+.leadCardIcon{
+  width:56px;
+  height:56px;
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:white;
+}
+
+
+/* Colors */
+.blueCard{
+  background:#3b82f6;
+}
+
+.greenCard{
+  background:#22c55e;
+}
+
+.orangeCard{
+  background:#f97316;
+}
+
+.purpleCard{
+  background:#a855f7;
+}
+
+
+/* Border Accent */
+.blueLeadCard{
+  border-left:
+  6px solid #3b82f6;
+}
+
+.greenLeadCard{
+  border-left:
+  6px solid #22c55e;
+}
+
+.orangeLeadCard{
+  border-left:
+  6px solid #f97316;
+}
+
+.purpleLeadCard{
+  border-left:
+  6px solid #a855f7;
+}
+
+
+.leadCard h4{
+  font-size:14px;
+  font-weight:500;
+  color:#64748b;
+  margin-bottom:8px;
+}
+
+.leadCard h2{
+  font-size:30px;
+  font-weight:700;
+  color:#071739;
+}
+
+
+/* Responsive */
+@media(max-width:1100px){
+
+  .leadTopCards{
+    grid-template-columns:
+    repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:768px){
+
+  .leadTopCards{
+    grid-template-columns:1fr;
+  }
+
+}
+

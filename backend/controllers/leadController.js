@@ -3,507 +3,526 @@ require("../db");
 
 
 // ==========================
+// Add Lead
+// ==========================
+const addLead =
+async (req, res) => {
+
+  try {
+
+    const {
+
+      company_name,
+      contact_person_name,
+      designation,
+      phone,
+      email,
+      city,
+      source,
+      lead_mode,
+      lead_status,
+      created_by_id
+
+    } = req.body;
+
+
+    const [result] =
+    await db.promise().query(
+
+      `INSERT INTO leads
+      (
+        company_name,
+        contact_person_name,
+        designation,
+        phone,
+        email,
+        city,
+        source,
+        lead_mode,
+        lead_status,
+        created_by_id
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+
+      [
+
+        company_name,
+        contact_person_name,
+        designation,
+        phone,
+        email,
+        city,
+        source,
+        lead_mode,
+        lead_status,
+        created_by_id
+
+      ]
+
+    );
+
+    res.status(201)
+    .json({
+
+      message:
+      "Lead Added Successfully",
+
+      id:
+      result.insertId
+
+    });
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500)
+    .json({
+
+      message:
+      "Failed to Add Lead"
+
+    });
+
+  }
+
+};
+
+
+// ==========================
 // Get All Leads
 // ==========================
 const getLeads =
-(req, res) => {
+async (req, res) => {
 
-  const sql = `
-    SELECT *
-    FROM leads
-    ORDER BY id DESC
-  `;
+  try {
 
-  db.query(
+    const [rows] =
+    await db.promise().query(
 
-    sql,
+      `SELECT
 
-    (err, result) => {
+      leads.*,
 
-      if (err) {
+      employees.full_name
 
-        console.log(err);
+      FROM leads
 
-        return res.status(500)
-        .json({
+      LEFT JOIN employees
 
-          message:
-          "Failed to fetch leads",
+      ON leads.created_by_id =
+      employees.employee_id
 
-        });
+      ORDER BY leads.id DESC`
 
-      }
+    );
 
-      res.status(200)
-      .json(result);
+    res.json(rows);
 
-    }
+  }
 
-  );
+  catch (error) {
 
-};
-// ==========================
-// Get Employee Leads
-// ==========================
-const getEmployeeLeads =
-(req, res) => {
+    console.log(error);
 
-  const employeeId =
-  req.params.employeeId;
+    res.status(500)
+    .json({
 
-  const sql = `
+      message:
+      "Failed to Fetch Leads"
 
-    SELECT *
+    });
 
-    FROM leads
-
-    WHERE
-    created_by_id = ?
-
-    ORDER BY id DESC
-
-  `;
-
-  db.query(
-
-    sql,
-
-    [employeeId],
-
-    (err, result) => {
-
-      if (err) {
-
-        console.log(err);
-
-        return res.status(500)
-        .json({
-
-          message:
-          "Failed to fetch employee leads"
-
-        });
-
-      }
-
-      res.status(200)
-      .json(result);
-
-    }
-
-  );
+  }
 
 };
+
 
 // ==========================
 // Delete Lead
 // ==========================
 const deleteLead =
-(req, res) => {
+async (req, res) => {
 
-  const leadId =
-  req.params.id;
+  try {
 
-  const sql =
-  "DELETE FROM leads WHERE id = ?";
+    const { id } =
+    req.params;
 
-  db.query(
+    await db.promise().query(
 
-    sql,
-    [leadId],
+      `DELETE FROM leads
+       WHERE id=?`,
 
-    (err, result) => {
+      [id]
 
-      if (err) {
+    );
 
-        console.log(err);
+    res.json({
 
-        return res.status(500)
-        .json({
+      message:
+      "Lead Deleted Successfully"
 
-          message:
-          "Failed to delete lead",
+    });
 
-        });
+  }
 
-      }
+  catch (error) {
 
-      res.status(200)
-      .json({
+    console.log(error);
 
-        message:
-        "Lead Deleted Successfully",
+    res.status(500)
+    .json({
 
-      });
+      message:
+      "Failed to Delete Lead"
 
-    }
+    });
 
-  );
+  }
 
 };
+
+
+// ==========================
+// Get Employee Leads
+// ==========================
+const getEmployeeLeads =
+async (req, res) => {
+
+  try {
+
+    const {
+      employeeId
+    } =
+    req.params;
+
+    const [rows] =
+    await db.promise().query(
+
+      `SELECT *
+
+      FROM leads
+
+      WHERE created_by_id = ?
+
+      ORDER BY id DESC`,
+
+      [employeeId]
+
+    );
+
+    res.json(rows);
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500)
+    .json({
+
+      message:
+      "Failed to Fetch Employee Leads"
+
+    });
+
+  }
+
+};
+
 
 // ==========================
 // Get Lead By ID
 // ==========================
 const getLeadById =
-(req, res) => {
+async (req, res) => {
 
-  const leadId =
-  req.params.id;
+  try {
 
-  const sql = `
-    SELECT *
-    FROM leads
-    WHERE id = ?
-  `;
+    const { id } =
+    req.params;
 
-  db.query(
+    const [rows] =
+    await db.promise().query(
 
-    sql,
+      `SELECT *
 
-    [leadId],
+       FROM leads
 
-    (err, result) => {
+       WHERE id=?`,
 
-      if (err) {
+      [id]
 
-        return res
-        .status(500)
-        .json(err);
+    );
 
-      }
+    if (
+      rows.length === 0
+    ) {
 
-      res.status(200)
-      .json(
-        result[0]
-      );
-
-    }
-
-  );
-
-};
-// ==========================
-// Add Lead
-// ==========================
-const addLead =
-(req, res) => {
-
-  const {
-
-    company_name,
-    contact_person_name,
-    email,
-    phone,
-    address,
-    website,
-    source,
-    city,
-    remarks,
-    lead_status,
-    lead_mode,
-    important_lead,
-    created_by_id
-
-  } = req.body;
-
-
-  // Validation
-  if (
-
-    !company_name ||
-    !contact_person_name ||
-    !phone ||
-    !email
-
-  ) {
-
-    return res.status(400)
-    .json({
-
-      message:
-      "Required fields are missing",
-
-    });
-
-  }
-  // ==========================
-// Update Lead
-// ==========================
-const updateLead =
-(req, res) => {
-
-  const leadId =
-  req.params.id;
-
-  const {
-
-    company_name,
-    contact_person_name,
-    email,
-    phone,
-    address,
-    website,
-    source,
-    city,
-    remarks,
-    lead_status,
-    lead_mode,
-    important_lead
-
-  } = req.body;
-
-
-  const sql = `
-
-    UPDATE leads
-
-    SET
-
-      company_name = ?,
-      contact_person_name = ?,
-      email = ?,
-      phone = ?,
-      address = ?,
-      website = ?,
-      source = ?,
-      city = ?,
-      remarks = ?,
-      lead_status = ?,
-      lead_mode = ?,
-      important_lead = ?
-
-    WHERE id = ?
-
-  `;
-
-
-  db.query(
-
-    sql,
-
-    [
-
-      company_name,
-      contact_person_name,
-      email,
-      phone,
-      address,
-      website,
-      source,
-      city,
-      remarks,
-      lead_status,
-      lead_mode,
-      important_lead,
-      leadId
-
-    ],
-
-    (err, result) => {
-
-      if (err) {
-
-        console.log(err);
-
-        return res.status(500)
-        .json({
-
-message:
-"Failed to update lead"
-
-        });
-
-      }
-
-      res.status(200)
+      return res.status(404)
       .json({
 
-message:
-"Lead Updated Successfully"
+        message:
+        "Lead Not Found"
 
       });
 
     }
 
-  );
+    res.json(
+      rows[0]
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500)
+    .json({
+
+      message:
+      "Failed to Fetch Lead"
+
+    });
+
+  }
 
 };
 
 
-  // ==========================
-  // Duplicate Check
-  // ==========================
-  const duplicateSql = `
+// ==========================
+// Update Lead
+// ==========================
+const updateLead =
+async (req, res) => {
 
-    SELECT *
+  try {
 
-    FROM leads
+    const { id } =
+    req.params;
 
-    WHERE
+   const {
 
-    phone = ?
-
-    OR email = ?
-
-    OR (
-
-      company_name = ?
-
-      AND
-
-      contact_person_name = ?
-
-    )
-
-  `;
-
-
-  db.query(
-
-    duplicateSql,
-
-    [
-
+      company_name,
+      contact_person_name,
+      designation,
       phone,
       email,
-      company_name,
-      contact_person_name
+      address,
+      website,
+      city,
+      source,
+      lead_mode,
+      lead_status,
+      remarks,
+      important_lead
 
-    ],
-
-    (
-
-      duplicateErr,
-      duplicateResult
-
-    ) => {
-
-      if (
-        duplicateErr
-      ) {
-
-        console.log(
-          duplicateErr
-        );
-
-        return res.status(500)
-        .json({
-
-          message:
-          "Duplicate check failed"
-
-        });
-
-      }
+} = req.body;
 
 
-      // Duplicate Found
-      if (
-        duplicateResult
-        .length > 0
-      ) {
+    await db.promise().query(
 
-        return res.status(409)
-        .json({
+      `UPDATE leads
+        SET
 
-          message:
-          "Duplicate lead already exists",
+        company_name=?,
 
-          duplicateLead:
-          duplicateResult[0]
+        contact_person_name=?,
 
-        });
+        designation=?,
 
-      }
+        phone=?,
 
+        email=?,
 
-      // ==========================
-      // Insert Lead
-      // ==========================
-      const sql = `
-        INSERT INTO leads (
+        address=?,
 
-          company_name,
-          contact_person_name,
-          email,
-          phone,
-          address,
-          website,
-          source,
-          city,
-          remarks,
-          lead_status,
-          lead_mode,
-          important_lead,
-          created_by_id
+        website=?,
 
-        )
+        city=?,
 
-        VALUES (
-          ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?)
-      `;
+        source=?,
 
+        lead_mode=?,
 
-      db.query(
+        lead_status=?,
 
-        sql,
+        remarks=?,
 
-        [
+        important_lead=?
 
-          company_name,
-          contact_person_name,
-          email,
-          phone,
-          address,
-          website,
-          source,
-          city,
-          remarks,
-          lead_status,
-          lead_mode,
-          important_lead || false,
-          created_by_id
+        WHERE id=?`,
 
-        ],
+      [
 
-        (err, result) => {
+        company_name,
+        contact_person_name,
+        designation,
+        phone,
+        email,
+        address,
+        website,
+        city,
+        source,
+        lead_mode,
+        lead_status,
+        remarks,
+        important_lead, 
+        id
 
-          if (err) {
+      ]
 
-            console.log(
-              "SQL ERROR:",
-              err
-            );
+    );
 
-            return res.status(500)
-            .json({
+    res.json({
 
-              message:
-              err.message,
+      message:
+      "Lead Updated Successfully"
 
-            });
+    });
 
-          }
+  }
 
-          res.status(201)
-          .json({
+  catch (error) {
 
-            message:
-            "Lead Added Successfully",
+    console.log(error);
 
-          });
+    res.status(500)
+    .json({
 
-        }
+      message:
+      "Failed to Update Lead"
 
-      );
+    });
 
-    }
+  }
 
-  );
+};
+// ==========================
+// Get Important Leads
+// ==========================
+const getImportantLeads =
+async (req, res) => {
+
+  try {
+
+    const [rows] =
+    await db.promise().query(
+
+      `SELECT *
+
+       FROM leads
+
+       WHERE important_lead = 1
+
+       ORDER BY id DESC`
+
+    );
+
+    res.json(rows);
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+
+      message:
+      "Failed to fetch important leads"
+
+    });
+
+  }
+
+};
+// ==========================
+// Converted Leads
+// ==========================
+const getConvertedLeads =
+async (req, res) => {
+
+try {
+
+const [rows] =
+await db.promise().query(
+
+`SELECT *
+
+FROM leads
+
+WHERE lead_status = 'converted'
+
+ORDER BY id DESC`
+
+);
+
+res.json(rows);
+
+}
+
+catch (error) {
+
+console.log(error);
+
+res.status(500).json({
+
+message:
+"Failed to fetch converted leads"
+
+});
+
+}
 
 };
 
+
+// ==========================
+// Not Interested Leads
+// ==========================
+const getNotInterestedLeads =
+async (req, res) => {
+
+try {
+
+const [rows] =
+await db.promise().query(
+
+`SELECT *
+
+FROM leads
+
+WHERE lead_status = 'not_interested'
+
+ORDER BY id DESC`
+
+);
+
+res.json(rows);
+
+}
+
+catch (error) {
+
+console.log(error);
+
+res.status(500).json({
+
+message:
+"Failed to fetch not interested leads"
+
+});
+
+}
+
+};
 
 // ==========================
 // Export
@@ -511,9 +530,21 @@ message:
 module.exports = {
 
   addLead,
+
   getLeads,
+
   deleteLead,
+
   getEmployeeLeads,
+
   getLeadById,
-  
+
+  updateLead,
+
+  getImportantLeads,
+
+  getConvertedLeads,
+
+  getNotInterestedLeads
+
 };

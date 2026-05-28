@@ -21,25 +21,50 @@ const createEmployee =
     status
 
   } = req.body;
+ console.log(req.body);
 
+if (
 
-  // Validation
-  if (
-    !manager_id ||
-    !role_id ||
-    !full_name ||
-    !email ||
-    !password
-  ) {
+  !manager_id ||
 
-    return res.status(400)
-    .json({
-      message:
-      "Required fields are missing",
-    });
+  
 
-  }
+  !full_name ||
 
+  !email ||
+
+  !password
+
+) {
+
+  console.log({
+
+    manager_id,
+    full_name,
+    email,
+    password
+
+  });
+
+  return res.status(400)
+  .json({
+
+    message:
+    "Required fields are missing",
+
+    data: {
+
+      manager_id,
+      role_id,
+      full_name,
+      email,
+      password
+
+    }
+
+  });
+
+}
 
   const sql = `
     INSERT INTO employees (
@@ -65,7 +90,11 @@ const createEmployee =
     [
 
       manager_id,
-      role_id,
+      designation?.toLowerCase() === "manager"
+
+        ? 2
+
+        : 1,
       full_name,
       email,
       phone,

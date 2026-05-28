@@ -1,3 +1,4 @@
+@reference "tailwindcss";
 .employeesPage{
   height:calc(100vh - 20px);
   overflow-y:auto;
@@ -119,4 +120,67 @@
     font-size:22px;
   }
 
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.crm-card {
+  @apply bg-white rounded-[18px] p-2 shadow-sm border border-gray-100 transition-all duration-100;
+}
+
+.crm-card:hover {
+  @apply shadow-lg;
+}
+
+.crm-card-top {
+  @apply flex justify-between items-center mb-1;
+}
+
+.crm-card h3 {
+  @apply text-gray-500 text-sm font-medium;
+}
+
+.crm-card h2 {
+  @apply text-2xl font-bold mt-2 text-[#0F172A];
+}
+
+.icon-circle {
+  @apply w-14 h-14 rounded-2xl flex items-center justify-center text-white;
+}
+
+.blue-bg {
+  @apply bg-blue-500;
+}
+
+.green-bg {
+  @apply bg-green-500;
+}
+
+.orange-bg {
+  @apply bg-orange-500;
+}
+
+.purple-bg {
+  @apply bg-purple-500;
+}
+
+.blue-card {
+  border-left: 6px solid #3b82f6;
+}
+
+.green-card {
+  border-left: 6px solid #22c55e;
+}
+
+.orange-card {
+  border-left: 6px solid #f97316;
+}
+
+.purple-card {
+  border-left: 6px solid #a855f7;
 }

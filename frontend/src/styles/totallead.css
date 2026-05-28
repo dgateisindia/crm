@@ -1,0 +1,606 @@
+@reference "tailwindcss";
+
+/* ==========================
+   Leads Container
+========================== */
+
+.leads-container{
+  width:100%;
+  padding:4px;
+}
+
+
+/* ==========================
+   Header
+========================== */
+
+.leadsHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.leads-header-title{
+  font-size:30px;
+  font-weight:700;
+  color:#0f172a;
+}
+
+.leads-header-subtitle{
+  color:#64748b;
+  font-size:14px;
+  margin-top:4px;
+}
+
+
+/* ==========================
+   Dashboard Cards
+========================== */
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:
+  repeat(4,1fr);
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.crm-card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:
+  0 2px 10px
+  rgba(0,0,0,.05);
+  border:
+  1px solid #eef2f7;
+  transition:.2s;
+}
+
+.crm-card:hover{
+  transform:
+  translateY(-2px);
+
+  box-shadow:
+  0 10px 24px
+  rgba(15,23,42,.08);
+}
+
+.crm-card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.crm-card h3{
+  color:#64748b;
+  font-size:14px;
+  font-weight:500;
+}
+
+.crm-card h2{
+  font-size:30px;
+  font-weight:700;
+  margin-top:8px;
+  color:#071739;
+}
+
+
+/* Icon Circle */
+
+.icon-circle{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+}
+
+/* Colors */
+
+.blue-bg{
+  background:#3b82f6;
+}
+
+.green-bg{
+  background:#22c55e;
+}
+
+.orange-bg{
+  background:#f97316;
+}
+
+.purple-bg{
+  background:#a855f7;
+}
+
+/* Border Accent */
+
+.blue-card{
+  border-left:
+  6px solid #3b82f6;
+}
+
+.green-card{
+  border-left:
+  6px solid #22c55e;
+}
+
+.orange-card{
+  border-left:
+  6px solid #f97316;
+}
+
+.purple-card{
+  border-left:
+  6px solid #a855f7;
+}
+
+
+/* ==========================
+   Toolbar
+========================== */
+
+.leadToolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  margin-bottom:20px;
+}
+
+
+/* Add Lead Button */
+
+.addLeadBtn{
+  min-width:140px;
+  height:44px;
+  border:none;
+  border-radius:12px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #071739,
+    #0f2c68
+  );
+
+  color:white;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  flex-shrink:0;
+
+  transition:.2s;
+
+  box-shadow:
+  0 8px 18px
+  rgba(7,23,57,.18);
+}
+
+.addLeadBtn:hover{
+  background:
+  linear-gradient(
+    135deg,
+    #0f2c68,
+    #1d4ed8
+  );
+
+  transform:
+  translateY(-2px);
+}
+
+
+/* Search */
+
+.manager-search-box{
+  flex:1;
+  height:44px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding:0 14px;
+
+  background:#f8fafc;
+
+  border:
+  1px solid #dbe2ea;
+
+  border-radius:12px;
+
+  min-width:300px;
+}
+
+.manager-search-input{
+  width:100%;
+  height:100%;
+
+  border:none;
+  outline:none;
+
+  background:transparent;
+
+  font-size:14px;
+  color:#0f172a;
+}
+
+
+/* Status Dropdown */
+
+.manager-filter-select{
+  width:180px;
+  height:44px;
+
+  border:
+  1px solid #dbe2ea;
+
+  border-radius:12px;
+
+  background:#f8fafc;
+
+  padding:0 12px;
+
+  outline:none;
+
+  font-size:14px;
+
+  flex-shrink:0;
+}
+
+
+/* ==========================
+   Table
+========================== */
+
+.tableWrapper{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+
+  border:
+  1px solid #e5e7eb;
+
+  box-shadow:
+  0 2px 10px
+  rgba(0,0,0,.05);
+}
+
+.table-scroll{
+  max-height:68vh;
+  overflow:auto;
+}
+
+.table-scroll table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table-scroll thead{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:white;
+}
+
+.table-head{
+  text-align:left;
+  padding:16px;
+  font-size:13px;
+  font-weight:600;
+  color:#475569;
+
+  border-bottom:
+  1px solid #e5e7eb;
+
+  background:#f8fafc;
+}
+
+.table-data{
+  padding:16px;
+  font-size:13px;
+  color:#334155;
+
+  border-bottom:
+  1px solid #f1f5f9;
+}
+
+.table-row:hover{
+  background:#f8fafc;
+}
+
+
+/* Scrollbar */
+
+.table-scroll::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+
+.table-scroll::-webkit-scrollbar-track{
+  background:#f1f5f9;
+}
+
+.table-scroll::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:20px;
+}
+
+
+/* Status Badge */
+
+.status-badge{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:capitalize;
+}
+
+.new{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+.connected{
+  background:#dcfce7;
+  color:#16a34a;
+}
+
+.interested{
+  background:#ffedd5;
+  color:#ea580c;
+}
+
+.proposal{
+  background:#ede9fe;
+  color:#9333ea;
+}
+
+.not_interested{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.converted{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+
+/* ==========================
+   Action Menu
+========================== */
+
+.dropdownMenu{
+  position:relative;
+}
+
+.actionBtn{
+  width:36px;
+  height:36px;
+
+  border:none;
+  border-radius:10px;
+
+  background:#f8fafc;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.actionMenu{
+  position:absolute;
+  top:42px;
+  right:0;
+
+  width:210px;
+
+  background:white;
+
+  border-radius:14px;
+
+  box-shadow:
+  0 10px 30px
+  rgba(0,0,0,.12);
+
+  overflow:hidden;
+
+  z-index:999;
+}
+
+.menuItem{
+  width:100%;
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  padding:14px 18px;
+
+  border:none;
+
+  background:white;
+
+  font-size:14px;
+
+  cursor:pointer;
+}
+
+.menuItem:hover{
+  background:#f8fafc;
+}
+
+.deleteBtn{
+  color:#dc2626;
+}
+
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:1100px){
+
+.dashboard-grid{
+grid-template-columns:
+repeat(2,1fr);
+}
+
+}
+
+@media(max-width:900px){
+
+.leadToolbar{
+flex-wrap:wrap;
+}
+
+.manager-search-box{
+width:100%;
+}
+
+.manager-filter-select{
+width:100%;
+}
+
+.addLeadBtn{
+width:100%;
+}
+
+}
+
+@media(max-width:768px){
+
+.dashboard-grid{
+grid-template-columns:1fr;
+}
+
+.leadsHeader{
+flex-direction:column;
+align-items:flex-start;
+gap:12px;
+}
+
+}
+/* ==========================
+   CRM Toolbar
+========================== */
+
+.leadToolbar{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:16px;
+
+  margin-bottom:20px;
+}
+
+
+/* Search */
+
+.searchContainer{
+
+  flex:1;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  height:50px;
+
+  background:#fff;
+
+  border:
+  1px solid #e2e8f0;
+
+  border-radius:14px;
+
+  padding:0 18px;
+}
+
+.searchIcon{
+  color:#64748b;
+}
+
+.leadSearchInput{
+
+  width:100%;
+
+  border:none;
+
+  outline:none;
+
+  background:transparent;
+
+  font-size:15px;
+}
+
+
+/* Dropdown */
+
+.leadSelect{
+
+  width:190px;
+
+  height:50px;
+
+  border:
+  1px solid #e2e8f0;
+
+  border-radius:14px;
+
+  background:#fff;
+
+  padding:0 16px;
+
+  font-size:14px;
+
+  outline:none;
+}
+
+
+/* Add Lead */
+
+.leadAddBtn{
+
+  height:50px;
+
+  padding:0 22px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color:white;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  white-space:nowrap;
+}
+
+.leadAddBtn:hover{
+
+  transform:
+  translateY(-2px);
+}

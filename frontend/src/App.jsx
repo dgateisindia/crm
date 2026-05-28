@@ -19,9 +19,9 @@ import EmployeeProfile from "./pages/employee/EmployeeProfile";
 import AddLeads from "./pages/manager/AddLeads";
 import CreateManager from "./pages/manager/CreateManager";
 import LeadDetails from "./pages/manager/LeadDetails";  
-
-
-
+import ImportantLeads from "./pages/manager/ImportantLeads";  
+import NotInterestedLeads from "./pages/manager/NotInterested"; 
+import ConvertedLeads from "./pages/manager/ConvertedLeads";
 function App() {
   return (
     <Routes>
@@ -170,6 +170,25 @@ function App() {
       <ProtectedRoute>
         <AddLeads />
         </ProtectedRoute>} />
+
+        <Route
+
+        path="/manager/important-leads"
+
+        element={
+        <ImportantLeads />
+        }
+
+        />
+        <Route
+        path="/manager/converted-leads"
+        element={<ConvertedLeads />}
+        />
+
+        <Route
+        path="/manager/not-interested"
+        element={<NotInterestedLeads />}
+        />
 
     </Routes>
   );

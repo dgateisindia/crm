@@ -3,27 +3,50 @@ import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
 import { useNavigate,useParams } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
-import "../../styles/leads.css";
+import "../../styles/addlead.css";
 
 function AddLeads() {
 
-  const [leadData, setLeadData] =
-  useState({
+  const initialState = {
 
-    company_name: "",
-    contact_person_name: "",
-    email: "",
-    phone: "",
-    address: "",
-    website: "",
-    city: "",
-    source: "",
-    lead_mode: "",
-    lead_status: "",
-    remarks: "",
-    important_lead: false,
+  company_name: "",
 
-  });
+  contact_person_name: "",
+
+  designation: "",
+
+  email: "",
+
+  phone: "",
+
+  address: "",
+
+  website: "",
+
+  city: "",
+
+  source: "",
+
+  lead_mode: "",
+
+  lead_status: "",
+
+  remarks: "",
+
+  important_lead: false
+
+};
+
+const [
+
+leadData,
+
+setLeadData
+
+] =
+useState(
+initialState
+);
   const [selectedFile, setSelectedFile] =
   useState(null);
 
@@ -54,6 +77,7 @@ function AddLeads() {
             city: response.data.city || "",
             source: response.data.source || "",
             lead_mode: response.data.lead_mode || "",
+            designation: response.data.designation || "",
             lead_status: response.data.lead_status || "",
             remarks: response.data.remarks || "",
             important_lead: response.data.important_lead || false,
@@ -135,6 +159,7 @@ function AddLeads() {
   alert(
     "Lead Updated Successfully"
   );
+  window.location.reload();
 
 }
 
@@ -165,22 +190,13 @@ else {
       );
 
     }
-      setLeadData({
+      if (!id) {
 
-        company_name: "",
-        contact_person_name: "",
-        email: "",
-        phone: "",
-        address: "",
-        website: "",
-        city: "",
-        source: "",
-        lead_mode: "",
-        lead_status: "",
-        remarks: "",
-        important_lead: false,
+        setLeadData(
+          initialState
+        );
 
-      });
+      }
 
     }
 
@@ -332,7 +348,7 @@ else {
           </div>
 
           {/* Main Grid */}
-          <div className="addLeadGrid">
+          <div className="addLeadWrapper">
 
             {/* Left Form */}
             <div className="leadFormCard">
@@ -393,6 +409,35 @@ else {
                       value={leadData.contact_person_name}
                       onChange={handleChange}
                       required
+                    />
+
+                  </div>
+                  <div>
+
+                    <label className="form-label">
+
+                    Designation
+
+                    </label>
+
+                    <input
+
+                    type="text"
+
+                    name="designation"
+
+                    value={
+                    leadData.designation
+                    }
+
+                    onChange={
+                    handleChange
+                    }
+
+                    placeholder="Enter Designation"
+
+                    className="form-input"
+
                     />
 
                   </div>
@@ -586,13 +631,17 @@ else {
                         Converted
                       </option>
 
+                      <option value="not_interested">
+                        Not Interested
+                      </option>
+
                     </select>
 
                   </div>
 
                 </div>
 
-                <div className="formGroup">
+                <div className="formGroup fullWidth">
 
                   <label>
                     Remarks
@@ -640,7 +689,7 @@ else {
             {/* Right Sidebar */}
             <div className="leadSidebar">
 
-              <div className="sidebarCard">
+              <div className="importCard">
 
                 <div className="sidebarHeader">
 

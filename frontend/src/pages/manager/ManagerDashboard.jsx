@@ -1,6 +1,7 @@
 import axios from "axios";
-
-import {useEffect,useState,} from "react";
+import { useNavigate }
+from "react-router-dom";
+import {useEffect,useState} from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 
 export default function ManagerDashboard() {
+
+  const navigate = useNavigate();
 
   const [stats,
     setStats] =
@@ -76,7 +79,17 @@ export default function ManagerDashboard() {
       <div className="dashboard-grid">
 
         {/* Total Leads */}
-        <div className="crm-card blue-card">
+        <div
+
+          className="crm-card blue-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
+
+        >
 
           <div className="crm-card-top">
 
@@ -91,19 +104,34 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Total Leads
+
           </h3>
 
           <h2>
+
             {
               stats.totalLeads
             }
+
           </h2>
 
         </div>
 
+
         {/* Employees */}
-        <div className="crm-card green-card">
+        <div
+
+          className="crm-card green-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/manager/employees"
+            )
+          }
+
+        >
 
           <div className="crm-card-top">
 
@@ -118,19 +146,34 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Employees
+
           </h3>
 
           <h2>
+
             {
               stats.totalEmployees
             }
+
           </h2>
 
         </div>
 
+
         {/* New Leads */}
-        <div className="crm-card orange-card">
+        <div
+
+          className="crm-card orange-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
+
+        >
 
           <div className="crm-card-top">
 
@@ -145,19 +188,34 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             New Leads
+
           </h3>
 
           <h2>
+
             {
               stats.newLeads
             }
+
           </h2>
 
         </div>
 
+
         {/* Converted */}
-        <div className="crm-card purple-card">
+        <div
+
+          className="crm-card purple-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/manager/leads"
+            )
+          }
+
+        >
 
           <div className="crm-card-top">
 
@@ -172,19 +230,22 @@ export default function ManagerDashboard() {
           </div>
 
           <h3>
+
             Converted
+
           </h3>
 
           <h2>
+
             {
               stats.convertedLeads
             }
+
           </h2>
 
         </div>
 
       </div>
-
       {/* Recent Leads */}
       <div className="recent-card">
 
