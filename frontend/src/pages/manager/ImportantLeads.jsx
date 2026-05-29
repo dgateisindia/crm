@@ -1,453 +1,572 @@
 import axios from "axios";
-
-import {useEffect,useState}from "react";
-
+import {
+  useEffect,
+  useState
+} from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
+
 import {
+  useNavigate
+} from "react-router-dom";
 
-Star,
-BadgeCheck,
-PhoneCall,
-UserX
-
-}
-from "lucide-react";
+import {
+  Star,
+  BadgeCheck,
+  PhoneCall,
+  UserX,
+  Eye,
+  Pencil,
+  Trash2,
+  MoreVertical
+} from "lucide-react";
 
 export default function ImportantLeads() {
 
+  const [
+    leads,
+    setLeads
+  ] = useState([]);
 
-const [
+  const [
+    search,
+    setSearch
+  ] = useState("");
 
-leads,
-
-setLeads
-
-] =
-useState([]);
-
-const [
-
-search,
-
-setSearch
-
-] =
-useState("");
+  const navigate =
+  useNavigate();
 
 
-// ==========================
-// Fetch Important Leads
-// ==========================
-const fetchLeads =
-async () => {
+  // ==========================
+  // Fetch Important Leads
+  // ==========================
+  const fetchLeads =
+  async () => {
 
-try {
+    try {
 
-const response =
-await axios.get(
+      const response =
+      await axios.get(
+        "http://localhost:5000/api/leads/important"
+      );
 
-"http://localhost:5000/api/leads/important"
+      setLeads(
+        response.data
+      );
 
-);
+    }
 
-setLeads(
-response.data
-);
+    catch (error) {
 
-}
+      console.log(error);
 
-catch (error) {
+    }
 
-console.log(error);
-
-}
-
-};
+  };
 
 
-// ==========================
-// Load Data
-// ==========================
-useEffect(() => {
+  // ==========================
+  // Load Data
+  // ==========================
+ useEffect(() => {
 
-const loadLeads =
-async () => {
+  const loadLeads =
+  async () => {
 
-await fetchLeads();
+    await fetchLeads();
 
-};
+  };
 
-loadLeads();
+  loadLeads();
 
 }, []);
 
-// ==========================
-// Search Filter
-// ==========================
-const filteredLeads =
 
-leads.filter((lead) => {
+  // ==========================
+  // Delete Lead
+  // ==========================
+  const handleDelete =
+  async (id) => {
 
-const searchText =
-search.toLowerCase();
+    const confirmDelete =
+    window.confirm(
+      "Are you sure you want to delete this lead?"
+    );
 
-return (
+    if (!confirmDelete)
+    return;
 
-lead.company_name
-?.toLowerCase()
-.includes(searchText)
+    try {
 
-||
+      await axios.delete(
+        `http://localhost:5000/api/leads/delete/${id}`
+      );
 
-lead.contact_person_name
-?.toLowerCase()
-.includes(searchText)
+      alert(
+        "Lead deleted successfully"
+      );
 
-||
+      fetchLeads();
 
-lead.phone
-?.includes(search)
+    }
 
-||
+    catch (error) {
 
-lead.city
-?.toLowerCase()
-.includes(searchText)
+      console.log(error);
 
-);
+      alert(
+        "Failed to delete lead"
+      );
 
-});
+    }
+
+  };
 
 
-return (
+  // ==========================
+  // Search Filter
+  // ==========================
+  const filteredLeads =
 
-<ManagerLayout>
+  leads.filter((lead) => {
 
-<div className="leads-container">
+    const searchText =
+    search.toLowerCase();
 
-<div className="mb-6">
+    return (
 
-<h1 className="leads-header-title">
+      lead.company_name
+      ?.toLowerCase()
+      .includes(searchText)
 
-Important Leads
+      ||
 
-</h1>
+      lead.contact_person_name
+      ?.toLowerCase()
+      .includes(searchText)
 
-<p className="leads-header-subtitle">
+      ||
 
-Manage important CRM leads
+      lead.phone
+      ?.includes(search)
 
-</p>
+      ||
 
-</div>
-        {/* Top Cards */}
-        <div className="dashboard-grid mb-4">
+      lead.city
+      ?.toLowerCase()
+      .includes(searchText)
 
-        {/* Important Leads */}
-        <div className="crm-card blue-card">
+    );
 
-            <div className="crm-card-top">
+  });
 
-            <div className="icon-circle blue-bg">
 
-                <Star size={20} />
+  return (
 
-            </div>
+    <ManagerLayout>
 
-            </div>
+      <div className="leads-container">
 
-            <h3>
+        {/* Header */}
+        <div className="mb-6">
+
+          <h1 className="leads-header-title">
 
             Important Leads
 
-            </h3>
+          </h1>
 
-            <h2>
+          <p className="leads-header-subtitle">
 
-            {
-                leads.length
-            }
+            Manage important CRM leads
 
-            </h2>
+          </p>
 
         </div>
 
 
-        {/* Connected */}
-        <div className="crm-card green-card">
+        {/* Top Cards */}
+        <div className="dashboard-grid mb-4">
+
+          {/* Important Leads */}
+          <div className="crm-card blue-card">
 
             <div className="crm-card-top">
 
-            <div className="icon-circle green-bg">
+              <div className="icon-circle blue-bg">
+
+                <Star size={20} />
+
+              </div>
+
+            </div>
+
+            <h3>
+              Important Leads
+            </h3>
+
+            <h2>
+              {leads.length}
+            </h2>
+
+          </div>
+
+
+          {/* Connected */}
+          <div className="crm-card green-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle green-bg">
 
                 <PhoneCall size={20} />
 
-            </div>
+              </div>
 
             </div>
 
             <h3>
-
-            Connected
-
+              Connected
             </h3>
 
             <h2>
 
-            {
+              {
 
-        leads.filter(
-        lead =>
-        lead.lead_status ===
-        "connected"
-        ).length
+              leads.filter(
+              lead =>
+              lead.lead_status ===
+              "connected"
+              ).length
 
-            }
+              }
 
             </h2>
 
-        </div>
+          </div>
 
 
-        {/* Converted */}
-        <div className="crm-card purple-card">
+          {/* Converted */}
+          <div className="crm-card purple-card">
 
             <div className="crm-card-top">
 
-            <div className="icon-circle purple-bg">
+              <div className="icon-circle purple-bg">
 
                 <BadgeCheck size={20} />
 
-            </div>
+              </div>
 
             </div>
 
             <h3>
-
-            Converted
-
+              Converted
             </h3>
 
             <h2>
 
-            {
+              {
 
-        leads.filter(
-        lead =>
-        lead.lead_status ===
-        "converted"
-        ).length
+              leads.filter(
+              lead =>
+              lead.lead_status ===
+              "converted"
+              ).length
 
-            }
+              }
 
             </h2>
 
-        </div>
+          </div>
 
 
-        {/* Not Interested */}
-        <div className="crm-card orange-card">
+          {/* Not Interested */}
+          <div className="crm-card orange-card">
 
             <div className="crm-card-top">
 
-            <div className="icon-circle orange-bg">
+              <div className="icon-circle orange-bg">
 
                 <UserX size={20} />
 
-            </div>
+              </div>
 
             </div>
 
             <h3>
-
-            Not Interested
-
+              Not Interested
             </h3>
 
             <h2>
 
-            {
+              {
 
-        leads.filter(
-        lead =>
-        lead.lead_status ===
-        "not_interested"
-        ).length
+              leads.filter(
+              lead =>
+              lead.lead_status ===
+              "not_interested"
+              ).length
 
-            }
+              }
 
             </h2>
 
-        </div>
+          </div>
 
         </div>
 
 
-<input
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="Search important leads..."
+          className="manager-search-input mb-4"
+          value={search}
+          onChange={(e) =>
+            setSearch(
+              e.target.value
+            )
+          }
+        />
 
-type="text"
 
-placeholder="Search important leads..."
+        {/* Table */}
+        <div className="leads-card tableWrapper">
 
-className="manager-search-input mb-4"
+          <table className="w-full">
 
-value={search}
+            <thead>
 
-onChange={(e) =>
-setSearch(
-e.target.value
-)
-}
+              <tr className="border-b">
 
-/>
+                <th className="table-head">
+                  Company
+                </th>
 
+                <th className="table-head">
+                  Contact Person
+                </th>
 
-<div className="leads-card tableWrapper">
+                <th className="table-head">
+                  Designation
+                </th>
 
-<table className="w-full">
+                <th className="table-head">
+                  Phone
+                </th>
 
-<thead>
+                <th className="table-head">
+                  Status
+                </th>
 
-<tr className="border-b">
+                <th className="table-head text-center">
+                  Action
+                </th>
 
-<th className="table-head">
-Company
-</th>
+              </tr>
 
-<th className="table-head">
-Contact Person
-</th>
+            </thead>
 
-<th className="table-head">
-Designation
-</th>
 
-<th className="table-head">
-Phone
-</th>
+            <tbody>
 
-<th className="table-head">
-Status
-</th>
+              {
 
-</tr>
+              filteredLeads.length > 0
 
-</thead>
+              ? (
 
-<tbody>
+              filteredLeads.map(
+              (lead) => (
 
-{
+              <tr
+              key={lead.id}
+              className="table-row"
+              >
 
-filteredLeads.length > 0
+                <td className="table-data">
+                  {lead.company_name}
+                </td>
 
-? (
+                <td className="table-data">
 
-filteredLeads.map(
-(lead) => (
+                  {
+                  lead.contact_person_name
+                  || "N/A"
+                  }
 
-<tr
+                </td>
 
-key={lead.id}
+                <td className="table-data">
 
-className="table-row"
+                  {
+                  lead.designation
+                  || "N/A"
+                  }
 
->
+                </td>
 
-<td className="table-data">
+                <td className="table-data">
 
-{
-lead.company_name
-}
+                  {
+                  lead.phone
+                  || "N/A"
+                  }
 
-</td>
+                </td>
 
-<td className="table-data">
 
-{
-lead.contact_person_name
-||
+                <td className="table-data">
 
-"N/A"
-}
+                  <span
+                    className={`status-badge ${lead.lead_status}`}
+                  >
 
-</td>
+                    {
+                    lead.lead_status
+                    }
 
-<td className="table-data">
+                  </span>
 
-{
-lead.designation
-||
+                </td>
 
-"N/A"
-}
 
-</td>
+                {/* Action Menu */}
+                <td className="p-4 relative">
 
-<td className="table-data">
+                  <details
+                    className="dropdownMenu"
+                  >
 
-{
-lead.phone
-||
+                    <summary
+                      className="actionBtn"
+                    >
 
-"N/A"
-}
+                      <MoreVertical
+                        size={20}
+                      />
 
-</td>
+                    </summary>
 
-<td className="table-data">
+                    <div
+                      className="actionMenu"
+                    >
 
-<span
-className={`status-badge ${lead.lead_status}`}
->
+                      <button
 
-{
-lead.lead_status
-}
+                        onClick={() =>
+                        navigate(
 
-</span>
+                        `/manager/lead/${lead.id}`
 
-</td>
+                        )
+                        }
 
-</tr>
+                        className="menuItem"
 
-))
+                      >
 
-)
+                        <Eye size={16} />
 
-: (
+                        View Lead
 
-<tr>
+                      </button>
 
-<td
 
-colSpan="5"
+                      <button
 
-className="text-center p-6 text-gray-500"
+                        onClick={() =>
+                        navigate(
 
->
+                        `/manager/edit-lead/${lead.id}`
 
-No Important Leads Found
+                        )
+                        }
 
-</td>
+                        className="menuItem"
 
-</tr>
+                      >
 
-)
+                        <Pencil size={16} />
 
-}
+                        Edit Lead
 
-</tbody>
+                      </button>
 
-</table>
 
-</div>
+                      <button
+                        className="menuItem"
+                      >
 
-</div>
+                        <PhoneCall
+                          size={16}
+                        />
 
-</ManagerLayout>
+                        Add Followup
 
-);
+                      </button>
+
+
+                      <button
+
+                        onClick={() =>
+                        handleDelete(
+                        lead.id
+                        )
+                        }
+
+                        className="menuItem deleteBtn"
+
+                      >
+
+                        <Trash2
+                          size={16}
+                        />
+
+                        Delete Lead
+
+                      </button>
+
+                    </div>
+
+                  </details>
+
+                </td>
+
+              </tr>
+
+              ))
+
+              ) : (
+
+              <tr>
+
+                <td
+                  colSpan="6"
+                  className="text-center p-6 text-gray-500"
+                >
+
+                  No Important Leads Found
+
+                </td>
+
+              </tr>
+
+              )
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </ManagerLayout>
+
+  );
 
 }

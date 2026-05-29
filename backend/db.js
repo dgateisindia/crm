@@ -25,28 +25,15 @@ db.connect((err) => {
 
   if (err) {
 
-    console.log(
-      "DB Error:",
-      err
-    );
+   
 
   }
 
   else {
 
-    console.log(
-      "Database Connected"
-    );
-
     db.query(
       "SELECT DATABASE() AS db",
       (err, result) => {
-
-        console.log(
-          "Current DB:",
-          result
-        );
-
       }
     );
 

@@ -2,17 +2,18 @@
 
 .sidebar {
   @apply w-60
-  h-screen
+  min-h-screen
   bg-[#071739]
   text-white
   px-4
   py-3
   flex
   flex-col
-  justify-between
-  overflow-hidden;
-}
+  justify-between;
 
+  position: sticky;
+  top: 0;
+}
 /* Logo */
 .sidebar-logo {
   @apply flex

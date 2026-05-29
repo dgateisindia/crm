@@ -1,7 +1,5 @@
 import Sidebar from "../components/Sidebar";
-
 import Topbar from "../components/Topbar";
-
 
 export default function ManagerLayout({
   children
@@ -9,20 +7,23 @@ export default function ManagerLayout({
 
   return (
 
-    <div className="flex min-h-screen">
-
+    <div className="flex min-h-screen bg-gray-100">
 
       {/* Sidebar */}
       <Sidebar />
 
-
       {/* Main Content */}
-      <div className="flex-1 bg-gray-100 h-screen overflow-hidden">
-
+      <div
+        className="
+        flex-1
+        h-screen
+        overflow-y-auto
+        overflow-x-hidden
+        "
+      >
 
         {/* Topbar */}
         <Topbar />
-
 
         {/* Page Content */}
         <div className="p-6">
