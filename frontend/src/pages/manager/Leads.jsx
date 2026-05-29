@@ -21,7 +21,6 @@ Pencil,
 PhoneCall,
 Trash2,
 MoreVertical,
-
 Briefcase,
 UserPlus,
 BadgeCheck,
@@ -426,21 +425,21 @@ lead.lead_status ===
 
     <h2>
 
-      {
+            {
 
-allLeads.filter(
-lead =>
-lead.lead_status ===
-"not_interested"
-).length
+      allLeads.filter(
+      lead =>
+      lead.lead_status ===
+      "not_interested"
+      ).length
 
-      }
+            }
 
-    </h2>
+          </h2>
 
-  </div>
+        </div>
 
-</div>
+      </div>
           {/* Toolbar */}
           <div className="leadToolbar">
 
@@ -540,7 +539,7 @@ lead.lead_status ===
               className="leadAddBtn"
               onClick={() =>
                 navigate(
-                  "/manager/add-lead"
+                  "/manager/add-leads"
                 )
               }
             >
@@ -556,7 +555,7 @@ lead.lead_status ===
         {/* Table */}
         <div className="leads-card tableWrapper overflow-hidden">
 
-          <div className="max-h-[500px] overflow-y-auto">
+          <div className="overflow-x-auto">
 
             <table className="w-full">
 

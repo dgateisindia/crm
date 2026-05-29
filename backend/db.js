@@ -16,18 +16,16 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) {
-    console.log("DB Error:", err);
-  } else {
-    console.log("Database Connected");
+
+   
+
+  }
+
+  else {
 
     db.query(
       "SELECT DATABASE() AS db",
       (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("Current DB:", result);
-        }
       }
     );
   }

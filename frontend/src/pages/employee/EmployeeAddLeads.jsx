@@ -1,12 +1,14 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import EmployeLayout from "../../layouts/EmployeeLayout";
 
-import "../../styles/leads.css";
+import "../../styles/addlead.css";
 
 function AddLeads() {
+
+  const { id } = useParams();
 
   const [leadData, setLeadData] =
   useState({
@@ -29,6 +31,78 @@ function AddLeads() {
   useState(null);
 
   const navigate = useNavigate();
+
+        // ==========================
+      // Fetch Existing Lead
+      // ==========================
+
+      useEffect(() => {
+
+        const fetchLead =
+        async () => {
+
+          if (!id) return;
+
+          try {
+
+            const response =
+            await axios.get(
+              `http://localhost:5000/api/leads/${id}`
+            );
+
+            setLeadData({
+
+              company_name:
+              response.data.company_name || "",
+
+              contact_person_name:
+              response.data.contact_person_name || "",
+
+              email:
+              response.data.email || "",
+
+              phone:
+              response.data.phone || "",
+
+              address:
+              response.data.address || "",
+
+              website:
+              response.data.website || "",
+
+              city:
+              response.data.city || "",
+
+              source:
+              response.data.source || "",
+
+              lead_mode:
+              response.data.lead_mode || "",
+
+              lead_status:
+              response.data.lead_status || "",
+
+              remarks:
+              response.data.remarks || "",
+
+              important_lead:
+              response.data.important_lead || false,
+
+            });
+
+          }
+
+          catch (error) {
+
+            console.log(error);
+
+          }
+
+        };
+
+        fetchLead();
+
+      }, [id]);
 
   const handleChange =
   (e) => {
@@ -79,24 +153,38 @@ function AddLeads() {
         )
       );
 
-      await axios.post(
+      if (id) {
 
-        "http://localhost:5000/api/leads/add",
+          await axios.put(
 
-        {
+            `http://localhost:5000/api/leads/update/${id}`,
 
-          ...leadData,
+            leadData
 
-          created_by_id:
-          user?.id || 1,
+          );
+
+          alert("Lead Updated Successfully");
 
         }
 
-      );
+        else {
 
-      alert(
-        "Lead Added Successfully"
-      );
+          await axios.post(
+
+            "http://localhost:5000/api/leads/add",
+
+            {
+              ...leadData,
+              created_by_id:
+              user?.id || 1,
+            }
+
+          );
+
+          alert("Lead Added Successfully");
+
+        }
+              
 
       setLeadData({
 
@@ -224,9 +312,8 @@ function AddLeads() {
 
     <EmployeLayout>
 
-      <div className="addLeadPage">
 
-        <div className="addLeadContainer">
+        <div className="addLeadContainer employeeAddLead">
 
           {/* Header */}
           <div className="addLeadHeader">
@@ -248,7 +335,7 @@ function AddLeads() {
 
               onClick={() =>
                 navigate(
-                  "/employee /leads"
+                  "/employee/my-leads"
                 )
               }
               >
@@ -264,7 +351,7 @@ function AddLeads() {
           </div>
 
           {/* Main Grid */}
-          <div className="addLeadGrid">
+          <div className="addLeadWrapper">
 
             {/* Left Form */}
             <div className="leadFormCard">
@@ -572,9 +659,7 @@ function AddLeads() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="leadSidebar">
-
-              <div className="sidebarCard">
+            <div className="importCard">
 
                 <div className="sidebarHeader">
 
@@ -643,11 +728,6 @@ function AddLeads() {
             </div>
 
           </div>
-
-        </div>
-
-      </div>
-
     </EmployeLayout>
 
   );

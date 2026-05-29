@@ -1,0 +1,248 @@
+/* =========================
+   Employee Dashboard
+========================= */
+
+.employeeDashboard {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* =========================
+   Header
+========================= */
+
+.dashboardTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: #071739;
+  margin-bottom: 6px;
+}
+
+.dashboardSubtitle {
+  color: #64748b;
+  font-size: 16px;
+  margin-bottom: 28px;
+}
+
+/* =========================
+   Stats Cards
+========================= */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+
+  position: relative;
+  overflow: hidden;
+
+  border: 1px solid #eef2f7;
+
+  box-shadow:
+  0 2px 10px rgba(0,0,0,.06);
+
+  min-height: 140px;
+}
+
+/* Left Border */
+
+.statCard::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:6px;
+  height:100%;
+  border-radius:20px;
+}
+
+/* Card Colors */
+
+.statCard:nth-child(1)::before{
+  background:#3b82f6;
+}
+
+.statCard:nth-child(2)::before{
+  background:#22c55e;
+}
+
+.statCard:nth-child(3)::before{
+  background:#f97316;
+}
+
+.statCard:nth-child(4)::before{
+  background:#a855f7;
+}
+
+/* Icon Box */
+
+.statIcon{
+  width:58px;
+  height:58px;
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin-bottom:14px;
+}
+
+/* Icon Colors */
+
+.statCard:nth-child(1) .statIcon{
+  background:#3b82f6;
+}
+
+.statCard:nth-child(2) .statIcon{
+  background:#22c55e;
+}
+
+.statCard:nth-child(3) .statIcon{
+  background:#f97316;
+}
+
+.statCard:nth-child(4) .statIcon{
+  background:#a855f7;
+}
+
+.statTitle {
+  color: #64748b;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 42px;
+  font-weight: 700;
+  color: #071739;
+}
+
+/* =========================
+   Recent Leads Table
+========================= */
+
+.recentCard {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+
+  border: 1px solid #eef2f7;
+
+  box-shadow:
+  0 2px 10px rgba(0,0,0,.06);
+}
+
+.recentTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #071739;
+  margin-bottom: 20px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.leadsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leadsTable th {
+  text-align: left;
+  padding: 16px;
+  color: #475569;
+  font-size: 15px;
+  font-weight: 600;
+
+  border-bottom:
+  1px solid #e2e8f0;
+}
+
+.leadsTable td {
+  padding: 18px 16px;
+  border-bottom:
+  1px solid #f1f5f9;
+
+  color:#111827;
+}
+
+.leadsTable tr:hover {
+  background: #f8fafc;
+}
+
+/* =========================
+   Status Badge
+========================= */
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 16px;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Status Colors */
+
+.new {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.contacted {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.qualified {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.converted {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.not_interested{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 1200px) {
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .employeeDashboard {
+    padding: 16px;
+  }
+
+}

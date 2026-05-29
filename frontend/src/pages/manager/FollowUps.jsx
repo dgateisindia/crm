@@ -5,8 +5,7 @@ import {
   useState
 } from "react";
 
-import ManagerLayout
-from "../../layouts/ManagerLayout";
+import ManagerLayout from "../../layouts/ManagerLayout";
 
 import "../../styles/leads.css";
 

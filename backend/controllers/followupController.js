@@ -179,6 +179,8 @@ const getFollowups =
   );
 
 };
+
+
 // ==========================
 // Get Employee Followups
 // ==========================
@@ -188,29 +190,46 @@ const getEmployeeFollowups =
   const employeeId =
   req.params.employeeId;
 
+  console.log(
+    "Employee ID:",
+    employeeId
+  );
+
   const sql = `
 
     SELECT
 
-      follow_ups.*,
+      follow_ups.followup_id,
 
-      leads.company_name
+      follow_ups.followup_mode,
+
+      follow_ups.remarks,
+
+      follow_ups.lead_status,
+
+      leads.company_name,
+
+      employees.full_name
 
     FROM follow_ups
 
-    LEFT JOIN leads
+    INNER JOIN leads
 
     ON follow_ups.lead_id =
     leads.id
+
+    INNER JOIN employees
+
+    ON follow_ups.employee_id =
+    employees.employee_id
 
     WHERE
     follow_ups.employee_id = ?
 
     ORDER BY
-    followup_id DESC
+    follow_ups.followup_id DESC
 
   `;
-
 
   db.query(
 
@@ -222,18 +241,23 @@ const getEmployeeFollowups =
 
       if (err) {
 
-        console.log(err);
+        console.log(
+          "DB ERROR:",
+          err
+        );
 
         return res
         .status(500)
         .json({
 
-message:
-"Failed to fetch employee followups"
+          message:
+          "Failed to fetch employee followups"
 
         });
 
       }
+
+      console.log(result);
 
       res.status(200)
       .json(result);
@@ -243,6 +267,9 @@ message:
   );
 
 };
+
+
+
 
 // ==========================
 // Get Lead Followups

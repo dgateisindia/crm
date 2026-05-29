@@ -7,17 +7,20 @@ import {
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
-import "../../styles/leads.css";
+import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 
 import {
   Search,
-
   Eye,
   Pencil,
   PhoneCall,
   Trash2,
-  MoreVertical
+  MoreVertical,
+  Briefcase,
+  UserPlus,
+  BadgeCheck,
+  UserX
 
 } from "lucide-react";
 
@@ -47,14 +50,16 @@ export default function Leads() {
   const [followupData,
     setFollowupData] =
     useState({
+
       followup_mode:
       "call",
+
+      lead_status:
+      "connected",
+
       remarks:
-    "",
-    next_followup_date:
-    "",
-    status:
-    "pending"
+      ""
+
     });
 
   const navigate =
@@ -202,12 +207,17 @@ useEffect(() => {
         }
       );
       alert("Follow-up added successfully");
-      setShowFollowupModal(false);
       setFollowupData({
-        followup_mode: "call",
-        remarks: "",
-        next_followup_date: "",
-        status: "pending"
+
+        followup_mode:
+        "call",
+
+        lead_status:
+        "connected",
+
+        remarks:
+        ""
+
       });
     }
     catch (error) {
@@ -295,51 +305,156 @@ useEffect(() => {
           </p>
 
         </div>
+        <div className="dashboard-grid">
+
+          <div className="crm-card blue-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle blue-bg">
+
+                <Briefcase size={18} />
+
+              </div>
+
+            </div>
+
+            <h3>My Leads</h3>
+
+            <h2>
+              {allLeads.length}
+            </h2>
+
+          </div>
 
 
-        {/* Filters */}
-        <div className="employee-filter-card md:flex-row">
+          <div className="crm-card green-card">
+
+            <div className="crm-card-top">
+
+              <div className="icon-circle green-bg">
+
+                <UserPlus size={18} />
+
+              </div>
+
+            </div>
+
+            <h3>New Leads</h3>
+
+            <h2>
+
+              {
+
+                allLeads.filter(
+                lead =>
+                lead.lead_status ===
+                "new"
+                ).length
+
+                      }
+
+                    </h2>
+
+                  </div>
 
 
-          {/* Search */}
-          <div className="employee-search-box ">
+                  <div className="crm-card purple-card">
 
-            <Search size={18} />
+                    <div className="crm-card-top">
+
+                      <div className="icon-circle purple-bg">
+
+                        <BadgeCheck size={18} />
+
+                      </div>
+
+                    </div>
+
+                    <h3>Converted</h3>
+
+                    <h2>
+
+                      {
+
+                allLeads.filter(
+                lead =>
+                lead.lead_status ===
+                "converted"
+                ).length
+
+                      }
+
+                    </h2>
+
+                  </div>
+
+
+                  <div className="crm-card orange-card">
+
+                    <div className="crm-card-top">
+
+                      <div className="icon-circle orange-bg">
+
+                        <UserX size={18} />
+
+                      </div>
+
+                    </div>
+
+                    <h3>Not Interested</h3>
+
+                    <h2>
+
+                      {
+
+                allLeads.filter(
+                lead =>
+                lead.lead_status ===
+                "not_interested"
+                ).length
+
+                      }
+
+                    </h2>
+
+                  </div>
+
+                </div>
+
+
+                <div className="leadToolbar">
+
+          <div className="searchContainer">
+
+            <Search
+              size={18}
+              className="searchIcon"
+            />
 
             <input
-
               type="text"
-
               placeholder="Search company or contact..."
-
-              className="employee -search-input"
-
+              className="leadSearchInput"
               value={search}
-
               onChange={(e) =>
                 setSearch(
                   e.target.value
                 )
               }
-
             />
 
           </div>
 
 
-          {/* Status Filter */}
           <select
-
-            className="employee-filter-select"
-
+            className="leadSelect"
             value={statusFilter}
-
             onChange={(e) =>
               setStatusFilter(
                 e.target.value
               )
             }
-
           >
 
             <option value="all">
@@ -350,33 +465,52 @@ useEffect(() => {
               New
             </option>
 
-            <option value="contacted">
-              Contacted
+            <option value="connected">
+              Connected
             </option>
 
-            <option value="qualified">
-              Qualified
+            <option value="interested">
+              Interested
             </option>
 
-            <option value="proposal_sent">
-              Proposal Sent
+            <option value="proposal">
+              Proposal
             </option>
 
             <option value="converted">
               Converted
             </option>
 
-            <option value="lost">
-              Lost
+            <option value="not_interested">
+              Not Interested
             </option>
 
           </select>
 
         </div>
+        {/* Add Lead */}
+          <button
+            className="leadAddBtn"
+            onClick={() =>
+              navigate(
+                "/employee/add-leads"
+              )
+            }
+          >
+
+            + Add Lead
+
+          </button>
+
+          
+
+        </div>
 
 
         {/* Table */}
-        <div className="leads-card tableWrapper">
+        <div className="leads-card tableWrapper overflow-hidden">
+
+          <div className="overflow-x-auto">
 
           <table className="w-full">
 
@@ -517,7 +651,7 @@ useEffect(() => {
                                 onClick={() =>
                                 navigate(
 
-                                `/manager/lead/${lead.id}`
+                                `/employee/lead/${lead.id}`
 
                                 )
                                 }
@@ -537,7 +671,7 @@ useEffect(() => {
 
                             onClick={() =>
                               navigate(
-                                `/manager/edit-lead/${lead.id}`
+                                `/employee/edit-lead/${lead.id}`
                               )
                             }
                               className="menuItem"
@@ -627,10 +761,10 @@ useEffect(() => {
             </tbody>
 
           </table>
-
+          </div>
         </div>
 
-      </div>
+      
 
 
       {
@@ -732,89 +866,77 @@ e.target.value
         </select>
 
       </div>
-
-
-      {/* Date */}
       <div className="crmInputGroup">
 
-        <label>
+          <label>
 
-          Next Followup
+            Lead Status
 
-        </label>
+          </label>
 
-        <input
+          <select
 
-          type="datetime-local"
+            value={
+            followupData.lead_status
+            }
 
-          value={
-followupData.next_followup_date
-          }
+            onChange={(e) =>
 
-          onChange={(e) =>
+            setFollowupData({
 
-setFollowupData({
+              ...followupData,
 
-...followupData,
+              lead_status:
+              e.target.value
 
-next_followup_date:
-e.target.value
+            })
 
-})
+            }
 
-          }
+          >
 
-        />
+            <option value="new">
+              New
+            </option>
 
-      </div>
+            <option value="connected">
+              Connected
+            </option>
 
+            <option value="interested">
+              Interested
+            </option>
 
-      {/* Status */}
-      <div className="crmInputGroup">
+            <option value="proposal">
+              Proposal
+            </option>
 
-        <label>
+            <option value="offered">
+              Offered
+            </option>
 
-          Status
+            <option value="meeting_scheduled">
+              Meeting Scheduled
+            </option>
 
-        </label>
+            <option value="not_interested">
+              Not Interested
+            </option>
 
-        <select
+            <option value="converted">
+              Converted
+            </option>
 
-          value={
-followupData.status
-          }
+            <option value="lost">
+              Lost
+            </option>
 
-          onChange={(e) =>
+          </select>
 
-setFollowupData({
+        </div>
+      
 
-...followupData,
-
-status:
-e.target.value
-
-})
-
-          }
-
-        >
-
-          <option value="pending">
-
-            Pending
-
-          </option>
-
-          <option value="completed">
-
-            Completed
-
-          </option>
-
-        </select>
-
-      </div>
-
+      
 
       {/* Remarks */}
       <div className="crmInputGroup fullWidth">

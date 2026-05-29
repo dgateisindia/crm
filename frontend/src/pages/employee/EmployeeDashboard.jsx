@@ -1,14 +1,28 @@
+
 import axios from "axios";
 
-import {
-  useState,
-  useEffect,
-} from "react";
+import {useState,useEffect,} from "react";
 
-import EmployeeLayout
-from "../../layouts/EmployeeLayout";
+import {useNavigate} from "react-router-dom";
+
+import EmployeeLayout from "../../layouts/EmployeeLayout";
+
+import "../../styles/managerDashboard.css";
+
+import {
+
+  Briefcase,
+  UserPlus,
+  BadgeCheck,
+  UserX
+
+}
+from "lucide-react";
 
 export default function EmployeeDashboard() {
+
+  const navigate =
+  useNavigate();
 
   const [stats,
     setStats] =
@@ -50,16 +64,6 @@ export default function EmployeeDashboard() {
     if (!userId)
     return;
 
-    console.log(
-      "User ID:",
-      userId
-    );
-
-    console.log(
-      "Calling API:",
-      `http://localhost:5000/api/dashboard/employee/${userId}`
-    );
-
     axios.get(
 
       `http://localhost:5000/api/dashboard/employee/${userId}`
@@ -67,11 +71,6 @@ export default function EmployeeDashboard() {
     )
 
     .then((res) => {
-
-      console.log(
-        "Dashboard Data:",
-        res.data
-      );
 
       setStats(
         res.data
@@ -81,10 +80,7 @@ export default function EmployeeDashboard() {
 
     .catch((err) => {
 
-      console.log(
-        "Dashboard Error:",
-        err
-      );
+      console.log(err);
 
     });
 
@@ -96,82 +92,20 @@ export default function EmployeeDashboard() {
     <EmployeeLayout>
 
       {/* Header */}
-      <h1 className="text-3xl font-bold text-[#071739] mb-6">
+      <div className="dashboard-header">
 
-        Employee Dashboard
+        <div>
 
-      </h1>
+          <h1 className="dashboard-title">
 
+            Employee Dashboard
 
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+          </h1>
 
-        {/* My Leads */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
+          <p className="dashboard-subtitle">
 
-          <h2 className="text-gray-500 text-sm">
-
-            My Leads
-
-          </h2>
-
-          <p className="text-4xl font-bold text-[#071739] mt-2">
-
-            {stats.totalLeads}
-
-          </p>
-
-        </div>
-
-
-        {/* Contacted */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-
-          <h2 className="text-gray-500 text-sm">
-
-            Contacted
-
-          </h2>
-
-          <p className="text-4xl font-bold text-[#071739] mt-2">
-
-            {stats.contacted}
-
-          </p>
-
-        </div>
-
-
-        {/* Qualified */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-
-          <h2 className="text-gray-500 text-sm">
-
-            Qualified
-
-          </h2>
-
-          <p className="text-4xl font-bold text-[#071739] mt-2">
-
-            {stats.qualified}
-
-          </p>
-
-        </div>
-
-
-        {/* Converted */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-
-          <h2 className="text-gray-500 text-sm">
-
-            Converted
-
-          </h2>
-
-          <p className="text-4xl font-bold text-[#071739] mt-2">
-
-            {stats.converted}
+            Welcome back,
+            here's your CRM progress.
 
           </p>
 
@@ -180,14 +114,191 @@ export default function EmployeeDashboard() {
       </div>
 
 
+      {/* Top Cards */}
+      <div className="dashboard-grid">
+
+        {/* My Leads */}
+        <div
+
+          className="crm-card blue-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/employee/my-leads"
+            )
+          }
+
+        >
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle blue-bg">
+
+              <Briefcase
+                size={18}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+
+            My Leads
+
+          </h3>
+
+          <h2>
+
+            {
+              stats.totalLeads
+            }
+
+          </h2>
+
+        </div>
+
+
+        {/* New Leads */}
+        <div
+
+          className="crm-card green-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/employee/my-leads"
+            )
+          }
+
+        >
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle green-bg">
+
+              <UserPlus
+                size={18}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+
+            Contacted
+
+          </h3>
+
+          <h2>
+
+            {
+              stats.contacted
+            }
+
+          </h2>
+
+        </div>
+
+
+        {/* Qualified */}
+        <div
+
+          className="crm-card orange-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/employee/my-leads"
+            )
+          }
+
+        >
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle orange-bg">
+
+              <UserX
+                size={18}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+
+            Qualified
+
+          </h3>
+
+          <h2>
+
+            {
+              stats.qualified
+            }
+
+          </h2>
+
+        </div>
+
+
+        {/* Converted */}
+        <div
+
+          className="crm-card purple-card cursor-pointer"
+
+          onClick={() =>
+            navigate(
+              "/employee/converted-leads"
+            )
+          }
+
+        >
+
+          <div className="crm-card-top">
+
+            <div className="icon-circle purple-bg">
+
+              <BadgeCheck
+                size={18}
+              />
+
+            </div>
+
+          </div>
+
+          <h3>
+
+            Converted
+
+          </h3>
+
+          <h2>
+
+            {
+              stats.converted
+            }
+
+          </h2>
+
+        </div>
+
+      </div>
+
+
       {/* Recent Leads */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="recent-card">
 
-        <h2 className="text-xl font-semibold text-[#071739] mb-5">
+        <div className="recent-header">
 
-          Recent Leads
+          <h2>
 
-        </h2>
+            Recent Leads
+
+          </h2>
+
+        </div>
 
         <div className="overflow-x-auto">
 
@@ -195,42 +306,31 @@ export default function EmployeeDashboard() {
 
             <thead>
 
-              <tr className="border-b text-gray-600">
+              <tr>
 
-                <th className="text-left p-4">
-
+                <th>
                   Company
-
                 </th>
 
-                <th className="text-left p-4">
-
+                <th>
                   Contact Person
-
                 </th>
 
-                <th className="text-left p-4">
-
+                <th>
                   Phone
-
                 </th>
 
-                <th className="text-left p-4">
-
+                <th>
                   Status
-
                 </th>
 
-                <th className="text-left p-4">
-
+                <th>
                   Lead Mode
-
                 </th>
 
               </tr>
 
             </thead>
-
 
             <tbody>
 
@@ -245,53 +345,67 @@ export default function EmployeeDashboard() {
                   .map((lead) => (
 
                     <tr
-
                       key={lead.id}
-
-                      className="border-b hover:bg-gray-50 transition"
-
                     >
 
-                      <td className="p-4">
-
+                      <td>
                         {
                           lead.company_name
                         }
-
                       </td>
 
-                      <td className="p-4">
+                      <td>
 
                         {
                           lead.contact_person_name
+                          || "N/A"
                         }
 
                       </td>
 
-                      <td className="p-4">
+                      <td>
 
                         {
                           lead.phone
+                          || "N/A"
                         }
 
                       </td>
 
-                      <td className="p-4 capitalize">
+                      <td>
 
-                        {
-                          lead.lead_status
-                        }
+                        <span
+                          className={`status-badge ${
+                            lead.lead_status ===
+                            "converted"
+
+                            ? "converted"
+
+                            : lead.lead_status ===
+                            "new"
+
+                            ? "new"
+
+                            : "connected"
+                          }`}
+                        >
+
+                          {
+                            lead.lead_status
+                          }
+
+                        </span>
 
                       </td>
 
-                      <td className="p-4 capitalize">
+                      <td>
 
                         {
                           lead.lead_mode
                           ?.replace(
                             "_",
                             " "
-                          )
+                          ) || "N/A"
                         }
 
                       </td>
