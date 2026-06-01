@@ -59,28 +59,27 @@ if (
 
 }
 
-  // ==========================
-  // Duplicate Check
-  // ==========================
-  const duplicateSql = `
+  const sql = `
+    INSERT INTO employees (
 
-    SELECT *
+      manager_id,
+      role_id,
+      full_name,
+      email,
+      phone,
+      password,
+      department,
+      designation,
+      status
 
-    FROM employees
+    )
 
-    WHERE
-
-    email = ?
-
-    OR phone = ?
-
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
 
   db.query(
-
-    duplicateSql,
-
+    sql,
     [
 
       manager_id,
@@ -91,183 +90,74 @@ if (
         : 1,
       full_name,
       email,
-      phone
+      phone,
+      password,
+      department,
+      designation,
+      status || "active"
+
     ],
 
-    (
+    (err, result) => {
 
-      duplicateErr,
-      duplicateResult
+      if (err) {
 
-<<<<<<< HEAD
-    ) => {
-
-      if (duplicateErr) {
-
-        console.log(
-          duplicateErr
-        );
-=======
         //console.log(err);
->>>>>>> origin/Deekshitha
 
         return res.status(500)
         .json({
-
           message:
-          "Duplicate check failed"
-
+          "Failed to create employee",
         });
 
       }
 
+      // Generate EMP001
+      const employeeCode =
+      `EMP${String(
+        result.insertId
+      ).padStart(3, "0")}`;
 
-      // Duplicate Found
-      if (
-        duplicateResult.length > 0
-      ) {
-
-        return res.status(409)
-        .json({
-
-          message:
-          "Email or Phone already exists"
-
-        });
-
-      }
-
-
-      // ==========================
-      // Insert Employee
-      // ==========================
-      const sql = `
-
-        INSERT INTO employees (
-
-          manager_id,
-          role_id,
-          full_name,
-          email,
-          phone,
-          password,
-          department,
-          designation,
-          status
-
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-
+      // Save employee code
+      const updateSql = `
+        UPDATE employees
+        SET employee_code = ?
+        WHERE employee_id = ?
       `;
 
-
       db.query(
-
-        sql,
-
+        updateSql,
         [
-
-          manager_id,
-          role_id,
-          full_name,
-          email,
-          phone,
-          password,
-          department,
-          designation,
-          status || "active"
-
+          employeeCode,
+          result.insertId
         ],
 
-        (err, result) => {
+        (updateErr) => {
 
-          if (err) {
+          if (updateErr) {
 
-<<<<<<< HEAD
-            console.log(err);
-=======
             //console.log(updateErr);
->>>>>>> origin/Deekshitha
 
             return res.status(500)
             .json({
-
               message:
-              "Failed to create employee",
-
+              "Employee created but code generation failed",
             });
 
           }
 
+          res.status(201)
+          .json({
 
-          // ==========================
-          // Generate EMP001
-          // ==========================
-          const employeeCode =
+            message:
+            "Employee created successfully",
 
-          `EMP${String(
-            result.insertId
-          ).padStart(3, "0")}`;
+            employee_code:
+            employeeCode,
 
-
-          // ==========================
-          // Save Employee Code
-          // ==========================
-          const updateSql = `
-
-            UPDATE employees
-
-            SET employee_code = ?
-
-            WHERE employee_id = ?
-
-          `;
-
-
-          db.query(
-
-            updateSql,
-
-            [
-              employeeCode,
-              result.insertId
-            ],
-
-            (updateErr) => {
-
-              if (updateErr) {
-
-                console.log(updateErr);
-
-                return res.status(500)
-                .json({
-
-                  message:
-                  "Employee created but code generation failed",
-
-                });
-
-              }
-
-
-              res.status(201)
-              .json({
-
-                message:
-                "Employee created successfully",
-
-                employee_code:
-                employeeCode,
-
-              });
-
-            }
-
-          );
+          });
 
         }
-
       );
 
     }
@@ -275,7 +165,6 @@ if (
   );
 
 };
-
 
 // ==========================
 // Get All Employees
@@ -319,7 +208,6 @@ const getEmployees =
   );
 
 };
-
 
 // ==========================
 // Get Employee By ID
@@ -432,4 +320,3 @@ module.exports = {
   deleteEmployee
 
 };
-

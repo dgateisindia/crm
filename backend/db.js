@@ -4,19 +4,9 @@ require("dotenv").config();
 
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
-<<<<<<< HEAD
-
-  user: process.env.DB_USER,
-
-  password: process.env.DB_PASSWORD,
-
-  database: process.env.DB_NAME,
-
-=======
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
->>>>>>> origin/Deekshitha
   port: process.env.DB_PORT,
 });
 db.connect((err) => {
@@ -35,17 +25,9 @@ db.connect((err) => {
       } else {
         console.log("Connected Database:", result);
       }
-<<<<<<< HEAD
-    );
-  }
-});
-
-module.exports = db;
-=======
     }
   );
 
 });
 module.exports =
 db;
->>>>>>> origin/Deekshitha
