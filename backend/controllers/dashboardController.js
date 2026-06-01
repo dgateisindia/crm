@@ -116,9 +116,6 @@ const getDashboardStats =
 // ==========================
 // EMPLOYEE DASHBOARD
 // ==========================
-// ==========================
-// EMPLOYEE DASHBOARD
-// ==========================
 const getEmployeeStats =
 (req, res) => {
 

@@ -75,7 +75,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -124,7 +124,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -170,7 +170,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -218,7 +218,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -232,7 +232,108 @@ async (req, res) => {
 
 };
 
+const getEmployeeImportantLeads =
+async (req, res) => {
 
+  try {
+
+    const { employeeId } = req.params;
+
+    const [rows] =
+    await db.promise().query(
+
+      `SELECT *
+       FROM leads
+       WHERE important_lead = 1
+       AND created_by_id = ?
+       ORDER BY id DESC`,
+
+      [employeeId]
+
+    );
+
+    res.json(rows);
+
+  }
+
+  catch (error) {
+
+    res.status(500).json({
+      message:
+      "Failed to fetch important leads"
+    });
+
+  }
+
+};
+const getEmployeeConvertedLeads =
+async (req, res) => {
+
+  try {
+
+    const { employeeId } = req.params;
+
+    const [rows] =
+    await db.promise().query(
+
+      `SELECT *
+       FROM leads
+       WHERE lead_status = 'converted'
+       AND created_by_id = ?
+       ORDER BY id DESC`,
+
+      [employeeId]
+
+    );
+
+    res.json(rows);
+
+  }
+
+  catch (error) {
+
+    res.status(500).json({
+      message:
+      "Failed to fetch converted leads"
+    });
+
+  }
+
+};
+const getEmployeeNotInterestedLeads =
+async (req, res) => {
+
+  try {
+
+    const { employeeId } = req.params;
+
+    const [rows] =
+    await db.promise().query(
+
+      `SELECT *
+       FROM leads
+       WHERE lead_status = 'not_interested'
+       AND created_by_id = ?
+       ORDER BY id DESC`,
+
+      [employeeId]
+
+    );
+
+    res.json(rows);
+
+  }
+
+  catch (error) {
+
+    res.status(500).json({
+      message:
+      "Failed to fetch not interested leads"
+    });
+
+  }
+
+};
 // ==========================
 // Get Lead By ID
 // ==========================
@@ -279,7 +380,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -389,7 +490,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500)
     .json({
@@ -429,7 +530,7 @@ async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500).json({
 
@@ -468,7 +569,7 @@ res.json(rows);
 
 catch (error) {
 
-console.log(error);
+//  console.log(error);
 
 res.status(500).json({
 
@@ -509,7 +610,7 @@ res.json(rows);
 
 catch (error) {
 
-console.log(error);
+//  console.log(error);
 
 res.status(500).json({
 
@@ -543,6 +644,12 @@ module.exports = {
 
   getConvertedLeads,
 
-  getNotInterestedLeads
+  getNotInterestedLeads,
+
+  getEmployeeImportantLeads,
+
+  getEmployeeConvertedLeads,
+
+  getEmployeeNotInterestedLeads
 
 };

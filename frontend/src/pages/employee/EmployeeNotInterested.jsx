@@ -1,12 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import ManagerLayout from "../../layouts/ManagerLayout";
+import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
 
 export default function NotInterestedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const employeeId = user?.id;
 
   // ==========================
   // Fetch Not Interested Leads
@@ -14,7 +20,7 @@ export default function NotInterestedLeads() {
   const fetchLeads = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/leads/not-interested"
+        `http://localhost:5000/api/leads/employee/${employeeId}/not-interested`
       );
 
       setLeads(response.data);
@@ -50,8 +56,7 @@ export default function NotInterestedLeads() {
         .includes(searchText) ||
 
       lead.phone
-        ?.toString()
-        .includes(search) ||
+        ?.includes(search) ||
 
       lead.city
         ?.toLowerCase()
@@ -60,7 +65,7 @@ export default function NotInterestedLeads() {
   });
 
   return (
-    <ManagerLayout>
+    <EmployeeLayout>
       <div className="leads-container">
 
         {/* Header */}
@@ -180,6 +185,6 @@ export default function NotInterestedLeads() {
         </div>
 
       </div>
-    </ManagerLayout>
+    </EmployeeLayout>
   );
 }

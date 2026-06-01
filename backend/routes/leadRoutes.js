@@ -31,7 +31,13 @@ const {
 
   getConvertedLeads,
 
-  getNotInterestedLeads
+  getNotInterestedLeads,
+
+  getEmployeeImportantLeads,
+
+  getEmployeeConvertedLeads,
+
+  getEmployeeNotInterestedLeads
 
 } = require(
   "../controllers/leadController"
@@ -66,6 +72,22 @@ router.get(
   "/employee/:employeeId",
   getEmployeeLeads
 );
+router.get(
+  "/employee/:employeeId/important",
+  getEmployeeImportantLeads
+);
+
+router.get(
+  "/employee/:employeeId/converted",
+  getEmployeeConvertedLeads
+);
+
+router.get(
+  "/employee/:employeeId/not-interested",
+  getEmployeeNotInterestedLeads
+);
+
+
 // Important Leads
 
 router.get(

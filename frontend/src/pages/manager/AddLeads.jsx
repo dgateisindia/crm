@@ -619,20 +619,36 @@ else {
                         New
                       </option>
 
-                      <option value="contacted">
-                        Contacted
+                      <option value="Connected">
+                        Connected
                       </option>
 
-                      <option value="qualified">
-                        Qualified
+                      <option value="Interested">
+                        Interested
                       </option>
 
-                      <option value="converted">
+                      <option value="Proposed">
+                        Proposed
+                      </option>
+
+                      <option value="Offered">
+                        Offered
+                      </option>
+
+                      <option value="Meeting Scheduled">
+                        Meeting Scheduled
+                      </option>
+
+                      <option value="Not Interested">
+                        Not Interested
+                      </option>
+
+                      <option value="Converted">
                         Converted
                       </option>
 
-                      <option value="not_interested">
-                        Not Interested
+                      <option value="Closed">
+                        Closed
                       </option>
 
                     </select>

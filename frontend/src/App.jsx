@@ -22,10 +22,11 @@ import LeadDetails from "./pages/manager/LeadDetails";
 import ImportantLeads from "./pages/manager/ImportantLeads";  
 import NotInterestedLeads from "./pages/manager/NotInterested"; 
 import ConvertedLeads from "./pages/manager/ConvertedLeads";
-
-
-
-
+import ResetPassword from "./pages/manager/ResetPassword";
+import ForgotPassword from "./pages/manager/ForgotPassword";
+import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
+import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
+import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
 
 
 
@@ -36,6 +37,15 @@ function App() {
       <Route
         path="/"
         element={<Login />}
+      />
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
+
+      <Route
+        path="/reset-password/:token"
+        element={<ResetPassword />}
       />
 
       <Route
@@ -212,6 +222,20 @@ function App() {
         <Route
         path="/manager/not-interested"
         element={<NotInterestedLeads />}
+        />
+
+        <Route
+        path="/employee/important-leads"
+        element={<EmployeeImportantLeads />}
+        />
+
+        <Route
+        path="/employee/converted-leads"
+        element={<EmployeeConvertedLeads />}
+        />
+        <Route
+        path="/employee/not-interested"
+        element={<EmployeeNotInterested />}
         />
 
     </Routes>
