@@ -21,7 +21,7 @@ const createEmployee =
     status
 
   } = req.body;
- console.log(req.body);
+ //console.log(req.body);
 
 if (
 
@@ -37,14 +37,7 @@ if (
 
 ) {
 
-  console.log({
-
-    manager_id,
-    full_name,
-    email,
-    password
-
-  });
+  
 
   return res.status(400)
   .json({
@@ -109,7 +102,7 @@ if (
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({
@@ -143,7 +136,7 @@ if (
 
           if (updateErr) {
 
-            console.log(updateErr);
+            //console.log(updateErr);
 
             return res.status(500)
             .json({
@@ -190,10 +183,10 @@ const getEmployees =
 
       if (err) {
 
-        console.log(
-          "SQL Error:",
-          err
-        );
+        //console.log(
+        //  "SQL Error:",
+        //  err
+        //);
 
         return res.status(500)
         .json({
@@ -203,10 +196,10 @@ const getEmployees =
 
       }
 
-      console.log(
-        "Employees Data:",
-        result
-      );
+      //console.log(
+      //  "Employees Data:",
+      //  result
+      //  );
 
       res.status(200)
       .json(result);
@@ -251,7 +244,7 @@ const getEmployeeById =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({
@@ -291,7 +284,7 @@ const deleteEmployee =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({

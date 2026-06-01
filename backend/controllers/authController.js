@@ -4,7 +4,7 @@ require("../db");
 const jwt =
 require("jsonwebtoken");
 
-
+const crypto = require("crypto");
 // ==========================
 // LOGIN
 // ==========================
@@ -38,7 +38,7 @@ const login =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({
@@ -283,10 +283,172 @@ const login =
   );
 
 };
+const forgotPassword = (req, res) => {
+  const { email } = req.body;
 
+  const token =
+    crypto.randomBytes(32).toString("hex");
+
+  const expiry =
+    new Date(Date.now() + 15 * 60 * 1000);
+
+  // Check Employee
+  db.query(
+    "SELECT * FROM employees WHERE email = ?",
+    [email],
+    (err, employeeResult) => {
+
+      if (employeeResult.length > 0) {
+
+        db.query(
+          `UPDATE employees
+           SET reset_token = ?,
+               reset_token_expiry = ?
+           WHERE email = ?`,
+          [token, expiry, email]
+        );
+
+        return res.json({
+          message: "Reset link generated",
+          resetLink:
+            `http://localhost:5173/reset-password/${token}`
+        });
+      }
+
+      // Check Manager
+      db.query(
+        "SELECT * FROM managers WHERE email = ?",
+        [email],
+        (err, managerResult) => {
+
+          if (managerResult.length > 0) {
+
+            db.query(
+              `UPDATE managers
+               SET reset_token = ?,
+                   reset_token_expiry = ?
+               WHERE email = ?`,
+              [token, expiry, email]
+            );
+
+            return res.json({
+              message: "Reset link generated",
+              resetLink:
+                `http://localhost:5173/reset-password/${token}`
+            });
+          }
+
+          return res.status(404).json({
+            message: "Email not found"
+          });
+
+        }
+      );
+    }
+  );
+};
+const resetPassword = (req, res) => {
+
+  const {
+    token,
+    password
+  } = req.body;
+
+  // Check Employee
+  db.query(
+    `SELECT *
+     FROM employees
+     WHERE reset_token = ?
+     AND reset_token_expiry > NOW()`,
+    [token],
+
+    (err, employeeResult) => {
+
+      if (employeeResult.length > 0) {
+
+        db.query(
+          `UPDATE employees
+           SET password = ?,
+               reset_token = NULL,
+               reset_token_expiry = NULL
+           WHERE reset_token = ?`,
+          [password, token],
+
+          (err) => {
+
+            if (err) {
+              return res.status(500).json({
+                message: "Server Error"
+              });
+            }
+
+            return res.json({
+              message:
+              "Password updated successfully"
+            });
+
+          }
+        );
+
+        return;
+      }
+
+      // Check Manager
+      db.query(
+        `SELECT *
+         FROM managers
+         WHERE reset_token = ?
+         AND reset_token_expiry > NOW()`,
+        [token],
+
+        (err, managerResult) => {
+
+          if (managerResult.length > 0) {
+
+            db.query(
+              `UPDATE managers
+               SET password = ?,
+                   reset_token = NULL,
+                   reset_token_expiry = NULL
+               WHERE reset_token = ?`,
+              [password, token],
+
+              (err) => {
+
+                if (err) {
+                  return res.status(500).json({
+                    message:
+                    "Server Error"
+                  });
+                }
+
+                return res.json({
+                  message:
+                  "Password updated successfully"
+                });
+
+              }
+            );
+
+            return;
+          }
+
+          return res.status(400).json({
+            message:
+            "Invalid or Expired Token"
+          });
+
+        }
+      );
+
+    }
+  );
+};
 
 module.exports = {
 
   login,
-
+  forgotPassword,
+  resetPassword
 };
+

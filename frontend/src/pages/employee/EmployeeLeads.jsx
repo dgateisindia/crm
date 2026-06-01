@@ -105,8 +105,8 @@ async () => {
 
 
     console.log(
-      "Employee Leads:",
-      response.data
+      
+      response.data[0]
     );
 
     setAllLeads(
@@ -249,6 +249,12 @@ useEffect(() => {
     .toLowerCase()
     : "";
 
+    const designation =
+
+    lead.designation
+    ? lead.designation
+    .toLowerCase()
+    : "";
 
     const matchesSearch =
 
@@ -259,6 +265,12 @@ useEffect(() => {
     ||
 
     contact.includes(
+      search.toLowerCase()
+    )
+
+    ||
+
+    designation.includes(
       search.toLowerCase()
     );
 
@@ -527,6 +539,9 @@ useEffect(() => {
                 <th className="table-head">
                   Contact Person
                 </th>
+                <th className="table-head">
+                  Designation
+                </th>
 
                 <th className="table-head">
                   Phone
@@ -587,6 +602,11 @@ useEffect(() => {
 
                       {lead.contact_person_name}
 
+                    </td>
+
+                    <td className="table-data">
+
+                      {lead.designation}
                     </td>
 
 

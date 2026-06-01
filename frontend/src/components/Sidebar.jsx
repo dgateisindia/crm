@@ -146,99 +146,92 @@ export default function Sidebar() {
 
           </ul>
         </div>
+        </div>
 
         {/* Important Section */}
-        <div className="mt-4">
+      <div className="mt-4">
+        <h2 className="text-gray-400 uppercase text-sm mb-4">
+          Important
+        </h2>
 
-          <h2 className="text-gray-400 uppercase text-sm mb-4">
-            Important
-          </h2>
+        <div className="space-y-2">
 
-          <div className="space-y-2">
-
-            <Link to="/manager/important-leads">
-
-              <div className="sidebar-important-card">
-
-                <div className="flex items-center gap-2">
-
-                  <AlertCircle size={20} />
-
-                  Important Leads
-
-                </div>
-
+          <Link to="/manager/important-leads">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/manager/important-leads"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle size={20} />
+                Important Leads
               </div>
+            </div>
+          </Link>
 
-            </Link>
-
-            <Link to="/manager/converted-leads">
-
-              <div className="sidebar-important-card">
-
-                <div className="flex items-center gap-2">
-
-                  <BadgeCheck size={20} />
-
-                  Converted Leads
-
-                </div>
-
+          <Link to="/manager/converted-leads">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/manager/converted-leads"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <BadgeCheck size={20} />
+                Converted Leads
               </div>
+            </div>
+          </Link>
 
-            </Link>
-
-
-            <Link to="/manager/not-interested">
-
-              <div className="sidebar-important-card">
-
-                <div className="flex items-center gap-2">
-
-                  <Clock size={20} />
-
-                  Not Interested
-
-                </div>
-
+          <Link to="/manager/not-interested">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/manager/not-interested"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Clock size={20} />
+                Not Interested
               </div>
+            </div>
+          </Link>
 
-            </Link>
+        </div>
+      </div>
+            {/* Bottom Profile */}
+            <div>
 
+        <div className="profile-card">
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="profile"
+            className="w-4 h-8 rounded-full"
+          />
+
+          <div>
+            <h3 className="font-semibold">
+              Manager
+            </h3>
+
+            <p className="text-sm text-gray-400">
+              CRM Manager
+            </p>
           </div>
         </div>
 
+          <button
+            onClick={handleLogout}
+            className="logout-btn"
+          >
+            Logout
+          </button>
+        </div>
+
       </div>
-
-      {/* Bottom Profile */}
-      <div>
-
-  <div className="profile-card">
-    <img
-      src="https://i.pravatar.cc/100"
-      alt="profile"
-      className="w-4 h-8 rounded-full"
-    />
-
-    <div>
-      <h3 className="font-semibold">
-        Manager
-      </h3>
-
-      <p className="text-sm text-gray-400">
-        CRM Manager
-      </p>
-    </div>
-  </div>
-
-    <button
-      onClick={handleLogout}
-      className="logout-btn"
-    >
-      Logout
-    </button>
-  </div>
-
-</div>
-  );
-}
+        );
+      }

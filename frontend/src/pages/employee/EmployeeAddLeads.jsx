@@ -15,6 +15,7 @@ function AddLeads() {
 
     company_name: "",
     contact_person_name: "",
+    designation: "",
     email: "",
     phone: "",
     address: "",
@@ -57,6 +58,9 @@ function AddLeads() {
 
               contact_person_name:
               response.data.contact_person_name || "",
+
+              designation:
+              response.data.contact_person_designation || "",
 
               email:
               response.data.email || "",
@@ -190,6 +194,7 @@ function AddLeads() {
 
         company_name: "",
         contact_person_name: "",
+        designation: "",
         email: "",
         phone: "",
         address: "",
@@ -419,6 +424,21 @@ function AddLeads() {
                   <div className="formGroup">
 
                     <label>
+                      Designation
+                    </label>
+
+                    <input
+                      type="text"
+                      name="designation"
+                      value={leadData.designation}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                  <div className="formGroup">
+
+                    <label>
                       Phone *
                     </label>
 
@@ -593,16 +613,36 @@ function AddLeads() {
                         New
                       </option>
 
-                      <option value="contacted">
-                        Contacted
+                      <option value="Connected">
+                        Connected
                       </option>
 
-                      <option value="qualified">
-                        Qualified
+                      <option value="Interested">
+                        Interested
                       </option>
 
-                      <option value="converted">
+                      <option value="Proposed">
+                        Proposed
+                      </option>
+
+                      <option value="Offered">
+                        Offered
+                      </option>
+
+                      <option value="Meeting Scheduled">
+                        Meeting Scheduled
+                      </option>
+
+                      <option value="Not Interested">
+                        Not Interested
+                      </option>
+
+                      <option value="Converted">
                         Converted
+                      </option>
+
+                      <option value="Closed">
+                        Closed
                       </option>
 
                     </select>

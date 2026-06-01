@@ -54,7 +54,7 @@ const addFollowup =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({
@@ -97,9 +97,9 @@ const addFollowup =
 
           if (updateErr) {
 
-            console.log(
-              updateErr
-            );
+            //console.log(
+            //  updateErr
+            //);
 
           }
 
@@ -179,8 +179,6 @@ const getFollowups =
   );
 
 };
-
-
 // ==========================
 // Get Employee Followups
 // ==========================
@@ -190,10 +188,10 @@ const getEmployeeFollowups =
   const employeeId =
   req.params.employeeId;
 
-  console.log(
-    "Employee ID:",
-    employeeId
-  );
+  //console.log(
+   // "Employee ID:",
+   // employeeId
+ // );
 
   const sql = `
 
@@ -241,10 +239,10 @@ const getEmployeeFollowups =
 
       if (err) {
 
-        console.log(
-          "DB ERROR:",
-          err
-        );
+        //console.log(
+        //  "DB ERROR:",
+        //  err
+        //);
 
         return res
         .status(500)
@@ -257,7 +255,7 @@ const getEmployeeFollowups =
 
       }
 
-      console.log(result);
+      //console.log(result);
 
       res.status(200)
       .json(result);
@@ -313,7 +311,7 @@ const getLeadFollowups =
 
       if (err) {
 
-        console.log(err);
+        //    console.log(err);
 
         return res
         .status(500)

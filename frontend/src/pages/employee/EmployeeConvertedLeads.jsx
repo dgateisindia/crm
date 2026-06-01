@@ -1,23 +1,30 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import ManagerLayout from "../../layouts/ManagerLayout";
+import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
 
-export default function NotInterestedLeads() {
+export default function ConvertedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
 
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const employeeId = user?.id;
+
   // ==========================
-  // Fetch Not Interested Leads
+  // Fetch Converted Leads
   // ==========================
   const fetchLeads = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/leads/not-interested"
+        `http://localhost:5000/api/leads/employee/${employeeId}/converted`
       );
 
       setLeads(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -60,24 +67,27 @@ export default function NotInterestedLeads() {
   });
 
   return (
-    <ManagerLayout>
+    <EmployeeLayout>
+
       <div className="leads-container">
 
         {/* Header */}
         <div className="mb-6">
+
           <h1 className="leads-header-title">
-            Not Interested Leads
+            Converted Leads
           </h1>
 
           <p className="leads-header-subtitle">
-            Manage not interested CRM leads
+            Manage converted CRM leads
           </p>
+
         </div>
 
         {/* Search */}
         <input
           type="text"
-          placeholder="Search not interested leads..."
+          placeholder="Search converted leads..."
           className="manager-search-input mb-4"
           value={search}
           onChange={(e) =>
@@ -87,9 +97,11 @@ export default function NotInterestedLeads() {
 
         {/* Table */}
         <div className="leads-card tableWrapper">
+
           <table className="w-full">
 
             <thead>
+
               <tr className="border-b">
 
                 <th className="table-head">
@@ -113,9 +125,11 @@ export default function NotInterestedLeads() {
                 </th>
 
               </tr>
+
             </thead>
 
             <tbody>
+
               {filteredLeads.length > 0 ? (
 
                 filteredLeads.map((lead) => (
@@ -151,11 +165,13 @@ export default function NotInterestedLeads() {
                     </td>
 
                     <td className="table-data">
+
                       <span
                         className={`status-badge ${lead.lead_status}`}
                       >
                         {lead.lead_status}
                       </span>
+
                     </td>
 
                   </tr>
@@ -165,21 +181,26 @@ export default function NotInterestedLeads() {
               ) : (
 
                 <tr>
+
                   <td
                     colSpan="5"
                     className="text-center p-6 text-gray-500"
                   >
-                    No Not Interested Leads Found
+                    No Converted Leads Found
                   </td>
+
                 </tr>
 
               )}
+
             </tbody>
 
           </table>
+
         </div>
 
       </div>
-    </ManagerLayout>
+
+    </EmployeeLayout>
   );
 }

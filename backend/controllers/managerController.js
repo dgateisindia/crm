@@ -70,7 +70,7 @@ const createManager =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({
@@ -105,9 +105,9 @@ const createManager =
 
           if (updateErr) {
 
-            console.log(
-              updateErr
-            );
+            //console.log(
+            //  updateErr
+            //);
 
             return res.status(500)
             .json({
@@ -157,7 +157,7 @@ const getManagers =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res.status(500)
         .json({

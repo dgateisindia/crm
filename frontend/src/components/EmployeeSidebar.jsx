@@ -15,6 +15,9 @@ import {
   PhoneCall,
   User,
   LogOut,
+  Clock,
+  AlertCircle,
+  BadgeCheck
 } from "lucide-react";
 
 export default function EmployeeSidebar() {
@@ -137,6 +140,62 @@ export default function EmployeeSidebar() {
         </div>
 
       </div>
+             {/* Important Section */}
+      <div className="mt-4">
+        <h2 className="text-gray-400 uppercase text-sm mb-4">
+          Important
+        </h2>
+
+        <div className="space-y-2">
+
+          <Link to="/employee/important-leads">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/employee/important-leads"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle size={20} />
+                Important Leads
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/employee/converted-leads">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/employee/converted-leads"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <BadgeCheck size={20} />
+                Converted Leads
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/employee/not-interested">
+            <div
+              className={`sidebar-important-card ${
+                location.pathname === "/employee/not-interested"
+                  ? "active-menu"
+                  : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Clock size={20} />
+                Not Interested
+              </div>
+            </div>
+          </Link>
+
+        </div>
+      </div>
+      
 
       {/* Bottom */}
       <div>

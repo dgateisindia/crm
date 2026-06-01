@@ -45,14 +45,7 @@ export default function FollowUps() {
 
     user.id;
 
-    console.log(
-"Employee API Called"
-);
-
-console.log(
-"Employee ID:",
-employeeId
-);
+  
         
 
 
