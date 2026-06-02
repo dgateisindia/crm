@@ -35,6 +35,8 @@ const login =
     [email],
 
     (err, managerResult) => {
+      console.log("Manager Error:",err);
+      console.log("Manager Result:",managerResult);
 
       if (err) {
 
@@ -157,6 +159,8 @@ const login =
         [email],
 
         (err, employeeResult) => {
+              console.log("Employee Error:", err);
+    console.log("Employee Result:", employeeResult);
 
           if (err) {
 
@@ -294,11 +298,20 @@ const forgotPassword = (req, res) => {
 
   // Check Employee
   db.query(
-    "SELECT * FROM employees WHERE email = ?",
-    [email],
-    (err, employeeResult) => {
+  "SELECT * FROM employees WHERE email = ?",
+  [email],
+  (err, employeeResult) => {
 
-      if (employeeResult.length > 0) {
+    if (err) {
+      console.log("EMPLOYEE QUERY ERROR:", err);
+      return res.status(500).json({
+        message: "Database Error"
+      });
+    }
+
+    console.log("employeeResult =", employeeResult);
+
+    if (employeeResult && employeeResult.length > 0) {
 
         db.query(
           `UPDATE employees
