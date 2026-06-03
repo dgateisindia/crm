@@ -27,14 +27,9 @@ import ForgotPassword from "./pages/manager/ForgotPassword";
 import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
 import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
 import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
-<<<<<<< HEAD
-import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
-
-
-=======
 import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
->>>>>>> origin/ashwin
+import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 
 function App() {
   return (

@@ -7,12 +7,6 @@ import {
 } from "react";
 
 import {
-<<<<<<< HEAD
-  ClipboardList,
-  Calendar,
-  Clock3,
-  CheckCircle
-=======
   MoreVertical,
   Eye,
  // Pencil,
@@ -21,19 +15,12 @@ import {
   Users,
   BadgeCheck,
   UserX
->>>>>>> origin/ashwin
 } from "lucide-react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import React from "react";
 import "../../styles/leads.css";
-<<<<<<< HEAD
-import "../../styles/followup.css";
-
-
-=======
 import "../../styles/totallead.css";
->>>>>>> origin/ashwin
 export default function FollowUps() {
 
 const [followups, setFollowups] = useState([]);
@@ -143,8 +130,6 @@ async () => {
     console.log(error);
   }
 
-<<<<<<< HEAD
-=======
     catch (error) {
 
       console.log(error);
@@ -185,7 +170,6 @@ async () => {
 
   }
 
->>>>>>> origin/ashwin
 };
 
 
@@ -242,76 +226,6 @@ async () => {
             Manage and track all follow ups with status & history
           </p>
 
-<<<<<<< HEAD
-      </div>
-
-      <button className="addFollowupBtn">
-        + Add Follow Up
-      </button>
-
-    </div>
-
-
- <div className="followupCards">
-
-  <div className="followupCard">
-    <div className="followupIcon blueIcon">
-      <ClipboardList size={22} color="white" />
-    </div>
-
-    <h4>Total Follow Ups</h4>
-    <h2>{followups.length}</h2>
-  </div>
-
-  <div className="followupCard">
-    <div className="followupIcon greenIcon">
-      <Calendar size={22} color="white" />
-    </div>
-
-    <h4>Upcoming</h4>
-    <h2>{upcomingCount}</h2>
-  </div>
-
-  <div className="followupCard">
-    <div className="followupIcon orangeIcon">
-      <Clock3 size={22} color="white" />
-    </div>
-
-    <h4>Overdue</h4>
-    <h2>{overdueCount}</h2>
-  </div>
-
-  <div className="followupCard">
-    <div className="followupIcon purpleIcon">
-      <CheckCircle size={22} color="white" />
-    </div>
-
-    <h4>Completed</h4>
-    <h2>{completedCount}</h2>
-  </div>
-
-</div>
-
-<div className="followupToolbar">
-
-  <input
-    type="text"
-    placeholder="Search company, employee, mode..."
-    className="followupSearch"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-
-  <div className="followupActions">
-
-    <button className="toolbarBtn">
-      Filters
-    </button>
-
-    <button className="toolbarBtn">
-      Export
-    </button>
-=======
         </div>
         {/* Top Cards */}
 <div className="dashboard-grid">
@@ -432,7 +346,6 @@ async () => {
       }
 
     </h2>
->>>>>>> origin/ashwin
 
   </div>
 
@@ -500,15 +413,8 @@ async () => {
 
             followups.map((item, index) => (
 
-<<<<<<< HEAD
-<tr
-  key={item.followup_id}
-  className="table-row"
->
-=======
             (item) => (
               <React.Fragment key={item.lead_id}>
->>>>>>> origin/ashwin
 
   <td className="table-data">
     {index + 1}
@@ -642,10 +548,6 @@ async () => {
 
 </tr>
 
-<<<<<<< HEAD
-))
-) : (
-=======
 {
 expandedLead === item.lead_id && (
 
@@ -741,7 +643,6 @@ expandedLead === item.lead_id && (
 )
 
 : (
->>>>>>> origin/ashwin
 
 <tr>
 
