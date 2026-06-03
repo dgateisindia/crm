@@ -124,6 +124,7 @@ router.put(
 );
 
 // Upload Excel
+// Upload Excel
 router.post(
   "/upload",
   upload.single("file"),
@@ -131,23 +132,26 @@ router.post(
 
     try {
 
+      const created_by_id =
+      req.body.created_by_id;
+
       const workbook =
-        xlsx.readFile(
-          req.file.path
-        );
+      xlsx.readFile(
+        req.file.path
+      );
 
       const sheetName =
-        workbook.SheetNames[0];
+      workbook.SheetNames[0];
 
       const sheet =
-        workbook.Sheets[
-          sheetName
-        ];
+      workbook.Sheets[
+        sheetName
+      ];
 
       const data =
-        xlsx.utils.sheet_to_json(
-          sheet
-        );
+      xlsx.utils.sheet_to_json(
+        sheet
+      );
 
       let inserted = 0;
       let duplicates = 0;
@@ -167,11 +171,13 @@ router.post(
               city,
               source,
               lead_mode,
-              lead_status
+              lead_status,
+              created_by_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
             [
+
               row["Company Name"] ||
               row.company_name ||
               null,
@@ -193,16 +199,23 @@ router.post(
               null,
 
               "website",
+
               "phone_call",
-              "new"
+
+              "new",
+
+              created_by_id
+
             ]
+
           );
 
           inserted++;
 
-        } catch (error) {
+        }
 
-          // Skip duplicate phone numbers
+        catch (error) {
+
           if (
             error.code ===
             "ER_DUP_ENTRY"
@@ -210,29 +223,43 @@ router.post(
 
             duplicates++;
 
-          } else {
+          }
+
+          else {
 
             console.log(error);
+
             throw error;
 
           }
+
         }
+
       }
 
       res.json({
+
         inserted,
-        duplicates,
+
+        duplicates
+
       });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.log(error);
 
       res.status(500).json({
+
         message:
-          "Upload Failed"
+        "Upload Failed"
+
       });
+
     }
+
   }
 );
 

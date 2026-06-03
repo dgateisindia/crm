@@ -29,6 +29,8 @@ export default function ImportantLeads() {
     setLeads
   ] = useState([]);
 
+  const [allLeads, setAllLeads] = useState([]);
+
   const [
     search,
     setSearch
@@ -56,8 +58,7 @@ export default function ImportantLeads() {
       await axios.get(
          `http://localhost:5000/api/leads/employee/${employeeId}/important`
       );
-console.log("User:", user);
-console.log("Employee ID:", employeeId);
+
 
       setLeads(
         response.data
@@ -72,7 +73,16 @@ console.log("Employee ID:", employeeId);
     }
 
   };
+const fetchAllLeads = async () => {
 
+  const response =
+  await axios.get(
+    `http://localhost:5000/api/leads/employee/${employeeId}`
+  );
+
+  setAllLeads(response.data);
+
+};
 
   // ==========================
   // Load Data
@@ -83,6 +93,7 @@ console.log("Employee ID:", employeeId);
   async () => {
 
     await fetchLeads();
+    await fetchAllLeads();
 
   };
 
@@ -242,7 +253,7 @@ console.log("Employee ID:", employeeId);
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "connected"
@@ -276,7 +287,7 @@ console.log("Employee ID:", employeeId);
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "converted"
@@ -310,7 +321,7 @@ console.log("Employee ID:", employeeId);
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "not_interested"

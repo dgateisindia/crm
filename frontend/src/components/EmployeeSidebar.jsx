@@ -17,7 +17,9 @@ import {
   LogOut,
   Clock,
   AlertCircle,
-  BadgeCheck
+  BadgeCheck,
+  ClipboardList,
+  CalendarClock
 } from "lucide-react";
 
 export default function EmployeeSidebar() {
@@ -108,6 +110,38 @@ export default function EmployeeSidebar() {
 
             </div>
           </Link>
+          <Link
+              to="/employee/tasks"
+            >
+              <div
+                className={`sidebar-menu ${
+                  location.pathname === "/employee/tasks"
+                    ? "active-menu"
+                    : ""
+                }`}
+              >
+                <ClipboardList size={18} />
+
+                Tasks
+
+              </div>
+            </Link>
+            <Link
+                to="/employee/task-followups"
+              >
+                <div
+                  className={`sidebar-menu ${
+                    location.pathname === "/employee/task-followups"
+                      ? "active-menu"
+                      : ""
+                  }`}
+                >
+                  <CalendarClock size={18} />
+
+                  Task Followups
+
+                </div>
+              </Link>
 
           <Link
             to="/employee/followups"
@@ -118,7 +152,7 @@ export default function EmployeeSidebar() {
                 size={18}
               />
 
-              Follow Ups
+              Lead Follow Ups
 
             </div>
           </Link>

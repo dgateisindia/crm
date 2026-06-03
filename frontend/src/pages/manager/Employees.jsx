@@ -7,9 +7,9 @@ Users,
 
 UserCheck,
 
-Briefcase,
+UserX,
 
-UserCog
+CalendarDays
 
 }
 from "lucide-react";
@@ -86,6 +86,8 @@ export default function Employees() {
     );
 
     if (!confirmDelete)
+
+      
     return;
 
     try {
@@ -124,6 +126,40 @@ export default function Employees() {
     }
 
   };
+  const updateEmployeeStatus = async (
+  employeeId,
+  status
+) => {
+
+  try {
+
+    await axios.put(
+      `http://localhost:5000/api/employee/status/${employeeId}`,
+      { status }
+    );
+
+    setEmployees(
+      employees.map((emp) =>
+        emp.employee_id === employeeId
+          ? {
+              ...emp,
+              status
+            }
+          : emp
+      )
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Failed to update status"
+    );
+
+  }
+
+};
 
   return (
 
@@ -219,89 +255,64 @@ export default function Employees() {
           </div>
 
 
-          {/* Managers */}
+         {/* Inactive Employees */}
           <div className="crm-card orange-card">
 
             <div className="crm-card-top">
 
               <div className="icon-circle orange-bg">
 
-                <UserCog
-                  size={20}
-                />
+                <UserX size={20} />
 
               </div>
 
             </div>
 
             <h3>
-
-              Managers
-
+              Inactive Employees
             </h3>
 
             <h2>
-
               {
-
-        employees.filter(
-        emp =>
-
-        emp.designation
-        ?.toLowerCase()
-        === "manager"
-
-        ).length
-
+                employees.filter(
+                  emp =>
+                    emp.status?.toLowerCase() ===
+                    "inactive"
+                ).length
               }
-
             </h2>
 
           </div>
 
-
-          {/* Employees */}
+          {/* On Leave Employees */}
           <div className="crm-card purple-card">
 
             <div className="crm-card-top">
 
               <div className="icon-circle purple-bg">
 
-                <Briefcase
-                  size={20}
-                />
+                <CalendarDays size={20} />
 
               </div>
 
             </div>
 
             <h3>
-
-              Employees
-
+              On Leave
             </h3>
 
             <h2>
-
               {
-
-        employees.filter(
-        emp =>
-
-        emp.designation
-        ?.toLowerCase()
-        !== "manager"
-
-        ).length
-
+                employees.filter(
+                  emp =>
+                    emp.status?.toLowerCase() ===
+                    "leave"
+                ).length
               }
-
             </h2>
 
           </div>
-
         </div>
-
 
         <div className="employeesTableCard">
 
@@ -319,7 +330,6 @@ export default function Employees() {
                   <th>Phone</th>
                   <th>Department</th>
                   <th>Designation</th>
-                  <th>Role</th>
                   <th>Status</th>
                   <th>Action</th>
 
@@ -387,7 +397,7 @@ export default function Employees() {
                           }
 
                         </td>
-
+{/*
                        <td>
 
                           <span
@@ -424,18 +434,38 @@ export default function Employees() {
                           </span>
 
                         </td>
-
+*/}
                         <td>
 
-                          <span className="statusBadge">
+                        <select
+                          value={
+                            employee.status ||
+                            "active"
+                          }
+                          className="statusSelect"
+                          onChange={(e) =>
+                            updateEmployeeStatus(
+                              employee.employee_id,
+                              e.target.value
+                            )
+                          }
+                        >
 
-                            {
-                              employee.status
-                            }
+                          <option value="active">
+                            Active
+                          </option>
 
-                          </span>
+                          <option value="inactive">
+                            Inactive
+                          </option>
 
-                        </td>
+                          <option value="leave">
+                            Leave
+                          </option>
+
+                        </select>
+
+                      </td>
 
                         <td className="actionCell">
 

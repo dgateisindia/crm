@@ -304,7 +304,53 @@ const deleteEmployee =
   );
 
 };
+const updateEmployeeStatus =
+async (req, res) => {
 
+  const { id } =
+  req.params;
+
+  const { status } =
+  req.body;
+
+  try {
+
+    await db.promise().query(
+
+      `UPDATE employees
+       SET status = ?
+       WHERE employee_id = ?`,
+
+      [
+        status,
+        id
+      ]
+
+    );
+
+    res.json({
+
+      message:
+      "Status Updated"
+
+    });
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+
+      message:
+      "Update Failed"
+
+    });
+
+  }
+
+};
 
 // ==========================
 // Export
@@ -317,6 +363,7 @@ module.exports = {
 
   getEmployeeById,
 
-  deleteEmployee
+  deleteEmployee,
+  updateEmployeeStatus
 
 };

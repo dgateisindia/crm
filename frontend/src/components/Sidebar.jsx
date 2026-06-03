@@ -1,8 +1,8 @@
 import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus, } from "lucide-react";
 import "../styles/sidebar.css";
 import logo from "../assets/logo.png";
-import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+//import { useState } from "react";
+//import { ChevronDown, ChevronRight } from "lucide-react";
 
 
 import {
@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
-  const [leadDropdown, setLeadDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -39,18 +38,16 @@ export default function Sidebar() {
       <div>
 
         {/* Logo */}
-        <img
-          src={logo}
-          alt="DGATE Logo"
-          className="w-10 h-10 object-contain"
-        />
+        <div className="flex justify-center mb-5">
+          <img
+            src={logo}
+            alt="DGATE Logo"
+            className="w-12 h-12 object-contain"
+          />
+        </div>
 
         {/* Main Menu */}
         <div>
-          <h2 className="text-gray-400 uppercase text-sm ">
-            Main Menu
-          </h2>
-
           <ul className="space-y-0.1">
 
             <Link to="/manager/dashboard">
@@ -60,42 +57,31 @@ export default function Sidebar() {
               </li>
             </Link>
 
-            <li className="sidebar-dropdown">
-
-            <div
-              className="sidebar-menu"
-              onClick={() => setLeadDropdown(!leadDropdown)}
-            >
-              <div className="flex items-center gap-3">
+            <Link to="/manager/leads">
+              <li
+                className={`sidebar-menu ${
+                  location.pathname === "/manager/leads"
+                    ? "active-menu"
+                    : ""
+                }`}
+              >
                 <ContactRound size={12} />
-                <span>Leads</span>
-              </div>
+                Leads
+              </li>
+            </Link>
 
-              {leadDropdown ? (
-                <ChevronDown size={18} />
-              ) : (
-                <ChevronRight size={18} />
-              )}
-            </div>
-
-            {leadDropdown && (
-              <div className="submenu">
-
-                <Link to="/manager/leads">
-                  <div className={`submenu-item ${location.pathname === "/manager/leads" ? "active-submenu" : ""}`}>
-                    Total Leads
-                  </div>
-                </Link>
-
-                <Link to="/manager/add-leads">
-                  <div className={`submenu-item ${location.pathname === "/manager/add-leads" ? "active-submenu" : ""}`}>
-                    Add Leads
-                  </div>
-                </Link>
-
-              </div>
-            )}
-          </li>
+            <Link to="/manager/add-leads">
+              <li
+                className={`sidebar-menu ${
+                  location.pathname === "/manager/add-leads"
+                    ? "active-menu"
+                    : ""
+                }`}
+              >
+                <ContactRound size={12} />
+                Add Lead
+              </li>
+            </Link>
             <Link to="/manager/employees">
               <li className={`sidebar-menu ${location.pathname === "/manager/employees" ? "active-menu " : ""}`}>
                 <UserCheck size={12} />

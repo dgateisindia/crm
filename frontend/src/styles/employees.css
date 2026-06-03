@@ -38,6 +38,7 @@
 
 .employeesTable{
   width:100%;
+  min-width:1200px;
   border-collapse:collapse;
 }
 
@@ -183,4 +184,19 @@
 
 .purple-card {
   border-left: 6px solid #a855f7;
+}
+.statusSelect{
+  min-width:120px;
+  padding:6px 10px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  background:white;
+  cursor:pointer;
+}
+.employeesTableCard{
+  margin-top:20px;
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  overflow:hidden;
 }

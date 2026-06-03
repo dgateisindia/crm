@@ -5,7 +5,7 @@ require("dotenv")
 .config();
 
 const db =
-mysql.createConnection({
+mysql.createPool({
 
   host:
   process.env.DB_HOST,
@@ -19,25 +19,36 @@ mysql.createConnection({
   database:
   process.env.DB_NAME,
 
+  waitForConnections:
+  true,
+
+  connectionLimit:
+  10,
+
+  queueLimit:
+  0
+
 });
 
-db.connect((err) => {
+db.getConnection(
+(err, connection) => {
 
   if (err) {
 
-   
-
-  }
-
-  else {
-
-    db.query(
-      "SELECT DATABASE() AS db",
-      (err, result) => {
-      }
+    console.log(
+      "Database Connection Failed:",
+      err
     );
 
+    return;
+
   }
+
+  console.log(
+    "MySQL Connected Successfully"
+  );
+
+  connection.release();
 
 });
 
