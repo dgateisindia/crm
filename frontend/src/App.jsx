@@ -27,9 +27,14 @@ import ForgotPassword from "./pages/manager/ForgotPassword";
 import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
 import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
 import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
+<<<<<<< HEAD
 import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 
 
+=======
+import EmployeeTasks from "./pages/employee/EmployeeTasks";
+import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
+>>>>>>> origin/ashwin
 
 function App() {
   return (
@@ -237,6 +242,15 @@ function App() {
         <Route
         path="/employee/not-interested"
         element={<EmployeeNotInterested />}
+        />
+        <Route
+          path="/employee/tasks"
+          element={<EmployeeTasks />}
+        />
+
+        <Route
+          path="/employee/task-followups"
+          element={<EmployeeTaskFollowups />}
         />
 
     </Routes>

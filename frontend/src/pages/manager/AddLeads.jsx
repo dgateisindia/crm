@@ -619,35 +619,35 @@ else {
                         New
                       </option>
 
-                      <option value="Connected">
+                      <option value="connected">
                         Connected
                       </option>
 
-                      <option value="Interested">
+                      <option value="interested">
                         Interested
                       </option>
 
-                      <option value="Proposed">
-                        Proposed
+                      <option value="proposal">
+                        Proposal
                       </option>
 
-                      <option value="Offered">
+                      <option value="offered">
                         Offered
                       </option>
 
-                      <option value="Meeting Scheduled">
+                      <option value="meeting_scheduled">
                         Meeting Scheduled
                       </option>
 
-                      <option value="Not Interested">
+                      <option value="not_interested">
                         Not Interested
                       </option>
 
-                      <option value="Converted">
+                      <option value="converted">
                         Converted
                       </option>
 
-                      <option value="Closed">
+                      <option value="closed">
                         Closed
                       </option>
 

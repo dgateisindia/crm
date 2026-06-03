@@ -231,70 +231,85 @@ useEffect(() => {
   // Filter Leads
   // ==========================
   const filteredLeads =
-  allLeads.filter(
-  (lead) => {
+allLeads.filter((lead) => {
 
-    const company =
+  const searchText =
+  search.toLowerCase();
 
-    lead.company_name
-    ? lead.company_name
-    .toLowerCase()
-    : "";
+  const matchesSearch =
 
-
-    const contact =
-
-    lead.contact_person_name
-    ? lead.contact_person_name
-    .toLowerCase()
-    : "";
-
-    const designation =
-
-    lead.designation
-    ? lead.designation
-    .toLowerCase()
-    : "";
-
-    const matchesSearch =
-
-    company.includes(
-      search.toLowerCase()
-    )
+    (lead.company_name || "")
+      .toLowerCase()
+      .includes(searchText)
 
     ||
 
-    contact.includes(
-      search.toLowerCase()
-    )
+    (lead.contact_person_name || "")
+      .toLowerCase()
+      .includes(searchText)
 
     ||
 
-    designation.includes(
-      search.toLowerCase()
-    );
+    (lead.designation || "")
+      .toLowerCase()
+      .includes(searchText)
 
+    ||
 
-    const matchesStatus =
+    (lead.phone || "")
+      .toString()
+      .toLowerCase()
+      .includes(searchText)
 
-    statusFilter ===
-    "all"
+    ||
+
+    (lead.email || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (lead.source || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (lead.lead_mode || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (lead.lead_status || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (lead.city || "")
+      .toLowerCase()
+      .includes(searchText);
+
+  const matchesStatus =
+
+    statusFilter === "all"
 
     ||
 
     lead.lead_status ===
     statusFilter;
 
+  return (
+    matchesSearch &&
+    matchesStatus
+  );
 
-    return (
-      matchesSearch &&
-      matchesStatus
-    );
-
-  });
+});
 
 
   return (
+    
 
     <EmployeeLayout>
 

@@ -37,6 +37,8 @@ export default function ImportantLeads() {
   const navigate =
   useNavigate();
 
+  const [allLeads, setAllLeads] = useState([]);
+
 
   // ==========================
   // Fetch Important Leads
@@ -64,6 +66,28 @@ export default function ImportantLeads() {
     }
 
   };
+  const fetchAllLeads = async () => {
+
+  try {
+
+    const response =
+    await axios.get(
+      "http://localhost:5000/api/leads/all"
+    );
+
+    setAllLeads(
+      response.data
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+};
 
 
   // ==========================
@@ -75,6 +99,7 @@ export default function ImportantLeads() {
   async () => {
 
     await fetchLeads();
+    await fetchAllLeads();
 
   };
 
@@ -234,7 +259,7 @@ export default function ImportantLeads() {
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "connected"
@@ -268,7 +293,7 @@ export default function ImportantLeads() {
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "converted"
@@ -302,7 +327,7 @@ export default function ImportantLeads() {
 
               {
 
-              leads.filter(
+              allLeads.filter(
               lead =>
               lead.lead_status ===
               "not_interested"

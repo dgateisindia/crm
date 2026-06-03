@@ -127,56 +127,72 @@ const addFollowup =
 // ==========================
 // Get All Followups
 // ==========================
-const getFollowups =
-(req, res) => {
+const getFollowups = (req, res) => {
 
   const sql = `
 
     SELECT
 
-      follow_ups.*,
+      l.id AS lead_id,
+      l.company_name,
+      l.lead_status,
 
-      leads.company_name,
+      MAX(f.followup_id) AS latest_followup,
 
-      employees.full_name
+      (
+        SELECT e.full_name
+        FROM employees e
+        WHERE e.employee_id =
+        (
+          SELECT employee_id
+          FROM follow_ups
+          WHERE lead_id = l.id
+          ORDER BY followup_id DESC
+          LIMIT 1
+        )
+      ) AS full_name,
 
-    FROM follow_ups
+      (
+        SELECT followup_mode
+        FROM follow_ups
+        WHERE lead_id = l.id
+        ORDER BY followup_id DESC
+        LIMIT 1
+      ) AS followup_mode,
 
-    LEFT JOIN leads
+      (
+        SELECT remarks
+        FROM follow_ups
+        WHERE lead_id = l.id
+        ORDER BY followup_id DESC
+        LIMIT 1
+      ) AS remarks
 
-    ON follow_ups.lead_id =
-    leads.id
+    FROM leads l
 
-    LEFT JOIN employees
+     JOIN follow_ups f
+    ON l.id = f.lead_id
 
-    ON follow_ups.employee_id =
-    employees.employee_id
+    GROUP BY l.id
 
-    ORDER BY
-    followup_id DESC
+    ORDER BY latest_followup DESC
 
   `;
 
+  db.query(sql, (err, result) => {
 
-  db.query(
+    if (err) {
 
-    sql,
-
-    (err, result) => {
-
-      if (err) {
-
-        return res.status(500)
-        .json(err);
-
-      }
-
-      res.status(200)
-      .json(result);
+      return res
+      .status(500)
+      .json(err);
 
     }
 
-  );
+    res.status(200)
+    .json(result);
+
+  });
 
 };
 // ==========================
@@ -195,45 +211,52 @@ const getEmployeeFollowups =
 
   const sql = `
 
-    SELECT
+        SELECT
 
-      follow_ups.followup_id,
+          l.id AS lead_id,
 
-      follow_ups.followup_mode,
+          l.company_name,
 
-      follow_ups.remarks,
+          l.lead_status,
 
-      follow_ups.lead_status,
+          MAX(f.followup_id) AS latest_followup,
 
-      leads.company_name,
+          (
+            SELECT followup_mode
+            FROM follow_ups
+            WHERE lead_id = l.id
+              AND employee_id = ?
+            ORDER BY followup_id DESC
+            LIMIT 1
+          ) AS followup_mode,
 
-      employees.full_name
+          (
+            SELECT remarks
+            FROM follow_ups
+            WHERE lead_id = l.id
+              AND employee_id = ?
+            ORDER BY followup_id DESC
+            LIMIT 1
+          ) AS remarks
 
-    FROM follow_ups
+        FROM leads l
 
-    INNER JOIN leads
+        JOIN follow_ups f
+        ON l.id = f.lead_id
 
-    ON follow_ups.lead_id =
-    leads.id
+        WHERE f.employee_id = ?
 
-    INNER JOIN employees
+        GROUP BY l.id
 
-    ON follow_ups.employee_id =
-    employees.employee_id
+        ORDER BY latest_followup DESC
 
-    WHERE
-    follow_ups.employee_id = ?
-
-    ORDER BY
-    follow_ups.followup_id DESC
-
-  `;
+        `;
 
   db.query(
 
     sql,
 
-    [employeeId],
+    [employeeId, employeeId, employeeId],
 
     (err, result) => {
 
@@ -332,13 +355,50 @@ message:
   );
 
 };
+const getLeadHistory = async (req, res) => {
 
+  const { leadId } = req.params;
+
+  try {
+
+    const [rows] =
+      await db.promise().query(
+
+        `SELECT
+          followup_id,
+          followup_mode,
+          lead_status,
+          remarks,
+          next_followup_date,
+          created_at
+         FROM follow_ups
+         WHERE lead_id = ?
+         ORDER BY created_at DESC`,
+
+        [leadId]
+
+      );
+
+    res.json(rows);
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: "Error fetching history"
+    });
+
+  }
+
+};
 
 module.exports = {
 
   addFollowup,
   getFollowups,
   getEmployeeFollowups,
-  getLeadFollowups
+  getLeadFollowups,
+  getLeadHistory
 
 };

@@ -9,7 +9,8 @@ const {
   createEmployee,
   getEmployees,
   getEmployeeById,
-  deleteEmployee
+  deleteEmployee,
+  updateEmployeeStatus
 
 } = require(
   "../controllers/employeeController"
@@ -22,7 +23,6 @@ router.post(
 );
 
 // IMPORTANT:
-// Put fixed routes first
 router.get(
   "/all",
   getEmployees
@@ -38,6 +38,11 @@ router.get(
 router.delete(
   "/delete/:id",
   deleteEmployee
+);
+// Update Status
+router.put(
+  "/status/:id",
+  updateEmployeeStatus
 );
 
 module.exports =

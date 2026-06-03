@@ -12,7 +12,9 @@ const {
 
   getEmployeeFollowups,
 
-  getLeadFollowups
+  getLeadFollowups,
+
+  getLeadHistory
 
 } = require(
 
@@ -48,6 +50,11 @@ router.get(
 getLeadFollowups
 );
 
+// Lead History
+router.get(
+"/lead-history/:leadId",
+getLeadHistory
+);
 
 module.exports =
 router;

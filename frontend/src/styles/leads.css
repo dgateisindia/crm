@@ -120,7 +120,7 @@
   box-sizing: border-box;
   border: 1px solid #dbe2ea;
   border-radius: 12px;
-  padding: 5px px;
+  padding: 5px 12px;
   font-size: 13px;
   outline: none;
   transition: 0.3s;
@@ -246,7 +246,7 @@ table{
 
 .table-head{
   text-align:left;
-  padding:14px;
+  padding:10px 12px;
   font-size:13px;
   font-weight:600;
   color:#374151;
@@ -255,8 +255,8 @@ table{
 }
 
 .table-data{
-  padding:14px;
-  font-size:13px;
+   padding:10px 12px;
+   font-size:13px;
   color:#374151;
   border-bottom:1px solid #f3f4f6;
 }
@@ -571,8 +571,7 @@ table{
   background:#fef2f2;
 }
 .tableWrapper{
-  overflow-x:auto;
-  overflow-y:visible !important;
+  overflow:visible;
 }
 
 table{
@@ -1011,4 +1010,55 @@ td{
   }
 
 }
+.history-box{
+  background:#f8fafc;
+  padding:15px;
+  border-radius:10px;
+}
 
+.history-box h3{
+  font-size:16px;
+  font-weight:600;
+  margin-bottom:12px;
+}
+
+.history-box table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.history-box th{
+  text-align:left;
+  padding:10px;
+  font-weight:600;
+  border-bottom:1px solid #e5e7eb;
+}
+
+.history-box td{
+  padding:10px;
+  border-bottom:1px solid #f1f5f9;
+}
+.status-connected{
+  background:#dcfce7;
+  color:#16a34a;
+}
+
+.status-interested{
+  background:#ffedd5;
+  color:#ea580c;
+}
+
+.status-proposal{
+  background:#f3e8ff;
+  color:#9333ea;
+}
+
+.status-converted{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+.status-not_interested{
+  background:#fee2e2;
+  color:#dc2626;
+}
