@@ -29,7 +29,7 @@ import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
 import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
 import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
-
+import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 function App() {
   return (
     <Routes>
@@ -153,7 +153,7 @@ function App() {
           path="/employee/lead/:id"
           element={
             <ProtectedRoute>
-              <LeadDetails />
+              <EmployeeLeadDetails />
             </ProtectedRoute>
           }
         />

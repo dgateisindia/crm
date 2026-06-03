@@ -159,8 +159,7 @@ initialState
   alert(
     "Lead Updated Successfully"
   );
-  window.location.reload();
-
+navigate("/manager/leads");
 }
 
 else {

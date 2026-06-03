@@ -15,7 +15,7 @@ import {
   Eye,
   Pencil,
   PhoneCall,
-  Trash2,
+  //Trash2,
   MoreVertical,
   Briefcase,
   UserPlus,
@@ -144,6 +144,7 @@ useEffect(() => {
   // ==========================
   // Delete Lead
   // ==========================
+  {/*}
   const handleDelete =
   async (id) => {
 
@@ -185,6 +186,7 @@ useEffect(() => {
     }
 
   };
+  */}
 
   const openFollowupModal =
   (lead) => { 
@@ -743,7 +745,7 @@ allLeads.filter((lead) => {
                             
 
 
-                            {/* Delete */}
+                            {/* Delete 
                             <button
 
                               onClick={() =>
@@ -762,7 +764,7 @@ allLeads.filter((lead) => {
 
                               Delete Lead
 
-                            </button>
+                            </button>*/}
 
                           </div>
 

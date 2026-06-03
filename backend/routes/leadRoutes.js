@@ -227,7 +227,7 @@ router.post(
 
           else {
 
-            console.log(error);
+           // console.log(error);
 
             throw error;
 
@@ -249,7 +249,7 @@ router.post(
 
     catch (error) {
 
-      console.log(error);
+      // console.log(error);
 
       res.status(500).json({
 

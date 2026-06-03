@@ -1,196 +1,219 @@
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import {
-  ClipboardList,
-  Phone,
   CalendarClock,
-  CheckCircle
+  Clock,
+  CheckCircle,
+  PhoneCall
 } from "lucide-react";
 
-export default function EmployeeTasks() {
+export default function EmployeeTaskFollowups() {
+
+  const [tasks, setTasks] = useState([]);
+  const handleTaskAction =
+            async (
+              task,
+              action
+            ) => {
+
+              if (!action) return;
+
+              try {
+
+                if (
+                  action ===
+                  "connected"
+                ) {
+
+                  await axios.put(
+                    `http://localhost:5000/api/tasks/connect/${task.task_id}`
+                  );
+
+                  alert(
+                    "Task moved to Leads"
+                  );
+
+                  setTasks(
+                    tasks.filter(
+                      t =>
+                      t.task_id !==
+                      task.task_id
+                    )
+                  );
+
+                }
+
+              }
+
+              catch (error) {
+
+                console.log(error);
+
+                alert(
+                  "Failed to update task"
+                );
+
+              }
+
+            };
+
+  useEffect(() => {
+
+    const fetchTasks = async () => {
+
+      try {
+
+        const user = JSON.parse(
+          localStorage.getItem("user")
+        );
+
+        const employeeId =
+          user?.employee_id ||
+          user?.id;
+
+        const response =
+          await axios.get(
+            `http://localhost:5000/api/tasks/employee/${employeeId}`
+          );
+
+        setTasks(response.data);
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
+
+    fetchTasks();
+
+  }, []);
+  
 
   return (
 
     <EmployeeLayout>
 
-      {/* Header */}
       <div className="dashboard-header">
 
         <div>
 
           <h1 className="dashboard-title">
-            Tasks
+            Task Followups
           </h1>
 
           <p className="dashboard-subtitle">
-            Manage uploaded contacts and daily calls
+            Manage scheduled callbacks and pending followups
           </p>
 
         </div>
 
       </div>
 
-      {/* Top Cards */}
+      {/* Cards */}
+
       <div className="dashboard-grid">
 
-        {/* Total Tasks */}
         <div className="crm-card blue-card">
 
           <div className="crm-card-top">
 
             <div className="icon-circle blue-bg">
-
-              <ClipboardList
-                size={18}
-              />
-
+              <CalendarClock size={18} />
             </div>
 
           </div>
 
-          <h3>
-            Total Tasks
-          </h3>
+          <h3>Total Tasks</h3>
 
-          <h2>
-            100
-          </h2>
+          <h2>{tasks.length}</h2>
 
         </div>
 
-        {/* Pending Calls */}
         <div className="crm-card green-card">
 
           <div className="crm-card-top">
 
             <div className="icon-circle green-bg">
-
-              <Phone
-                size={18}
-              />
-
+              <PhoneCall size={18} />
             </div>
 
           </div>
 
-          <h3>
-            Pending Calls
-          </h3>
+          <h3>Pending</h3>
 
           <h2>
-            80
+            {
+              tasks.filter(
+                task =>
+                  task.task_status ===
+                  "pending"
+              ).length
+            }
           </h2>
 
         </div>
 
-        {/* Task Followups */}
         <div className="crm-card orange-card">
 
           <div className="crm-card-top">
 
             <div className="icon-circle orange-bg">
-
-              <CalendarClock
-                size={18}
-              />
-
+              <Clock size={18} />
             </div>
 
           </div>
 
-          <h3>
-            Task Followups
-          </h3>
+          <h3>Followups</h3>
 
           <h2>
-            15
+            {
+              tasks.filter(
+                task =>
+                  task.task_status ===
+                  "followup"
+              ).length
+            }
           </h2>
 
         </div>
 
-        {/* Completed */}
         <div className="crm-card purple-card">
 
           <div className="crm-card-top">
 
             <div className="icon-circle purple-bg">
-
-              <CheckCircle
-                size={18}
-              />
-
+              <CheckCircle size={18} />
             </div>
 
           </div>
 
-          <h3>
-            Completed
-          </h3>
+          <h3>Completed</h3>
 
           <h2>
-            5
+            {
+              tasks.filter(
+                task =>
+                  task.task_status ===
+                  "completed"
+              ).length
+            }
           </h2>
 
         </div>
 
       </div>
 
-      {/* Search + Filter */}
+      {/* Table */}
+
       <div className="recent-card">
 
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            marginBottom: "20px",
-            flexWrap: "wrap"
-          }}
-        >
-
-          <input
-            type="text"
-            placeholder="Search Company..."
-            style={{
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              minWidth: "250px"
-            }}
-          />
-
-          <select
-            style={{
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "8px"
-            }}
-          >
-
-            <option>
-              All Status
-            </option>
-
-            <option>
-              Pending
-            </option>
-
-            <option>
-              Followup
-            </option>
-
-            <option>
-              Completed
-            </option>
-
-            <option>
-              Not Interested
-            </option>
-
-          </select>
-
-        </div>
-
-        {/* Table */}
         <div className="overflow-x-auto">
 
           <table className="w-full">
@@ -199,25 +222,17 @@ export default function EmployeeTasks() {
 
               <tr>
 
-                <th>
-                  Company
-                </th>
+                <th>Company</th>
 
-                <th>
-                  Contact Person
-                </th>
+                <th>Contact</th>
 
-                <th>
-                  Phone
-                </th>
+                <th>Phone</th>
 
-                <th>
-                  Status
-                </th>
+                <th>Status</th>
 
-                <th>
-                  Action
-                </th>
+                <th>Created</th>
+
+                <th>Action</th>
 
               </tr>
 
@@ -225,73 +240,115 @@ export default function EmployeeTasks() {
 
             <tbody>
 
-              <tr>
+              {
+                tasks.length > 0
+                ? (
 
-                <td>
-                  Infosys
-                </td>
+                  tasks.map(task => (
 
-                <td>
-                  Ravi Kumar
-                </td>
+                    <tr
+                      key={task.task_id}
+                    >
 
-                <td>
-                  9876543210
-                </td>
+                      <td>
+                        {task.company_name}
+                      </td>
 
-                <td>
+                      <td>
+                        {
+                          task.contact_person_name
+                        }
+                      </td>
 
-                  <span className="status-badge new">
-                    Pending
-                  </span>
+                      <td>
+                        {task.phone}
+                      </td>
 
-                </td>
+                      <td>
 
-                <td>
+                        <span
+                          className={`status-badge ${task.task_status}`}
+                        >
 
-                  <button
-                    className="action-btn"
-                  >
-                    Actions
-                  </button>
+                          {
+                            task.task_status
+                          }
 
-                </td>
+                        </span>
 
-              </tr>
+                      </td>
 
-              <tr>
+                      <td>
 
-                <td>
-                  TCS
-                </td>
+                        {
+                          new Date(
+                            task.created_at
+                          ).toLocaleDateString()
+                        }
 
-                <td>
-                  Suresh
-                </td>
+                      </td>
+                      <td>
 
-                <td>
-                  9876543211
-                </td>
+                      <select
 
-                <td>
+                        onChange={(e) =>
+                          handleTaskAction(
+                            task,
+                            e.target.value
+                          )
+                        }
 
-                  <span className="status-badge connected">
-                    Followup
-                  </span>
+                      >
 
-                </td>
+                        <option value="">
+                          Actions
+                        </option>
 
-                <td>
+                        <option value="connected">
+                          Connected
+                        </option>
 
-                  <button
-                    className="action-btn"
-                  >
-                    Actions
-                  </button>
+                        <option value="followup">
+                          Schedule Followup
+                        </option>
 
-                </td>
+                        <option value="not_interested">
+                          Not Interested
+                        </option>
 
-              </tr>
+                      </select>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                )
+
+                : (
+
+                  <tr>
+
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign:
+                        "center",
+                        padding:
+                        "20px"
+                      }}
+                    >
+
+                      No Tasks Found
+
+                    </td>
+
+                  </tr>
+
+                )
+
+              }
 
             </tbody>
 
