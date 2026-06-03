@@ -1,5 +1,4 @@
 import axios from "axios";
-import { MoreVertical } from "lucide-react";
 
 import {
   useEffect,
@@ -23,8 +22,10 @@ import "../../styles/leads.css";
 import "../../styles/totallead.css";
 export default function FollowUps() {
 
-const [followups, setFollowups] = useState([]);
-const [search, setSearch] = useState("");
+  const [
+    followups,
+    setFollowups
+  ] = useState([]);
 
   const [expandedLead, setExpandedLead] = useState(null);
   const [history, setHistory] = useState({});
@@ -110,25 +111,23 @@ const handleFollowupSubmit = async () => {
   // ==========================
   // Fetch Followups
   // ==========================
-const fetchFollowups =
-async () => {
+  const fetchFollowups =
+  async () => {
 
-  try {
+    try {
 
-    const response =
-    await axios.get(
-      "http://localhost:5000/api/followups/all"
-    );
+      const response =
+      await axios.get(
 
-    console.log(response.data);
+"http://localhost:5000/api/followups/all"
 
-    setFollowups(response.data);
+      );
 
-  }
-  catch(error){
+      setFollowups(
+        response.data
+      );
 
-    console.log(error);
-  }
+    }
 
     catch (error) {
 
@@ -179,33 +178,12 @@ async () => {
     async () => {
 
       await fetchFollowups();
+
     };
 
     loadFollowups();
 
-
   }, []);
-
-  const upcomingCount = followups.filter(
-        item => item.next_followup_date
-      ).length;
-
-      const completedCount = followups.filter(
-        item => item.status === "completed"
-      ).length;
-
-      const overdueCount = followups.filter(item => {
-        if (!item.next_followup_date) return false;
-
-        return new Date(item.next_followup_date) < new Date();
-      }).length;
-
-      const filteredFollowups = followups.filter(
-        (item) =>
-          item.company_name?.toLowerCase().includes(search.toLowerCase()) ||
-          item.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-          item.followup_mode?.toLowerCase().includes(search.toLowerCase())
-      );
 
 
   return (
@@ -214,16 +192,19 @@ async () => {
 
       <div className="leads-container">
 
-      <div className="followupHeader">
+        {/* Header */}
+        <div className="mb-6">
 
-         <div>
+          <h1 className="leads-header-title">
 
-          <h1 className="followupTitle">
             Follow Ups
+
           </h1>
 
-          <p className="followupSubtitle">
-            Manage and track all follow ups with status & history
+          <p className="leads-header-subtitle">
+
+            Manage all CRM followups
+
           </p>
 
         </div>
@@ -359,40 +340,37 @@ async () => {
 
             {/* Table Header */}
             <thead>
+
               <tr className="border-b">
 
-                <th className="table-head">#</th>
-
                 <th className="table-head">
+
                   Company
+
                 </th>
 
                 <th className="table-head">
+
                   Employee
+
                 </th>
 
                 <th className="table-head">
+
                   Mode
+
                 </th>
 
                 <th className="table-head">
+
                   Remarks
+
                 </th>
 
                 <th className="table-head">
+
                   Lead Status
-                </th>
 
-                <th className="table-head">
-                  Last Follow Up
-                </th>
-
-                <th className="table-head">
-                  Next Follow Up
-                </th>
-
-                <th className="table-head">
-                  Action
                 </th>
 
                 <th className="table-head">
@@ -400,7 +378,9 @@ async () => {
                 </th>
 
               </tr>
+
             </thead>
+
 
             {/* Table Body */}
             <tbody>
@@ -411,61 +391,84 @@ async () => {
 
             ? (
 
-            followups.map((item, index) => (
+            followups.map(
 
             (item) => (
               <React.Fragment key={item.lead_id}>
 
-  <td className="table-data">
-    {index + 1}
-  </td>
+            <tr
+             
+            className="table-row"
 
-  <td className="table-data">
-    {item.company_name}
-  </td>
+            >
 
-  <td className="table-data">
-    {item.full_name || "N/A"}
-  </td>
+              {/* Company */}
+              <td className="table-data">
 
-  <td className="table-data">
-    {item.followup_mode}
-  </td>
+                {
+            item.company_name
+                }
 
-  <td className="table-data">
-    {item.remarks || "No remarks"}
-  </td>
+              </td>
 
+
+              {/* Employee */}
+              <td className="table-data">
+
+                {
+
+            item.full_name ||
+
+            "N/A"
+
+                }
+
+              </td>
+
+
+              {/* Mode */}
+              <td className="table-data">
+
+                {
+            item.followup_mode
+                }
+
+              </td>
+
+
+              {/* Remarks */}
+              <td className="table-data">
+
+                {
+
+            item.remarks ||
+
+            "No remarks"
+
+                }
+
+              </td>
+
+
+  {/* Lead Status */}
   <td className="table-data">
+
     <span
-      className={`followupStatus ${item.lead_status?.toLowerCase()}`}
+      className={`followupStatus ${item.lead_status}`}
     >
-      {item.lead_status?.replace("_", " ")}
+
+      {
+
+      item.lead_status
+      ?.replace(
+      "_",
+      " "
+      )
+
+      }
+
     </span>
-  </td>
 
-  <td className="table-data">
-  {
-    item.contact_date
-      ? new Date(item.contact_date)
-          .toLocaleDateString()
-      : "N/A"
-  }
-</td>
-
-<td className="table-data">
-  {
-    item.next_followup_date
-      ? new Date(item.next_followup_date)
-          .toLocaleDateString()
-      : "Not Scheduled"
-  }
-</td>
-
-  <td className="table-data">
-    <button className="actionBtn">
-      <MoreVertical size={16} />
-    </button>
   </td>
  <td className="table-data">
 
@@ -635,18 +638,13 @@ expandedLead === item.lead_id && (
 }
 
 </React.Fragment>
+))
 
-)
-
-)
-
-)
-
-: (
+) : (
 
 <tr>
 
-<td colSpan="9"className="text-center p-6 text-gray-500">
+<td colSpan="5"className="text-center p-6 text-gray-500">
 
 No Followups Found
 
