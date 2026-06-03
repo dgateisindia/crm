@@ -42,14 +42,11 @@ export default function Sidebar() {
         <img
           src={logo}
           alt="DGATE Logo"
-          className="w-10 h-10 object-contain"
+          className="w-10 h-10 object-contain mb-5"
         />
 
         {/* Main Menu */}
         <div>
-          <h2 className="text-gray-400 uppercase text-sm ">
-            Main Menu
-          </h2>
 
           <ul className="space-y-0.1">
 
@@ -203,27 +200,8 @@ export default function Sidebar() {
 
         </div>
       </div>
-            {/* Bottom Profile */}
+            {/* Bottom */}
             <div>
-
-        <div className="profile-card">
-          <img
-            src="https://i.pravatar.cc/100"
-            alt="profile"
-            className="w-4 h-8 rounded-full"
-          />
-
-          <div>
-            <h3 className="font-semibold">
-              Manager
-            </h3>
-
-            <p className="text-sm text-gray-400">
-              CRM Manager
-            </p>
-          </div>
-        </div>
-
           <button
             onClick={handleLogout}
             className="logout-btn"

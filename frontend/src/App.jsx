@@ -27,6 +27,7 @@ import ForgotPassword from "./pages/manager/ForgotPassword";
 import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
 import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
 import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
+import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 
 
 
@@ -153,7 +154,7 @@ function App() {
           path="/employee/lead/:id"
           element={
             <ProtectedRoute>
-              <LeadDetails />
+              <EmployeeLeadDetails />
             </ProtectedRoute>
           }
         />

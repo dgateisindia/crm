@@ -1,0 +1,293 @@
+/* ==========================
+   Follow Up Header
+========================== */
+
+.followupHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+.followupTitle{
+  font-size:32px;
+  font-weight:700;
+  color:#071739;
+  margin:0;
+}
+
+.followupSubtitle{
+  color:#64748b;
+  margin-top:6px;
+  font-size:14px;
+}
+
+/* ==========================
+   Add Button
+========================== */
+
+.addFollowupBtn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+.addFollowupBtn:hover{
+  background:#1d4ed8;
+}
+
+/* ==========================
+   Top Cards
+========================== */
+
+.followupCards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:24px;
+}
+
+.followupCard{
+  background:white;
+  padding:22px;
+  border-radius:18px;
+
+  border:1px solid #e5e7eb;
+
+  box-shadow:
+  0 4px 16px
+  rgba(15,23,42,.05);
+
+  transition:.2s;
+}
+
+.followupCard:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 10px 24px
+  rgba(15,23,42,.08);
+}
+
+.followupCard h4{
+  font-size:14px;
+  font-weight:500;
+  color:#64748b;
+  margin-bottom:8px;
+}
+
+.followupCard h2{
+  font-size:30px;
+  font-weight:700;
+  color:#071739;
+}
+
+/* ==========================
+   Search + Actions
+========================== */
+
+.followupToolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  gap:16px;
+}
+
+.followupSearch{
+  width:450px;
+  padding:12px 16px;
+
+  border:1px solid #d1d5db;
+  border-radius:12px;
+
+  font-size:14px;
+  outline:none;
+
+  transition:.2s;
+}
+
+.followupSearch:focus{
+  border-color:#2563eb;
+
+  box-shadow:
+  0 0 0 4px
+  rgba(37,99,235,.08);
+}
+
+.followupActions{
+  display:flex;
+  gap:10px;
+}
+
+.toolbarBtn{
+  border:none;
+
+  background:white;
+  border:1px solid #d1d5db;
+
+  padding:10px 18px;
+
+  border-radius:12px;
+
+  cursor:pointer;
+
+  font-size:14px;
+  font-weight:500;
+
+  transition:.2s;
+}
+
+.toolbarBtn:hover{
+  background:#f8fafc;
+}
+
+/* ==========================
+   Status Badges
+========================== */
+
+.followupStatus{
+  padding:8px 14px;
+  border-radius:12px;
+
+  font-size:13px;
+  font-weight:600;
+
+  text-transform:capitalize;
+}
+
+/* Connected */
+.connected{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+/* Interested */
+.interested{
+  background:#ffedd5;
+  color:#ea580c;
+}
+
+/* Proposal */
+.proposal{
+  background:#f3e8ff;
+  color:#9333ea;
+}
+
+/* Offered */
+.offered{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+/* Not Interested */
+.not_interested{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* Converted */
+.converted{
+  background:#dcfce7;
+  color:#16a34a;
+}
+
+/* Lost */
+.lost{
+  background:#e5e7eb;
+  color:#4b5563;
+}
+.actionBtn{
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:8px;
+  background:#f8fafc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.actionBtn:hover{
+  background:#e2e8f0;
+}
+.pending{
+  background:#fef3c7;
+  color:#d97706;
+}
+
+.followupCardTop{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.followupIcon{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  margin-bottom:12px;
+}
+
+.blueIcon{
+  background:#3b82f6;
+}
+
+.greenIcon{
+  background:#22c55e;
+}
+
+.orangeIcon{
+  background:#f97316;
+}
+
+.purpleIcon{
+  background:#a855f7;
+}
+/* ==========================
+   Responsive
+========================== */
+
+
+
+@media(max-width:1100px){
+
+  .followupCards{
+    grid-template-columns:
+    repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:768px){
+
+  .followupHeader{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+  }
+
+  .followupToolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .followupSearch{
+    width:100%;
+  }
+
+  .followupCards{
+    grid-template-columns:1fr;
+  }
+
+}

@@ -58,10 +58,6 @@ export default function EmployeeSidebar() {
             className="sidebar-logo-image"
           />
 
-          <h1 className="sidebar-logo-text">
-            DGATE CRM
-          </h1>
-
         </div>
 
         {/* Menu */}
