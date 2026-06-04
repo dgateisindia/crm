@@ -261,3 +261,44 @@
 
   overflow-x:hidden !important;
 }
+.uploadTypeGrid{
+  display:flex;
+  gap:20px;
+  margin-top:20px;
+}
+
+.uploadCard{
+  flex:1;
+  padding:25px;
+  border:2px solid #e5e7eb;
+  border-radius:16px;
+  text-align:center;
+  cursor:pointer;
+  transition:0.3s;
+  background:white;
+}
+
+.uploadCard svg{
+  margin-bottom:12px;
+}
+
+.uploadCard h3{
+  margin:8px 0;
+  font-size:18px;
+  font-weight:600;
+}
+
+.uploadCard p{
+  font-size:14px;
+  color:#6b7280;
+}
+
+.uploadCard:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+}
+
+.uploadCard.active{
+  border-color:#2563eb;
+  background:#eff6ff;
+}

@@ -3,12 +3,21 @@ import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
 import { useNavigate,useParams } from "react-router-dom";
 import EmployeLayout from "../../layouts/EmployeeLayout";
-
+import {Briefcase,PhoneCall} from "lucide-react";
 import "../../styles/addlead.css";
 
 function AddLeads() {
 
   const { id } = useParams();
+
+  const [uploadType, setUploadType] =
+  useState("leads");
+
+  const [selectedFile, setSelectedFile] =
+  useState(null);
+
+  const [showUploadModal, setShowUploadModal] =
+  useState(false);
 
   const [leadData, setLeadData] =
   useState({
@@ -28,9 +37,6 @@ function AddLeads() {
     important_lead: false,
 
   });
-  const [selectedFile, setSelectedFile] =
-  useState(null);
-
   const navigate = useNavigate();
 
         // ==========================
@@ -50,6 +56,7 @@ function AddLeads() {
             await axios.get(
               `http://localhost:5000/api/leads/${id}`
             );
+            console.log(response.data);
 
             setLeadData({
 
@@ -60,7 +67,7 @@ function AddLeads() {
               response.data.contact_person_name || "",
 
               designation:
-              response.data.contact_person_designation || "",
+              response.data.designation || "",
 
               email:
               response.data.email || "",
@@ -168,6 +175,7 @@ function AddLeads() {
           );
 
           alert("Lead Updated Successfully");
+          navigate("/employee/my-leads");
 
         }
 
@@ -186,7 +194,7 @@ function AddLeads() {
           );
 
           alert("Lead Added Successfully");
-
+          navigate("/employee/my-leads");
         }
               
 
@@ -249,37 +257,43 @@ function AddLeads() {
           );
 
           const formData =
-          new FormData();
+            new FormData();
 
-          formData.append(
-            "file",
-            selectedFile
-          );
+            formData.append(
+              "file",
+              selectedFile
+            );
 
-          formData.append(
+            formData.append(
+              "uploadType",
+              uploadType
+            );
 
-            "created_by_id",
+            formData.append(
+              "created_by_id",
+              user?.id || 1
+            );
 
-            user?.id || 1
+      const uploadUrl =
 
-          );
+          uploadType === "tasks"
+
+          ? "http://localhost:5000/api/tasks/upload"
+
+          : "http://localhost:5000/api/leads/upload";
 
           const response =
           await axios.post(
 
-            "http://localhost:5000/api/leads/upload",
+            uploadUrl,
 
             formData,
 
             {
-
               headers: {
-
                 "Content-Type":
                 "multipart/form-data"
-
               }
-
             }
 
           );
@@ -312,6 +326,7 @@ function AddLeads() {
         }
 
       };
+      console.log(leadData);
 
   return (
 
@@ -752,13 +767,11 @@ function AddLeads() {
 
                   <button
                     className="uploadBtn"
-                    onClick={
-                      handleUpload
+                    onClick={() =>
+                      setShowUploadModal(true)
                     }
                   >
-
-                    Upload Leads
-
+                    Upload Excel
                   </button>
 
                 </div>
@@ -768,6 +781,120 @@ function AddLeads() {
             </div>
 
           </div>
+          {
+showUploadModal && (
+
+<div className="crmModalOverlay">
+
+  <div className="crmModalCard">
+
+   <h2>
+  Upload Excel File
+</h2>
+
+<p className="modalSubtitle">
+  Select where the imported data should go
+</p>
+
+    <div
+      style={{
+        marginTop: "20px"
+      }}
+    >
+
+      <label>
+        Upload Type
+      </label>
+
+      <div className="uploadTypeGrid">
+
+  <div
+    className={`uploadCard ${
+      uploadType === "leads"
+        ? "active"
+        : ""
+    }`}
+    onClick={() =>
+      setUploadType("leads")
+    }
+  >
+    <Briefcase size={36} />
+
+    <h3>Leads</h3>
+
+    <p>
+      CRM prospects and leads
+    </p>
+  </div>
+
+  <div
+    className={`uploadCard ${
+      uploadType === "tasks"
+        ? "active"
+        : ""
+    }`}
+    onClick={() =>
+      setUploadType("tasks")
+    }
+  >
+    <PhoneCall size={36} />
+
+    <h3>Tasks</h3>
+
+    <p>
+      Employee calling list
+    </p>
+  </div>
+
+</div>
+
+    </div>
+
+    <div
+      style={{
+        marginTop: "20px"
+      }}
+    >
+
+      <button
+
+        className="cancelButton"
+
+        onClick={() =>
+          setShowUploadModal(false)
+        }
+
+      >
+
+        Cancel
+
+      </button>
+
+      <button
+
+        className="saveButton"
+
+        onClick={() => {
+
+          handleUpload();
+
+          setShowUploadModal(false);
+
+        }}
+
+      >
+
+        Upload
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+)}
     </EmployeLayout>
 
   );

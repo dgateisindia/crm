@@ -24,18 +24,18 @@ db.getConnection((err, connection) => {
 
   if (err) {
 
-    console.log(
-      "Database Connection Failed:",
-      err
-    );
+    //console.log(
+      //"Database Connection Failed:",
+      //err
+    //);
 
     return;
 
   }
 
-  console.log(
-    "MySQL Connected Successfully"
-  );
+  //console.log(
+    //"MySQL Connected Successfully"
+  //);
 
   connection.query(
     "SELECT DATABASE() AS db",

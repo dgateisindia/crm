@@ -9,6 +9,11 @@ require("cors");
 const app =
 express();
 
+//tasks routes
+
+const taskRoutes =
+require("./routes/taskRoutes");
+
 
 // Database Connection
 const db =
@@ -78,6 +83,12 @@ app.use(
   managerRoutes
 );
 
+//task routes
+app.use(
+  "/api/tasks",
+  taskRoutes
+);
+
 
 // Test Route
 app.get(
@@ -103,7 +114,7 @@ app.get(
 
         if (err) {
 
-          console.log(err);
+          //console.log(err);
 
           return res.status(500).json({
             success: false,

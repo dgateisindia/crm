@@ -23,7 +23,7 @@ import {
   User
 } from "lucide-react";
 
-export default function LeadDetails() {
+export default function EmployeeLeadDetails() {
 
   const { id } =
   useParams();
@@ -178,7 +178,7 @@ export default function LeadDetails() {
         <button
 
           onClick={() =>
-navigate("/manager/leads")
+navigate("/employee/my-leads")
           }
 
           className="flex items-center gap-2 border px-4 py-2 rounded-xl hover:bg-gray-100"

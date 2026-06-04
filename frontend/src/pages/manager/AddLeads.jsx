@@ -149,9 +149,10 @@ console.log("Lead Data:", response.data);
     }
   );
 
-  alert("Lead Updated Successfully");
-
-  navigate("/manager/leads"); // Redirect to Total Leads page
+  alert(
+    "Lead Updated Successfully"
+  );
+navigate("/manager/leads");
 }
 
 else {
