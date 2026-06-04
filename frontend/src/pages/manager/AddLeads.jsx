@@ -64,8 +64,10 @@ initialState
 
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/leads/${id}`
+         `http://localhost:5000/api/leads/${id}`
           );
+
+console.log("Lead Data:", response.data);
 
           setLeadData({
             company_name: response.data.company_name || "",
@@ -134,33 +136,22 @@ initialState
         )
       );
 
-      if (id) {
+    if (id) {
 
   await axios.put(
-
-`http://localhost:5000/api/leads/update/${id}`,
-
+    `http://localhost:5000/api/leads/update/${id}`,
     {
-
       ...leadData,
-
       created_by_id:
-
       user?.employee_id ||
-
       user?.id ||
-
       1
-
     }
-
   );
 
-  alert(
-    "Lead Updated Successfully"
-  );
-  window.location.reload();
+  alert("Lead Updated Successfully");
 
+  navigate("/manager/leads"); // Redirect to Total Leads page
 }
 
 else {
@@ -412,7 +403,7 @@ else {
                     />
 
                   </div>
-                  <div>
+                  <div className="formGroup">
 
                     <label className="form-label">
 
