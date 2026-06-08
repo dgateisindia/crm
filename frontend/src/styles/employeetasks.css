@@ -1,0 +1,231 @@
+.followup-modal-overlay {
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(
+    0,
+    0,
+    0,
+    0.45
+  );
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 9999;
+
+}
+
+.followup-modal {
+
+  background: #fff;
+
+  width: 450px;
+
+  padding: 25px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 10px 25px
+    rgba(
+      0,
+      0,
+      0,
+      0.15
+    );
+
+  animation:
+    popupAnimation
+    0.25s ease;
+
+}
+
+@keyframes popupAnimation {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-20px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+.followup-modal h2 {
+
+  margin-bottom: 20px;
+
+  font-size: 22px;
+
+  color: #1f2937;
+
+}
+
+.followup-form-group {
+
+  margin-bottom: 15px;
+
+}
+
+.followup-form-group label {
+
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-weight: 600;
+
+  color: #374151;
+
+}
+
+.followup-form-group input,
+
+.followup-form-group textarea {
+
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  font-size: 14px;
+
+}
+
+.followup-form-group input:focus,
+
+.followup-form-group textarea:focus {
+
+  border-color: #2563eb;
+
+}
+
+.followup-modal-actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+
+}
+
+.cancel-btn {
+
+  background: #e5e7eb;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+.save-btn {
+
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+.save-btn:hover {
+
+  background: #1d4ed8;
+
+}
+.action-menu-container {
+
+  position: relative;
+
+}
+
+.action-menu-btn {
+
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+}
+
+.action-dropdown {
+
+  position: absolute;
+
+  right: 0;
+
+  top: 35px;
+
+  background: white;
+
+  min-width: 180px;
+
+  border-radius: 10px;
+
+  box-shadow:
+    0 5px 20px
+    rgba(
+      0,
+      0,
+      0,
+      0.12
+    );
+
+  z-index: 999;
+
+}
+
+.action-dropdown div {
+
+  padding: 12px 15px;
+
+  cursor: pointer;
+
+}
+
+.action-dropdown div:hover {
+
+  background: #f3f4f6;
+
+}

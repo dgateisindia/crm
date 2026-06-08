@@ -404,9 +404,9 @@ else {
                     />
 
                   </div>
+                  
                   <div className="formGroup">
-
-                    <label className="form-label">
+                    <label>
 
                     Designation
 
@@ -426,7 +426,7 @@ else {
                     handleChange
                     }
 
-                    placeholder="Enter Designation"
+                    //placeholder="Enter Designation"
 
                     className="form-input"
 

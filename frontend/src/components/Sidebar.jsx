@@ -59,12 +59,7 @@ export default function Sidebar() {
 
             <Link to="/manager/leads">
               <li
-                className={`sidebar-menu ${
-                  location.pathname === "/manager/leads"
-                    ? "active-menu"
-                    : ""
-                }`}
-              >
+                className={`sidebar-menu ${location.pathname === "/manager/leads"? "active-menu": ""}`}>
                 <ContactRound size={12} />
                 Leads
               </li>
@@ -72,12 +67,7 @@ export default function Sidebar() {
 
             <Link to="/manager/add-leads">
               <li
-                className={`sidebar-menu ${
-                  location.pathname === "/manager/add-leads"
-                    ? "active-menu"
-                    : ""
-                }`}
-              >
+                className={`sidebar-menu ${location.pathname === "/manager/add-leads"? "active-menu": ""}`}>
                 <ContactRound size={12} />
                 Add Lead
               </li>
@@ -144,12 +134,7 @@ export default function Sidebar() {
 
           <Link to="/manager/important-leads">
             <div
-              className={`sidebar-important-card ${
-                location.pathname === "/manager/important-leads"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
+              className={`sidebar-important-card ${location.pathname === "/manager/important-leads"? "active-menu": ""}`}>
               <div className="flex items-center gap-2">
                 <AlertCircle size={20} />
                 Important Leads
@@ -159,12 +144,8 @@ export default function Sidebar() {
 
           <Link to="/manager/converted-leads">
             <div
-              className={`sidebar-important-card ${
-                location.pathname === "/manager/converted-leads"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
+              className={`sidebar-important-card ${location.pathname === "/manager/converted-leads"? "active-menu": ""}`}>
+            
               <div className="flex items-center gap-2">
                 <BadgeCheck size={20} />
                 Converted Leads
@@ -174,12 +155,7 @@ export default function Sidebar() {
 
           <Link to="/manager/not-interested">
             <div
-              className={`sidebar-important-card ${
-                location.pathname === "/manager/not-interested"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
+              className={`sidebar-important-card ${location.pathname === "/manager/not-interested"? "active-menu": ""}`}>
               <div className="flex items-center gap-2">
                 <Clock size={20} />
                 Not Interested
@@ -189,17 +165,32 @@ export default function Sidebar() {
 
         </div>
       </div>
-            {/* Bottom */}
+             
             <div>
+          {/* Bottom Profile
+        <div className="profile-card">
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="profile"
+            className="w-4 h-8 rounded-full"
+          />*/}
+
+          <div>
+            <h3 className="font-semibold">
+              Manager
+            </h3>
+
+            <p className="text-sm text-gray-400">
+              CRM Manager
+            </p>
+          </div>
+        </div>
 
           <button
             onClick={handleLogout}
-            className="logout-btn"
-          >
+            className="logout-btn">
             Logout
           </button>
         </div>
-
-      </div>
         );
       }

@@ -30,6 +30,8 @@ import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
 import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
 import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
+import EmployeeReport from "./pages/employee/EmployeeReport";
+
 function App() {
   return (
     <Routes>
@@ -110,6 +112,15 @@ function App() {
       />
 
       <Route
+        path="/employee/reports"
+        element={
+          <ProtectedRoute>
+            <EmployeeReport />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/manager/settings"
         element={
           <ProtectedRoute>
@@ -167,7 +178,7 @@ function App() {
           }
         />
               <Route
-        path="/manager/employee/:id"
+        path="/manager/employees/:id"
         element={
         <ProtectedRoute>
           <EmployeeDetails />

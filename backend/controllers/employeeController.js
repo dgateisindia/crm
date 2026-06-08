@@ -351,7 +351,242 @@ async (req, res) => {
   }
 
 };
+const getEmployeeProfile =
+(req, res) => {
 
+  const id =
+  req.params.id;
+
+  const sql = `
+
+    SELECT
+
+      employee_id,
+      employee_code,
+      full_name,
+      email,
+      phone,
+      department,
+      designation,
+      status
+
+    FROM employees
+
+    WHERE employee_id = ?
+
+  `;
+
+  db.query(
+
+    sql,
+
+    [id],
+
+    (err, result) => {
+
+      if (err) {
+
+        console.log(err);
+
+        return res
+        .status(500)
+        .json(err);
+
+      }
+
+      res.json(
+        result[0]
+      );
+
+    }
+
+  );
+
+};
+const changePassword =
+(req, res) => {
+
+  const id =
+  req.params.id;
+
+  const {
+    newPassword
+  } = req.body;
+
+  db.query(
+
+    `
+
+      UPDATE employees
+
+      SET password = ?
+
+      WHERE employee_id = ?
+
+    `,
+
+    [
+
+      newPassword,
+      id
+
+    ],
+
+    (err) => {
+
+      if (err) {
+
+        return res
+        .status(500)
+        .json(err);
+
+      }
+
+      res.json({
+
+        message:
+        "Password Updated"
+
+      });
+
+    }
+
+  );
+
+};
+// ==========================
+// Employee Statistics
+// ==========================
+const getEmployeeStats =
+(req, res) => {
+
+  const employeeId =
+  req.params.id;
+
+  const stats = {};
+
+  db.query(
+
+    `SELECT COUNT(*) totalLeads
+     FROM leads
+     WHERE created_by_id = ?`,
+
+    [employeeId],
+
+    (err, leadResult) => {
+
+      if (err) {
+
+        return res
+        .status(500)
+        .json({
+          message:
+          "Error fetching leads"
+        });
+
+      }
+
+      stats.totalLeads =
+      leadResult[0].totalLeads;
+
+      db.query(
+
+        `SELECT COUNT(*) totalFollowups
+         FROM follow_ups
+         WHERE employee_id = ?`,
+
+        [employeeId],
+
+        (err, followupResult) => {
+
+          if (err) {
+            console.log("followup error", err);
+
+            return res
+            .status(500)
+            .json({
+              message:
+              "Error fetching followups"
+            });
+
+          }
+
+          stats.totalFollowups =
+          followupResult[0]
+          .totalFollowups;
+
+          db.query(
+
+            `SELECT COUNT(*) convertedLeads
+             FROM leads
+             WHERE created_by_id = ?
+             AND lead_status = 'converted'`,
+
+            [employeeId],
+
+            (err, convertedResult) => {
+
+              if (err) {
+
+                return res
+                .status(500)
+                .json({
+                  message:
+                  "Error fetching conversions"
+                });
+
+              }
+
+              stats.convertedLeads =
+              convertedResult[0]
+              .convertedLeads;
+
+              db.query(
+
+                `SELECT COUNT(*) pendingLeads
+                 FROM leads
+                 WHERE created_by_id = ?
+                 AND lead_status NOT IN
+                 ('converted','closed')`,
+
+                [employeeId],
+
+                (err, pendingResult) => {
+
+                  if (err) {
+
+                    return res
+                    .status(500)
+                    .json({
+                      message:
+                      "Error fetching pending leads"
+                    });
+
+                  }
+
+                  stats.pendingLeads =
+                  pendingResult[0]
+                  .pendingLeads;
+
+                  res.json(stats);
+
+                }
+
+              );
+
+            }
+
+          );
+
+        }
+
+      );
+
+    }
+
+  );
+
+};
 // ==========================
 // Export
 // ==========================
@@ -364,6 +599,9 @@ module.exports = {
   getEmployeeById,
 
   deleteEmployee,
-  updateEmployeeStatus
+  updateEmployeeStatus,
+  getEmployeeProfile,
+  changePassword,
+  getEmployeeStats
 
 };

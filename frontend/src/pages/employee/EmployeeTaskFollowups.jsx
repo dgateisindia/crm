@@ -1,3 +1,6 @@
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import {
@@ -8,13 +11,65 @@ import {
 } from "lucide-react";
 
 export default function EmployeeTaskFollowups() {
-  
+
+  const [followups,
+  setFollowups] =
+  useState([]);
+
+  useEffect(() => {
+
+    const fetchFollowups =
+    async () => {
+
+      try {
+
+        const user =
+        JSON.parse(
+          localStorage.getItem(
+            "user"
+          )
+        );
+
+        const employeeId =
+          user?.employee_id ||
+          user?.id;
+
+        const response =
+        await axios.get(
+
+          `http://localhost:5000/api/tasks/followups/${employeeId}`
+
+        );
+
+        setFollowups(
+          response.data
+        );
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
+
+    fetchFollowups();
+
+  }, []);
+
+  const today =
+  new Date()
+  .toISOString()
+  .split("T")[0];
 
   return (
 
     <EmployeeLayout>
 
       {/* Header */}
+
       <div className="dashboard-header">
 
         <div>
@@ -31,7 +86,8 @@ export default function EmployeeTaskFollowups() {
 
       </div>
 
-      {/* Top Cards */}
+      {/* Cards */}
+
       <div className="dashboard-grid">
 
         <div className="crm-card blue-card">
@@ -40,7 +96,9 @@ export default function EmployeeTaskFollowups() {
 
             <div className="icon-circle blue-bg">
 
-              <CalendarClock size={18} />
+              <CalendarClock
+                size={18}
+              />
 
             </div>
 
@@ -51,7 +109,7 @@ export default function EmployeeTaskFollowups() {
           </h3>
 
           <h2>
-            25
+            {followups.length}
           </h2>
 
         </div>
@@ -62,7 +120,9 @@ export default function EmployeeTaskFollowups() {
 
             <div className="icon-circle green-bg">
 
-              <PhoneCall size={18} />
+              <PhoneCall
+                size={18}
+              />
 
             </div>
 
@@ -73,7 +133,21 @@ export default function EmployeeTaskFollowups() {
           </h3>
 
           <h2>
-            10
+
+            {
+
+              followups.filter(
+
+                item =>
+
+                item.followup_date
+                ?.split("T")[0]
+                === today
+
+              ).length
+
+            }
+
           </h2>
 
         </div>
@@ -84,7 +158,9 @@ export default function EmployeeTaskFollowups() {
 
             <div className="icon-circle orange-bg">
 
-              <Clock size={18} />
+              <Clock
+                size={18}
+              />
 
             </div>
 
@@ -95,7 +171,21 @@ export default function EmployeeTaskFollowups() {
           </h3>
 
           <h2>
-            12
+
+            {
+
+              followups.filter(
+
+                item =>
+
+                item.followup_date
+                ?.split("T")[0]
+                > today
+
+              ).length
+
+            }
+
           </h2>
 
         </div>
@@ -106,7 +196,9 @@ export default function EmployeeTaskFollowups() {
 
             <div className="icon-circle purple-bg">
 
-              <CheckCircle size={18} />
+              <CheckCircle
+                size={18}
+              />
 
             </div>
 
@@ -116,43 +208,74 @@ export default function EmployeeTaskFollowups() {
             Completed
           </h3>
 
-          <h2>
-            3
-          </h2>
+          <h2>0</h2>
 
         </div>
 
       </div>
 
-      {/* Search & Filter */}
+      {/* Filters */}
+
       <div className="recent-card">
 
         <div
+
           style={{
+
             display: "flex",
+
             gap: "15px",
-            marginBottom: "20px",
-            flexWrap: "wrap"
+
+            marginBottom:
+            "20px",
+
+            flexWrap:
+            "wrap"
+
           }}
+
         >
 
           <input
+
             type="text"
-            placeholder="Search Company..."
+
+            placeholder=
+            "Search Company..."
+
             style={{
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              minWidth: "250px"
+
+              padding:
+              "10px",
+
+              border:
+              "1px solid #ddd",
+
+              borderRadius:
+              "8px",
+
+              minWidth:
+              "250px"
+
             }}
+
           />
 
           <select
+
             style={{
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "8px"
+
+              padding:
+              "10px",
+
+              border:
+              "1px solid #ddd",
+
+              borderRadius:
+              "8px"
+
             }}
+
           >
 
             <option>
@@ -167,15 +290,12 @@ export default function EmployeeTaskFollowups() {
               Upcoming
             </option>
 
-            <option>
-              Completed
-            </option>
-
           </select>
 
         </div>
 
         {/* Table */}
+
         <div className="overflow-x-auto">
 
           <table className="w-full">
@@ -205,11 +325,11 @@ export default function EmployeeTaskFollowups() {
                 </th>
 
                 <th>
-                  Status
+                  Remarks
                 </th>
 
                 <th>
-                  Action
+                  Status
                 </th>
 
               </tr>
@@ -218,85 +338,122 @@ export default function EmployeeTaskFollowups() {
 
             <tbody>
 
-              <tr>
+              {
 
-                <td>
-                  Infosys
-                </td>
+                followups.length > 0
 
-                <td>
-                  Ravi Kumar
-                </td>
+                ?
 
-                <td>
-                  9876543210
-                </td>
+                (
 
-                <td>
-                  05-06-2026
-                </td>
+                  followups.map(
 
-                <td>
-                  11:00 AM
-                </td>
+                    (item) => (
 
-                <td>
+                      <tr
+                        key={
+                          item.followup_id
+                        }
+                      >
 
-                  <span className="status-badge new">
-                    Today
-                  </span>
+                        <td>
+                          {
+                            item.company_name
+                          }
+                        </td>
 
-                </td>
+                        <td>
+                          {
+                            item.contact_person_name
+                          }
+                        </td>
 
-                <td>
+                        <td>
+                          {
+                            item.phone
+                          }
+                        </td>
 
-                  <button className="action-btn">
-                    Actions
-                  </button>
+                        <td>
 
-                </td>
+                          {
 
-              </tr>
+                            new Date(
 
-              <tr>
+                              item.followup_date
 
-                <td>
-                  TCS
-                </td>
+                            )
 
-                <td>
-                  Suresh
-                </td>
+                            .toLocaleDateString()
 
-                <td>
-                  9876543211
-                </td>
+                          }
 
-                <td>
-                  07-06-2026
-                </td>
+                        </td>
 
-                <td>
-                  03:00 PM
-                </td>
+                        <td>
+                          {
+                            item.followup_time
+                          }
+                        </td>
 
-                <td>
+                        <td>
+                          {
+                            item.remarks
+                          }
+                        </td>
 
-                  <span className="status-badge connected">
-                    Upcoming
-                  </span>
+                        <td>
 
-                </td>
+                          <span
+                            className=
+                            "status-badge connected"
+                          >
 
-                <td>
+                            Followup
 
-                  <button className="action-btn">
-                    Actions
-                  </button>
+                          </span>
 
-                </td>
+                        </td>
 
-              </tr>
+                      </tr>
+
+                    )
+
+                  )
+
+                )
+
+                :
+
+                (
+
+                  <tr>
+
+                    <td
+
+                      colSpan="7"
+
+                      style={{
+
+                        textAlign:
+                        "center",
+
+                        padding:
+                        "20px"
+
+                      }}
+
+                    >
+
+                      No Followups Found
+
+                    </td>
+
+                  </tr>
+
+                )
+
+              }
 
             </tbody>
 

@@ -2,63 +2,181 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
-
+import "../../styles/employeetasks.css";
 import {
   CalendarClock,
   Clock,
   CheckCircle,
-  PhoneCall
+  PhoneCall,
+  MoreVertical
 } from "lucide-react";
 
 export default function EmployeeTaskFollowups() {
 
   const [tasks, setTasks] = useState([]);
+
+  const [showFollowupModal,
+      setShowFollowupModal] =
+      useState(false);
+
+      const [selectedTask,
+      setSelectedTask] =
+      useState(null);
+
+      const [followupDate,
+      setFollowupDate] =
+      useState("");
+
+      const [followupTime,
+      setFollowupTime] =
+      useState("");
+
+      const [remarks,
+      setRemarks] =
+      useState("");
+
+      const [openMenu,
+      setOpenMenu] =
+      useState(null);
+
   const handleTaskAction =
-            async (
-              task,
-              action
-            ) => {
+    async (
+      task,
+      action
+    ) => {
 
-              if (!action) return;
+      if (!action) return;
 
-              try {
+      try {
 
-                if (
-                  action ===
-                  "connected"
-                ) {
+        if (
+          action ===
+          "connected"
+        ) {
 
-                  await axios.put(
-                    `http://localhost:5000/api/tasks/connect/${task.task_id}`
-                  );
+          await axios.put(
+            `http://localhost:5000/api/tasks/connect/${task.task_id}`
+          );
 
-                  alert(
-                    "Task moved to Leads"
-                  );
+          alert(
+            "Task moved to Leads"
+          );
 
-                  setTasks(
-                    tasks.filter(
-                      t =>
-                      t.task_id !==
-                      task.task_id
-                    )
-                  );
+        }
+        else if (
+          action === "followup"
+        ) {
 
-                }
+          setSelectedTask(
+            task
+          );
 
-              }
+          setShowFollowupModal(
+            true
+          );
 
-              catch (error) {
+        }
 
-                console.log(error);
+        else if (
+          action ===
+          "not_interested"
+        ) {
 
-                alert(
-                  "Failed to update task"
-                );
+          await axios.put(
+            `http://localhost:5000/api/tasks/not-interested/${task.task_id}`
+          );
 
-              }
+          alert(
+            "Task moved to Not Interested"
+          );
 
-            };
+        }
+
+        setTasks(
+
+          tasks.filter(
+            t =>
+            t.task_id !==
+            task.task_id
+          )
+
+        );
+
+      }
+
+      catch (error) {
+
+        console.log(error);
+
+        alert(
+          "Failed to update task"
+        );
+
+      }
+
+    };
+const saveFollowup =
+async () => {
+
+  try {
+
+    await axios.post(
+
+      "http://localhost:5000/api/tasks/followup",
+
+      {
+
+        task_id:
+        selectedTask.task_id,
+
+        followup_date:
+        followupDate,
+
+        followup_time:
+        followupTime,
+
+        remarks
+
+      }
+
+    );
+
+    alert(
+      "Followup Scheduled"
+    );
+
+    setTasks(
+
+      tasks.filter(
+
+        task =>
+
+        task.task_id !==
+        selectedTask.task_id
+
+      )
+
+    );
+
+    setShowFollowupModal(
+      false
+    );
+
+    setFollowupDate("");
+
+    setFollowupTime("");
+
+    setRemarks("");
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+};
 
   useEffect(() => {
 
@@ -105,7 +223,7 @@ export default function EmployeeTaskFollowups() {
         <div>
 
           <h1 className="dashboard-title">
-            Task Followups
+            Tasks
           </h1>
 
           <p className="dashboard-subtitle">
@@ -289,35 +407,72 @@ export default function EmployeeTaskFollowups() {
                       </td>
                       <td>
 
-                      <select
+                     <div className="action-menu-container">
 
-                        onChange={(e) =>
-                          handleTaskAction(
-                            task,
-                            e.target.value
+                      <button
+                        className="action-menu-btn"
+                        onClick={() =>
+                          setOpenMenu(
+                            openMenu === task.task_id
+                              ? null
+                              : task.task_id
                           )
                         }
-
                       >
 
-                        <option value="">
-                          Actions
-                        </option>
+                        <MoreVertical
+                          size={18}
+                        />
 
-                        <option value="connected">
-                          Connected
-                        </option>
+                      </button>
 
-                        <option value="followup">
-                          Schedule Followup
-                        </option>
+                      {
 
-                        <option value="not_interested">
-                          Not Interested
-                        </option>
+                        openMenu ===
+                        task.task_id && (
 
-                      </select>
+                          <div className="action-dropdown">
 
+                            <div
+                              onClick={() =>
+                                handleTaskAction(
+                                  task,
+                                  "connected"
+                                )
+                              }
+                            >
+                              Connected
+                            </div>
+
+                            <div
+                              onClick={() =>
+                                handleTaskAction(
+                                  task,
+                                  "followup"
+                                )
+                              }
+                            >
+                              Schedule Followup
+                            </div>
+
+                            <div
+                              onClick={() =>
+                                handleTaskAction(
+                                  task,
+                                  "not_interested"
+                                )
+                              }
+                            >
+                              Not Interested
+                            </div>
+
+                          </div>
+
+                        )
+
+                      }
+
+                    </div>
                       </td>
 
                     </tr>
@@ -357,6 +512,133 @@ export default function EmployeeTaskFollowups() {
         </div>
 
       </div>
+      {
+showFollowupModal && (
+
+<div className="followup-modal-overlay">
+
+  <div className="followup-modal">
+
+    <h2>
+      Schedule Followup
+    </h2>
+
+    <div className="followup-form-group">
+
+      <label>
+        Followup Date
+      </label>
+
+      <input
+
+        type="date"
+
+        value={followupDate}
+
+        onChange={(e)=>
+
+          setFollowupDate(
+            e.target.value
+          )
+
+        }
+
+      />
+
+    </div>
+
+    <div className="followup-form-group">
+
+      <label>
+        Followup Time
+      </label>
+
+      <input
+
+        type="time"
+
+        value={followupTime}
+
+        onChange={(e)=>
+
+          setFollowupTime(
+            e.target.value
+          )
+
+        }
+
+      />
+
+    </div>
+
+    <div className="followup-form-group">
+
+      <label>
+        Remarks
+      </label>
+
+      <textarea
+
+        rows="4"
+
+        value={remarks}
+
+        onChange={(e)=>
+
+          setRemarks(
+            e.target.value
+          )
+
+        }
+
+        placeholder="Enter remarks"
+
+      />
+
+    </div>
+
+    <div className="followup-modal-actions">
+
+      <button
+
+        className="cancel-btn"
+
+        onClick={() =>
+
+          setShowFollowupModal(
+            false
+          )
+
+        }
+
+      >
+
+        Cancel
+
+      </button>
+
+      <button
+
+        className="save-btn"
+
+        onClick={
+          saveFollowup
+        }
+
+      >
+
+        Save Followup
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+)
+}
 
     </EmployeeLayout>
 

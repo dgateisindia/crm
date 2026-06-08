@@ -10,14 +10,11 @@ function AddLeads() {
 
   const { id } = useParams();
 
-  const [uploadType, setUploadType] =
-  useState("leads");
+  const [uploadType, setUploadType] = useState("leads");
 
-  const [selectedFile, setSelectedFile] =
-  useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const [showUploadModal, setShowUploadModal] =
-  useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const [leadData, setLeadData] =
   useState({

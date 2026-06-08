@@ -1,17 +1,38 @@
-import "../styles/Topbar.css";
+import "../styles/topbar.css";
+import { CalendarDays,  } from "lucide-react";
 
-export default function Topbar(){
-    const today = new Date().toLocaleDateString();
+export default function Topbar() {
 
+  const today = new Date();
 
-    return(
-        <div className="topbar">
-            <h1 className="topbar-title">
-                Manager  Dashboard
-            </h1>
-            <p className="topbar-date">
-                {today}
-            </p>
-        </div>
-    );
+  const formattedDate =
+    today.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+  return (
+    <div className="topbar">
+
+      <h1 className="topbar-title">
+        Manager Dashboard
+      </h1>
+
+      <div className="date-box">
+
+        <CalendarDays
+          size={16}
+          className="date-icon"
+        />
+
+        <span className="date-text">
+          {formattedDate}
+        </span>
+
+        
+      </div>
+
+    </div>
+  );
 }
