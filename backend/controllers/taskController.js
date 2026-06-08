@@ -584,7 +584,7 @@ module.exports = {
 
   moveTaskToNotInterested,
 
-  //uploadTasks,
+  uploadTasks,
 
   saveTaskFollowup
 
