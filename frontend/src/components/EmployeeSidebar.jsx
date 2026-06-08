@@ -1,10 +1,6 @@
-import {
-  Link,
-  useNavigate,useLocation,
-} from "react-router-dom";
+import {Link,useNavigate,useLocation,} from "react-router-dom";
 
-import logo
-from "../assets/logo.png";
+import logo from "../assets/logo.png";
 
 import "../styles/employeesidebar.css";
 
@@ -19,13 +15,15 @@ import {
   AlertCircle,
   BadgeCheck,
   ClipboardList,
-  CalendarClock
+  CalendarClock,
+  FileText
 } from "lucide-react";
 
 export default function EmployeeSidebar() {
 
   const navigate =
     useNavigate();
+    
   const location =
     useLocation();
 
@@ -160,7 +158,7 @@ export default function EmployeeSidebar() {
           <Link
             to="/employee/profile"
           >
-            <div className="sidebar-menu">
+            <div className={`sidebar-menu ${location.pathname === "/employee/profile" ? "active-menu " : ""}`} >
 
               <User
                 size={18}
@@ -170,6 +168,12 @@ export default function EmployeeSidebar() {
 
             </div>
           </Link>
+          <Link to="/employee/reports">
+              <li className={`sidebar-menu ${location.pathname === "/employee/reports" ? "active-menu " : ""}`}  >
+                <FileText size={12} />
+                Reports
+              </li>
+            </Link>
 
         </div>
 

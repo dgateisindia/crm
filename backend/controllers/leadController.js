@@ -17,6 +17,8 @@ async (req, res) => {
       designation,
       phone,
       email,
+      address,
+      website,
       city,
       source,
       lead_mode,
@@ -36,13 +38,15 @@ async (req, res) => {
         designation,
         phone,
         email,
+        address,
+        website,
         city,
         source,
         lead_mode,
         lead_status,
         created_by_id
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
 
       [
 
@@ -51,6 +55,8 @@ async (req, res) => {
         designation,
         phone,
         email,
+        address,
+        website,
         city,
         source,
         lead_mode,

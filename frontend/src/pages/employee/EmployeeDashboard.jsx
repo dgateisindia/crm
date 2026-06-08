@@ -94,22 +94,7 @@ export default function EmployeeDashboard() {
       {/* Header */}
       <div className="dashboard-header">
 
-        <div>
-
-          <h1 className="dashboard-title">
-
-            Employee Dashboard
-
-          </h1>
-
-          <p className="dashboard-subtitle">
-
-            Welcome back,
-            here's your CRM progress.
-
-          </p>
-
-        </div>
+        
 
       </div>
 

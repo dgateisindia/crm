@@ -14,8 +14,11 @@ multer({
 
 const {
   getEmployeeTasks,
+  getTaskFollowups,
   connectTaskToLead,
-  uploadTasks
+  uploadTasks,
+  moveTaskToNotInterested,
+  saveTaskFollowup
 } = require(
   "../controllers/taskController"
 );
@@ -24,14 +27,26 @@ router.get(
   "/employee/:employeeId",
   getEmployeeTasks
 );
+router.get(
+  "/followups/:employeeId",
+  getTaskFollowups
+);
 router.put(
   "/connect/:taskId",
   connectTaskToLead
+);
+router.put(
+  "/not-interested/:taskId",
+  moveTaskToNotInterested
 );
 router.post(
   "/upload",
   upload.single("file"),
   uploadTasks
+);
+router.post(
+  "/followup",
+  saveTaskFollowup
 );
 
 module.exports =

@@ -1,7 +1,7 @@
 import axios from "axios";
 import {
 
-Trash2,
+//Trash2,
 
 Users,
 
@@ -22,13 +22,30 @@ import ManagerLayout
 from "../../layouts/ManagerLayout";
 
 import "../../styles/employees.css";
-
+import { useNavigate } from "react-router-dom";
 export default function Employees() {
 
   const [
     employees,
     setEmployees
   ] = useState([]);
+
+  const [openMenu,
+    setOpenMenu] =
+    useState(null);
+
+    const toggleMenu =
+    (id) => {
+
+      setOpenMenu(
+        openMenu === id
+          ? null
+          : id
+      );
+
+    };
+
+  const navigate = useNavigate();
 
   // ==========================
   // Fetch Employees
@@ -470,19 +487,45 @@ export default function Employees() {
                         <td className="actionCell">
 
                           <button
+                            className="actionMenuBtn"
                             onClick={() =>
-                              handleDelete(
+                              toggleMenu(
                                 employee.employee_id
                               )
                             }
-                            className="deleteBtn"
                           >
-
-                            <Trash2
-                              size={18}
-                            />
-
+                            ⋮
                           </button>
+
+                          {
+                            openMenu === employee.employee_id && (
+
+                              <div className="actionDropdown">
+
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/manager/employees/${employee.employee_id}`
+                                    )
+                                  }
+                                >
+                                  View Details
+                                </button>
+
+                                <button
+                                  onClick={() =>
+                                    handleDelete(
+                                      employee.employee_id
+                                    )
+                                  }
+                                >
+                                  Delete
+                                </button>
+
+                              </div>
+
+                            )
+                          }
 
                         </td>
 

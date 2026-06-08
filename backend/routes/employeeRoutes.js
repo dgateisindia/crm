@@ -10,39 +10,54 @@ const {
   getEmployees,
   getEmployeeById,
   deleteEmployee,
-  updateEmployeeStatus
+  updateEmployeeStatus,
+  getEmployeeProfile,
+  changePassword,
+  getEmployeeStats
 
 } = require(
   "../controllers/employeeController"
 );
-
 // Create Employee
 router.post(
   "/create",
   createEmployee
 );
-
-// IMPORTANT:
+// Get All Employees
 router.get(
   "/all",
   getEmployees
 );
-
-// Dynamic route LAST
+// Get Employee by ID
 router.get(
-  "/:id",
-  getEmployeeById
+  "/profile/:id",
+  getEmployeeProfile
 );
-
-// Delete
+// Update Employee Status
+router.put(
+  "/change-password/:id",
+  changePassword
+);
+// Get Employee Statistics
+router.get(
+  "/stats/:id",
+  getEmployeeStats
+);
+// Update Employee Status
+router.put(
+  "/status/:id",
+  updateEmployeeStatus
+);
+// Delete Employee
 router.delete(
   "/delete/:id",
   deleteEmployee
 );
-// Update Status
-router.put(
-  "/status/:id",
-  updateEmployeeStatus
+
+// ALWAYS LAST
+router.get(
+  "/:id",
+  getEmployeeById
 );
 
 module.exports =

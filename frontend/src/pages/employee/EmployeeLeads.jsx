@@ -318,22 +318,7 @@ allLeads.filter((lead) => {
       <div className="leads-container">
 
 
-        {/* Header */}
-        <div className="mb-6">
-
-          <h1 className="leads-header-title">
-
-            Total Leads
-
-          </h1>
-
-          <p className="leads-header-subtitle">
-
-            View all CRM leads
-
-          </p>
-
-        </div>
+        
         <div className="dashboard-grid">
 
           <div className="crm-card blue-card">

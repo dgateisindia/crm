@@ -1,27 +1,38 @@
-export default function EmployeeTopbar() {
+import "../styles/topbar.css";
+import { CalendarDays,  } from "lucide-react";
+
+export default function Topbar() {
+
+  const today = new Date();
+
+  const formattedDate =
+    today.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
 
   return (
+    <div className="topbar">
 
-    <div className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
+      <h1 className="topbar-title">
+        Employee Dashboard
+      </h1>
 
-      <div>
+      <div className="date-box">
 
-        <h1 className="text-xl font-semibold text-slate-800">
+        <CalendarDays
+          size={16}
+          className="date-icon"
+        />
 
-          Employee Portal
+        <span className="date-text">
+          {formattedDate}
+        </span>
 
-        </h1>
-
-        <p className="text-sm text-gray-500">
-
-          Manage your leads efficiently
-
-        </p>
-
+        
       </div>
 
     </div>
-
   );
-
 }

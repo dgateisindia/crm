@@ -411,9 +411,9 @@ else {
                     />
 
                   </div>
-                  <div>
-
-                    <label className="form-label">
+                  
+                  <div className="formGroup">
+                    <label>
 
                     Designation
 
@@ -433,7 +433,7 @@ else {
                     handleChange
                     }
 
-                    placeholder="Enter Designation"
+                    //placeholder="Enter Designation"
 
                     className="form-input"
 
