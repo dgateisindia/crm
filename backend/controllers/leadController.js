@@ -22,7 +22,9 @@ async (req, res) => {
       source,
       lead_mode,
       lead_status,
-      created_by_id
+      created_by_id,
+      created_by_type,
+      created_by_name
 
     } = req.body;
 
@@ -43,24 +45,28 @@ async (req, res) => {
         source,
         lead_mode,
         lead_status,
-        created_by_id
+        created_by_id,
+        created_by_type,
+        created_by_name
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)`,
 
       [
 
         company_name,
         contact_person_name,
-        designation,
+        designation || "",
         phone,
         email,
-        address,
-        website,
+        address || "",
+        website || "",
         city,
         source,
         lead_mode,
         lead_status,
-        created_by_id
+        created_by_id,
+        created_by_type,
+        created_by_name
 
       ]
 
@@ -104,25 +110,16 @@ async (req, res) => {
 
   try {
 
-    const [rows] =
-    await db.promise().query(
+   const [rows] =
+      await db.promise().query(
 
-      `SELECT
+        `SELECT *
 
-      leads.*,
+        FROM leads
 
-      employees.full_name
+        ORDER BY id DESC`
 
-      FROM leads
-
-      LEFT JOIN employees
-
-      ON leads.created_by_id =
-      employees.employee_id
-
-      ORDER BY leads.id DESC`
-
-    );
+      );
 
     res.json(rows);
 
@@ -202,6 +199,9 @@ async (req, res) => {
       employeeId
     } =
     req.params;
+  
+
+    
 
     const [rows] =
     await db.promise().query(
@@ -210,13 +210,16 @@ async (req, res) => {
 
       FROM leads
 
-      WHERE created_by_id = ?
+      WHERE created_by_type = 'employee'
+
+      AND created_by_id = ?
 
       ORDER BY id DESC`,
 
       [employeeId]
 
     );
+    
 
     res.json(rows);
 
@@ -251,6 +254,7 @@ async (req, res) => {
       `SELECT *
        FROM leads
        WHERE important_lead = 1
+       AND created_by_type = 'employee'
        AND created_by_id = ?
        ORDER BY id DESC`,
 
@@ -285,6 +289,7 @@ async (req, res) => {
       `SELECT *
        FROM leads
        WHERE lead_status = 'converted'
+       AND created_by_type = 'employee'
        AND created_by_id = ?
        ORDER BY id DESC`,
 
@@ -319,6 +324,7 @@ async (req, res) => {
       `SELECT *
        FROM leads
        WHERE lead_status = 'not_interested'
+       AND created_by_type = 'employee'
        AND created_by_id = ?
        ORDER BY id DESC`,
 

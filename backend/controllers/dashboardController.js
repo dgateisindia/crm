@@ -137,6 +137,7 @@ const getEmployeeStats =
 
     WHERE
     created_by_id = ?
+    AND created_by_type = 'employee'
     `,
 
     [employeeId],
@@ -169,6 +170,7 @@ const getEmployeeStats =
         AND
 
         created_by_id = ?
+        AND created_by_type = 'employee'
         `,
 
         [employeeId],
@@ -201,6 +203,7 @@ const getEmployeeStats =
             AND
 
             created_by_id = ?
+            AND created_by_type = 'employee'
             `,
 
             [employeeId],
@@ -233,6 +236,7 @@ const getEmployeeStats =
                 AND
 
                 created_by_id = ?
+                AND created_by_type = 'employee'
                 `,
 
                 [employeeId],
@@ -261,6 +265,7 @@ const getEmployeeStats =
 
                     WHERE
                     created_by_id = ?
+                    AND created_by_type = 'employee'
 
                     ORDER BY id DESC
 

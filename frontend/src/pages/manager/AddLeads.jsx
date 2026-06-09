@@ -139,14 +139,14 @@ console.log("Lead Data:", response.data);
     if (id) {
 
   await axios.put(
-    `http://localhost:5000/api/leads/update/${id}`,
-    {
-      ...leadData,
-      created_by_id:
-      user?.employee_id ||
-      user?.id ||
-      1
-    }
+
+`http://localhost:5000/api/leads/update/${id}`,
+
+    
+
+      leadData,
+
+
   );
 
   alert(
@@ -167,11 +167,15 @@ else {
 
           created_by_id:
 
-          user?.employee_id ||
+          user?.manager_id ||
 
           user?.id ||
 
-          1
+          1,
+          created_by_type:"manager",
+          created_by_name:
+          user?.full_name ||
+          "Manager Name"
 
         }
 
@@ -221,17 +225,11 @@ else {
 
         try {
 
-          const user =
-          JSON.parse(
-
-            localStorage.getItem(
-              "user"
-            )
-
+         const user = JSON.parse(
+            localStorage.getItem("user")
           );
 
-          const formData =
-          new FormData();
+          const formData = new FormData();
 
           formData.append(
             "file",
@@ -239,12 +237,22 @@ else {
           );
 
           formData.append(
-
             "created_by_id",
-
-            user?.id || 1
-
+            user?.manager_id ||
+            user?.id ||
+            1
           );
+
+          formData.append(
+            "created_by_type",
+            "manager"
+          );
+
+          formData.append(
+              "created_by_name",
+              user?.full_name ||
+              "Manager Name"
+            );
 
           const response =
           await axios.post(
@@ -275,6 +283,7 @@ else {
             Duplicates Skipped`
 
           );
+          navigate("/manager/leads");
 
         }
 

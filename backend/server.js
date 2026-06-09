@@ -42,6 +42,8 @@ require("./routes/uploadRoutes");
 const followupRoutes =
 require("./routes/followupRoutes");
 
+const reportsRoutes =
+require("./routes/reportsRoutes");
 
 // Middleware
 app.use(cors());
@@ -66,7 +68,10 @@ app.use(
   leadRoutes
 );
 
-
+app.use(
+  "/api/leads",
+  uploadRoutes
+);
 app.use(
   "/api/dashboard",
   dashboardRoutes
@@ -84,6 +89,17 @@ app.use(
 );
 
 //task routes
+app.use(
+  "/api/tasks",
+  taskRoutes
+);
+
+//reports routes
+app.use(
+  "/api/reports",
+  reportsRoutes
+);
+
 app.use(
   "/api/tasks",
   taskRoutes

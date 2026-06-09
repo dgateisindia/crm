@@ -579,13 +579,9 @@ module.exports = {
 
   getEmployeeTasks,
   getTaskFollowups,
-
   connectTaskToLead,
-
   moveTaskToNotInterested,
-
   uploadTasks,
-
   saveTaskFollowup
 
 };
