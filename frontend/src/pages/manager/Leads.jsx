@@ -186,6 +186,7 @@ useEffect(() => {
         }
       );
       alert("Follow-up added successfully");
+      await fetchLeads();
       setShowFollowupModal(false);
       setFollowupData({
 
@@ -203,6 +204,16 @@ useEffect(() => {
     catch (error) {
       console.log(error);
       alert("Failed to submit follow-up");
+      setShowFollowupModal(false);
+      await fetchLeads();
+      setFollowupData({
+
+          followup_mode:
+          "call",
+          lead_status:
+          "connected",
+          remarks: ""
+      });
     }
   };
    

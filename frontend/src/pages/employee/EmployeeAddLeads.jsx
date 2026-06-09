@@ -186,6 +186,10 @@ function AddLeads() {
               ...leadData,
               created_by_id:
               user?.id || 1,
+              created_by_type:
+              "employee",
+              created_by_name:
+              user?.full_name || "Employee Name",
             }
 
           );
@@ -271,6 +275,16 @@ function AddLeads() {
               user?.id || 1
             );
 
+            formData.append(
+              "created_by_type",
+              "employee"
+            );
+
+            formData.append(
+              "created_by_name",
+              user?.full_name || "Employee Name"
+            );
+
       const uploadUrl =
 
           uploadType === "tasks"
@@ -304,26 +318,28 @@ function AddLeads() {
             Duplicates Skipped`
 
           );
+          navigate("/employee/my-leads");
 
         }
 
-        catch (error) {
+       catch (error) {
 
-          console.log(error);
+  console.log(
+    "UPLOAD ERROR:",
+    error
+  );
 
-          alert(
+  alert(
 
-            error.response?.data
-            ?.message ||
+    JSON.stringify(
+      error.response?.data
+    )
 
-            "Failed to Upload Leads"
+  );
 
-          );
-
-        }
+}
 
       };
-      console.log(leadData);
 
   return (
 
@@ -625,35 +641,35 @@ function AddLeads() {
                         New
                       </option>
 
-                      <option value="Connected">
+                      <option value="connected">
                         Connected
                       </option>
 
-                      <option value="Interested">
+                      <option value="interested">
                         Interested
                       </option>
 
-                      <option value="Proposed">
+                      <option value="proposed">
                         Proposed
                       </option>
 
-                      <option value="Offered">
+                      <option value="offered">
                         Offered
                       </option>
 
-                      <option value="Meeting Scheduled">
+                      <option value="meeting_scheduled">
                         Meeting Scheduled
                       </option>
 
-                      <option value="Not Interested">
+                      <option value="not_interested">
                         Not Interested
                       </option>
 
-                      <option value="Converted">
+                      <option value="converted">
                         Converted
                       </option>
 
-                      <option value="Closed">
+                      <option value="closed">
                         Closed
                       </option>
 

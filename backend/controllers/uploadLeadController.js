@@ -1,8 +1,11 @@
 const db =
 require("../db");
 
+
+
 const XLSX =
 require("xlsx");
+
 
 
 // ==========================
@@ -10,6 +13,7 @@ require("xlsx");
 // ==========================
 const uploadLeads =
 (req, res) => {
+   
 
   try {
 
@@ -54,6 +58,14 @@ const uploadLeads =
     req.body
     .created_by_id;
 
+    const created_by_type =
+    req.body
+    .created_by_type;
+
+    const created_by_name =
+    req.body
+    .created_by_name;
+
 
     rows.forEach(
 
@@ -63,6 +75,7 @@ const uploadLeads =
 
           company_name,
           contact_person_name,
+          designation,
           email,
           phone,
           address,
@@ -73,7 +86,6 @@ const uploadLeads =
           lead_status,
           lead_mode,
           important_lead
-
         } = row;
 
 
@@ -120,6 +132,7 @@ const uploadLeads =
               return;
 
             }
+    
 
 
             const insertSql = `
@@ -127,6 +140,7 @@ const uploadLeads =
 
                 company_name,
                 contact_person_name,
+                designation,
                 email,
                 phone,
                 address,
@@ -137,43 +151,59 @@ const uploadLeads =
                 lead_status,
                 lead_mode,
                 important_lead,
-                created_by_id
+                created_by_id,
+                created_by_type,
+                created_by_name
 
               )
 
               VALUES (
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?
+                ?, ?, ?, ?, ?,
+                ?
               )
             `;
 
+db.query(
 
-            db.query(
+  insertSql,
 
-              insertSql,
+  [
 
-              [
+    company_name,
+    contact_person_name,
+    designation || "",
+    email,
+    phone,
+    address || "",
+    website || "",
+    source || "",
+    city || "",
+    remarks || "",
+    lead_status || "new",
+    lead_mode || "phone_call",
+    important_lead || false,
+    created_by_id,
+    created_by_type,
+    created_by_name
 
-                company_name,
-                contact_person_name,
-                email,
-                phone,
-                address || "",
-                website || "",
-                source || "",
-                city || "",
-                remarks || "",
-                lead_status || "new",
-                lead_mode || "phone_call",
-                important_lead || false,
-                created_by_id
+  ],
 
-              ]
+  (err, result) => {
 
-            );
+    if (err) {
 
-            inserted++;
+
+      return;
+
+    }
+
+    inserted++;
+
+  }
+
+);
 
           }
 

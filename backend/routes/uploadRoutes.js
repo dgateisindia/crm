@@ -50,10 +50,16 @@ multer({
 
 });
 
-
 router.post(
 
   "/upload",
+
+  (req, res, next) => {
+
+    
+    next();
+
+  },
 
   upload.single(
     "file"
@@ -62,7 +68,6 @@ router.post(
   uploadLeads
 
 );
-
 
 module.exports =
 router;

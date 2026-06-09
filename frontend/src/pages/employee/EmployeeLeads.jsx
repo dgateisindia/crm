@@ -89,24 +89,11 @@ async () => {
 
       user?.id;
 
-
-    console.log(
-      "Employee ID:",
-      employeeId
-    );
-
-
     const response =
     await axios.get(
 
 `http://localhost:5000/api/leads/employee/${employeeId}`
 
-    );
-
-
-    console.log(
-      
-      response.data[0]
     );
 
     setAllLeads(
@@ -209,6 +196,10 @@ useEffect(() => {
         }
       );
       alert("Follow-up added successfully");
+      setShowFollowupModal(false);
+
+      await fetchLeads();
+
       setFollowupData({
 
         followup_mode:
@@ -225,6 +216,7 @@ useEffect(() => {
     catch (error) {
       console.log(error);
       alert("Failed to submit follow-up");
+      navigate("/employee/leads");
     }
   };
    
@@ -299,7 +291,7 @@ allLeads.filter((lead) => {
 
     ||
 
-    lead.lead_status ===
+    lead.lead_status.toLowerCase() ===
     statusFilter;
 
   return (
@@ -308,8 +300,6 @@ allLeads.filter((lead) => {
   );
 
 });
-
-
   return (
     
 
@@ -362,7 +352,7 @@ allLeads.filter((lead) => {
 
                 allLeads.filter(
                 lead =>
-                lead.lead_status ===
+                lead.lead_status.toLowerCase() ===
                 "new"
                 ).length
 
@@ -393,7 +383,7 @@ allLeads.filter((lead) => {
 
                 allLeads.filter(
                 lead =>
-                lead.lead_status ===
+                lead.lead_status.toLowerCase() ===
                 "converted"
                 ).length
 
@@ -424,7 +414,7 @@ allLeads.filter((lead) => {
 
                 allLeads.filter(
                 lead =>
-                lead.lead_status ===
+                lead.lead_status.toLowerCase()   ===
                 "not_interested"
                 ).length
 
