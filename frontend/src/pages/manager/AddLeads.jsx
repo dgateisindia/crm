@@ -447,13 +447,23 @@ else {
                       Phone *
                     </label>
 
-                    <input
-                      type="text"
-                      name="phone"
-                      value={leadData.phone}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    name="phone"
+                    value={leadData.phone}
+                    onChange={(e) => {
+
+                      const value = e.target.value
+                        .replace(/\D/g, "")   // Only digits
+                        .slice(0, 10);        // Max 10 digits
+
+                      setLeadData({
+                        ...leadData,
+                        phone: value
+                      });
+
+                    }}
+                  />
 
                   </div>
 

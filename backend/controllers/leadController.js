@@ -30,6 +30,19 @@ async (req, res) => {
     } = req.body;
 
 
+    // Phone validation
+    if (!/^\d{10}$/.test(phone)) {
+
+      return res.status(400).json({
+
+        message:
+        "Phone number must contain exactly 10 digits"
+
+      });
+
+    }
+
+
     const [result] =
     await db.promise().query(
 
@@ -50,7 +63,7 @@ async (req, res) => {
         created_by_type,
         created_by_name
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
       [
 
@@ -87,8 +100,6 @@ async (req, res) => {
   }
 
   catch (error) {
-
-    //console.log(error);
 
     res.status(500)
     .json({

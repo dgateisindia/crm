@@ -29,8 +29,8 @@ export default function EmployeeDashboard() {
     useState({
 
       totalLeads: 0,
-      contacted: 0,
-      qualified: 0,
+      connected: 0,
+      new: 0,
       converted: 0,
       recentLeads: [],
 
@@ -171,14 +171,14 @@ export default function EmployeeDashboard() {
 
           <h3>
 
-            Contacted
+            Connected
 
           </h3>
 
           <h2>
 
             {
-              stats.contacted
+              stats.connected
             }
 
           </h2>
@@ -213,14 +213,14 @@ export default function EmployeeDashboard() {
 
           <h3>
 
-            Qualified
+            NEW
 
           </h3>
 
           <h2>
 
             {
-              stats.qualified
+              stats.new
             }
 
           </h2>

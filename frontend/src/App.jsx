@@ -257,6 +257,10 @@ function App() {
           path="/employee/task-followups"
           element={<EmployeeTaskFollowups />}
         />
+        <Route
+          path="/manager/edit-employee/:id"
+          element={<CreateEmployee />}
+        />
 
     </Routes>
   );

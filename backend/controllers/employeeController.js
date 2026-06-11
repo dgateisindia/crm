@@ -587,12 +587,82 @@ const getEmployeeStats =
   );
 
 };
+const updateEmployee =
+async (req, res) => {
+
+  try {
+
+    const { id } =
+    req.params;
+
+    const {
+
+      full_name,
+      email,
+      phone,
+      department,
+      designation,
+      status
+
+    } = req.body;
+
+    await db.promise().query(
+
+      `UPDATE employees
+
+       SET
+
+       full_name = ?,
+       email = ?,
+       phone = ?,
+       department = ?,
+       designation = ?,
+       status = ?
+
+       WHERE employee_id = ?`,
+
+      [
+
+        full_name,
+        email,
+        phone,
+        department,
+        designation,
+        status,
+        id
+
+      ]
+
+    );
+
+    res.json({
+
+      message:
+      "Employee Updated Successfully"
+
+    });
+
+  }
+
+  catch (error) {
+
+    res.status(500).json({
+
+      message:
+      "Failed to update employee"
+
+    });
+
+  }
+
+};
 // ==========================
 // Export
 // ==========================
 module.exports = {
 
   createEmployee,
+
 
   getEmployees,
 
@@ -602,6 +672,7 @@ module.exports = {
   updateEmployeeStatus,
   getEmployeeProfile,
   changePassword,
-  getEmployeeStats
+  getEmployeeStats,
+  updateEmployee
 
 };

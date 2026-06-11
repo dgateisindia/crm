@@ -841,19 +841,19 @@ setShowFollowupModal(false)
         <select
 
           value={
-followupData.followup_mode
-          }
+            followupData.followup_mode
+                      }
 
-          onChange={(e) =>
+                      onChange={(e) =>
 
-setFollowupData({
+            setFollowupData({
 
-...followupData,
+            ...followupData,
 
-followup_mode:
-e.target.value
+            followup_mode:
+            e.target.value
 
-})
+            })
 
           }
 

@@ -154,70 +154,55 @@ const getEmployeeStats =
       .totalLeads;
 
 
-      // ==========================
-      // Contacted Leads
-      // ==========================
-      db.query(
-
-        `
-        SELECT COUNT(*) AS contacted
-
-        FROM leads
-
-        WHERE
-        lead_status = 'contacted'
-
-        AND
-
-        created_by_id = ?
-        AND created_by_type = 'employee'
-        `,
-
-        [employeeId],
-
-        (err, contactedResult) => {
-
-          if (err)
-          return res.status(500)
-          .json(err);
-
-
-          stats.contacted =
-          contactedResult[0]
-          .contacted;
-
-
-          // ==========================
-          // Qualified Leads
-          // ==========================
+      // Connected Leads
           db.query(
 
             `
-            SELECT COUNT(*) AS qualified
+            SELECT COUNT(*) AS connected
 
             FROM leads
 
             WHERE
-            lead_status = 'qualified'
+            lead_status = 'connected'
 
-            AND
-
-            created_by_id = ?
+            AND created_by_id = ?
             AND created_by_type = 'employee'
             `,
 
             [employeeId],
 
-            (err, qualifiedResult) => {
+            (err, connectedResult) => {
 
               if (err)
-              return res.status(500)
-              .json(err);
+                return res.status(500).json(err);
 
+              stats.connected =
+                connectedResult[0].connected;
 
-              stats.qualified =
-              qualifiedResult[0]
-              .qualified;
+              // New Leads
+              db.query(
+
+                `
+                SELECT COUNT(*) AS newLeads
+
+                FROM leads
+
+                WHERE
+                lead_status = 'new'
+
+                AND created_by_id = ?
+                AND created_by_type = 'employee'
+                `,
+
+                [employeeId],
+
+                (err, newResult) => {
+
+                  if (err)
+                    return res.status(500).json(err);
+
+                  stats.new =
+                    newResult[0].newLeads;
 
 
               // ==========================

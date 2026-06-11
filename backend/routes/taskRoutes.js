@@ -16,12 +16,14 @@ const {
   getEmployeeTasks,
   getTaskFollowups,
   connectTaskToLead,
-  uploadTasks,
   moveTaskToNotInterested,
   saveTaskFollowup
 } = require(
   "../controllers/taskController"
 );
+const{
+  uploadLeads
+}= require("../controllers/uploadLeadController");
 
 router.get(
   "/employee/:employeeId",
@@ -32,17 +34,17 @@ router.get(
   getTaskFollowups
 );
 router.put(
-  "/connect/:taskId",
+  "/connect/:leadId",
   connectTaskToLead
 );
 router.put(
-  "/not-interested/:taskId",
+  "/not-interested/:leadId",
   moveTaskToNotInterested
 );
 router.post(
   "/upload",
   upload.single("file"),
-  uploadTasks
+  uploadLeads
 );
 router.post(
   "/followup",

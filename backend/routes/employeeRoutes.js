@@ -13,7 +13,8 @@ const {
   updateEmployeeStatus,
   getEmployeeProfile,
   changePassword,
-  getEmployeeStats
+  getEmployeeStats,
+  updateEmployee
 
 } = require(
   "../controllers/employeeController"
@@ -52,6 +53,11 @@ router.put(
 router.delete(
   "/delete/:id",
   deleteEmployee
+);
+// Update Employee
+router.put(
+  "/update/:id",
+  updateEmployee
 );
 
 // ALWAYS LAST
