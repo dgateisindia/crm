@@ -1,0 +1,119 @@
+/* ==========================
+   Task Followup Action Menu
+========================== */
+
+.taskDropdownMenu{
+  position:relative;
+}
+
+.taskActionBtn{
+  width:36px;
+  height:36px;
+
+  border:none;
+  border-radius:10px;
+
+  background:#f8fafc;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  transition:.2s;
+}
+
+.taskActionBtn:hover{
+  background:#eef2f7;
+}
+
+.taskActionMenu{
+
+  position:absolute;
+
+  top:0;
+
+  right:45px;
+
+  min-width:230px;
+
+  background:#fff;
+
+  border-radius:16px;
+
+  border:1px solid #e2e8f0;
+
+  box-shadow:
+    0 12px 28px
+    rgba(15,23,42,.15);
+
+  padding:8px;
+
+  z-index:9999;
+}
+
+.taskMenuItem{
+
+  width:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  padding:12px 14px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:transparent;
+
+  color:#334155;
+
+  font-size:14px;
+
+  font-weight:500;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.taskMenuItem:hover{
+
+  background:#f8fafc;
+}
+
+.taskMenuItem svg{
+
+  flex-shrink:0;
+}
+
+.taskMenuDivider{
+
+  height:1px;
+
+  background:#e2e8f0;
+
+  margin:6px 0;
+}
+/* Individual Action Colors */
+
+.taskView{
+  color:#060606;
+}
+
+.taskEdit{
+  color:#090909;
+}
+
+.taskFollowup{
+  color:#0b0b0b;
+}
+
+.leadFollowup{
+  color:#040404;
+}

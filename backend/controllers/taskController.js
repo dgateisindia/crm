@@ -4,6 +4,116 @@ require("../db");
 const XLSX =
 require("xlsx");
 
+// ==========================
+// Add Lead History
+// ==========================
+const addLeadHistory = (
+
+  lead_id,
+
+  employee_id,
+
+  remarks,
+
+  followup_date,
+
+  followup_time,
+
+  lead_status = "connected",
+
+  followup_mode = "call"
+
+) => {
+
+  const nextFollowup =
+
+    `${followup_date} ${followup_time}`;
+
+  const sql = `
+
+    INSERT INTO follow_ups
+
+    (
+
+      lead_id,
+
+      employee_id,
+
+      contact_date,
+
+      followup_mode,
+
+      remarks,
+
+      next_followup_date,
+
+      status,
+
+      lead_status
+
+    )
+
+    VALUES
+
+    (?, ?, NOW(), ?, ?, ?, ?, ?)
+
+  `;
+
+  db.query(
+
+    sql,
+
+    [
+
+      lead_id,
+
+      employee_id,
+
+      followup_mode,
+
+      remarks,
+
+      nextFollowup,
+
+      "pending",
+
+      lead_status
+
+    ],
+
+    (err) => {
+
+      if (err) {
+
+        console.log(
+
+          "Followup History Error:",
+
+          err
+
+        );
+
+      }
+
+      else {
+
+        console.log(
+
+          "Lead History Added"
+
+        );
+
+      }
+
+    }
+
+  );
+
+};
+
+// ==========================
+// Get Employee Tasks
+// ==========================
 const getEmployeeTasks =
 (req, res) => {
 
@@ -12,29 +122,29 @@ const getEmployeeTasks =
 
   const sql = `
 
-        SELECT *
+    SELECT *
 
-        FROM leads
+    FROM leads
 
-        WHERE
+    WHERE
 
-        lead_status = 'new'
+    lead_status = 'new'
 
-        AND created_by_type = 'employee'
+    AND created_by_type = 'employee'
 
-        AND created_by_id = ?
+    AND created_by_id = ?
 
-        AND id NOT IN (
+    AND id NOT IN (
 
-        SELECT lead_id
+      SELECT lead_id
 
-        FROM task_followups
+      FROM task_followups
 
-        )
+    )
 
-        ORDER BY id DESC
+    ORDER BY id DESC
 
-        `;
+  `;
 
   db.query(
 
@@ -60,13 +170,16 @@ const getEmployeeTasks =
 
 };
 
+// ==========================
+// Move Task To Lead
+// ==========================
 const connectTaskToLead =
 (req, res) => {
 
-    const leadId =
-    req.params.leadId;
+  const leadId =
+  req.params.leadId;
 
-    const sql = `
+  const sql = `
 
     UPDATE leads
 
@@ -74,82 +187,88 @@ const connectTaskToLead =
 
     WHERE id = ?
 
-    `;
+  `;
 
-    db.query(
+  db.query(
 
-        sql,
+    sql,
 
-        [leadId],
+    [leadId],
 
-        (err) => {
+    (err) => {
 
-            if (err) {
+      if (err) {
 
-                return res
-                .status(500)
-                .json(err);
+        return res
+        .status(500)
+        .json(err);
 
-            }
+      }
 
-            res.json({
+      res.json({
 
-                message:
-                "Task moved to Leads"
+        message:
+        "Task moved to Leads"
 
-            });
+      });
 
-        }
+    }
 
-    );
+  );
 
 };
 
+// ==========================
+// Not Interested
+// ==========================
 const moveTaskToNotInterested =
 (req, res) => {
 
-    const leadId =
-    req.params.leadId;
+  const leadId =
+  req.params.leadId;
 
-    const sql = `
+  const sql = `
 
     UPDATE leads
 
-    SET lead_status =
-    'not_interested'
+    SET lead_status = 'not_interested'
 
     WHERE id = ?
 
-    `;
+  `;
 
-    db.query(
+  db.query(
 
-        sql,
+    sql,
 
-        [leadId],
+    [leadId],
 
-        (err) => {
+    (err) => {
 
-            if (err) {
+      if (err) {
 
-                return res
-                .status(500)
-                .json(err);
+        return res
+        .status(500)
+        .json(err);
 
-            }
+      }
 
-            res.json({
+      res.json({
 
-                message:
-                "Moved to Not Interested"
+        message:
+        "Moved to Not Interested"
 
-            });
+      });
 
-        }
+    }
 
-    );
+  );
 
 };
+
+// ==========================
+// Save Task Followup
+// ==========================
 const saveTaskFollowup =
 (req, res) => {
 
@@ -217,12 +336,48 @@ const saveTaskFollowup =
 
       }
 
-          res.json({
+      // Update Lead Status
+      db.query(
 
-            message:
-            "Followup Scheduled"
+        `
 
-          });
+        UPDATE leads
+
+        SET lead_status = 'connected'
+
+        WHERE id = ?
+
+        `,
+
+        [lead_id]
+
+      );
+
+      // Add Lead History
+      addLeadHistory(
+
+        lead_id,
+
+        employee_id,
+
+        remarks,
+
+        followup_date,
+
+        followup_time,
+
+        "connected",
+
+        "call"
+
+      );
+
+      res.json({
+
+        message:
+        "Followup Scheduled"
+
+      });
 
     }
 
@@ -230,7 +385,9 @@ const saveTaskFollowup =
 
 };
 
-
+// ==========================
+// Get Task Followups
+// ==========================
 const getTaskFollowups =
 (req, res) => {
 
@@ -239,37 +396,49 @@ const getTaskFollowups =
 
   const sql = `
 
-        SELECT
+    SELECT
 
-            tf.*,
+        tf.followup_id,
 
-            l.company_name,
+        tf.lead_id,
 
-            l.contact_person_name,
+        tf.employee_id,
 
-            l.phone,
+        DATE_FORMAT(
+          tf.followup_date,
+          '%Y-%m-%d'
+        ) AS followup_date,
 
-            l.email,
+        tf.followup_time,
 
-            l.city,
+        tf.remarks,
 
-            l.lead_status
+        l.company_name,
 
-        FROM task_followups tf
+        l.contact_person_name,
 
-        JOIN leads l
+        l.phone,
 
-        ON tf.lead_id = l.id
+        l.email,
 
-        WHERE
+        l.city,
 
-        tf.employee_id = ?
+        l.lead_status
+        
+    FROM task_followups tf
 
-        AND l.lead_status = 'new'
+    JOIN leads l
 
-        ORDER BY tf.followup_date ASC
+    ON tf.lead_id = l.id
 
-        `;
+    WHERE
+
+    tf.employee_id = ?
+
+    ORDER BY tf.followup_date ASC
+
+  `;
+
   db.query(
 
     sql,
@@ -293,13 +462,249 @@ const getTaskFollowups =
   );
 
 };
+const editTaskFollowup = (
+  req,
+  res
+) => {
+
+  const leadId =
+  req.params.leadId;
+
+  const {
+
+    followup_date,
+
+    followup_time,
+
+    remarks
+
+  } = req.body;
+
+  const sql = `
+
+    UPDATE task_followups
+
+    SET
+
+      followup_date = ?,
+
+      followup_time = ?,
+
+      remarks = ?
+
+    WHERE lead_id = ?
+
+  `;
+
+  db.query(
+
+    sql,
+
+    [
+
+      followup_date,
+
+      followup_time,
+
+      remarks,
+
+      leadId
+
+    ],
+
+    (err) => {
+
+      if (err) {
+
+        return res
+        .status(500)
+        .json(err);
+
+      }
+
+      res.json({
+
+        message:
+
+        "Task Followup Updated"
+
+      });
+
+    }
+
+  );
+
+};
+const addTaskFollowup = (
+  req,
+  res
+) => {
+
+  const leadId =
+  req.params.leadId;
+
+  const {
+
+    employee_id,
+
+    followup_date,
+
+    followup_time,
+
+    remarks
+
+  } = req.body;
+
+  const updateSql = `
+
+    UPDATE task_followups
+
+    SET
+
+      followup_date = ?,
+
+      followup_time = ?,
+
+      remarks = ?
+
+    WHERE lead_id = ?
+
+  `;
+
+  db.query(
+
+    updateSql,
+
+    [
+
+      followup_date,
+
+      followup_time,
+
+      remarks,
+
+      leadId
+
+    ],
+
+    (err) => {
+
+      if (err) {
+
+        return res
+        .status(500)
+        .json(err);
+
+      }
+
+      // History Entry
+
+      const historySql = `
+
+        INSERT INTO follow_ups
+
+        (
+
+          lead_id,
+
+          employee_id,
+
+          contact_date,
+
+          followup_mode,
+
+          remarks,
+
+          next_followup_date,
+
+          status,
+
+          lead_status
+
+        )
+
+        VALUES
+
+        (
+
+          ?,
+
+          ?,
+
+          NOW(),
+
+          'call',
+
+          ?,
+
+          ?,
+
+          'completed',
+
+          'connected'
+
+        )
+
+      `;
+
+      db.query(
+
+        historySql,
+
+        [
+
+          leadId,
+
+          employee_id,
+
+          remarks,
+
+          `${followup_date} ${followup_time}`
+
+        ],
+
+        (err) => {
+
+          if (err) {
+
+            return res
+            .status(500)
+            .json(err);
+
+          }
+
+          res.json({
+
+            message:
+
+            "Task Followup Added"
+
+          });
+
+        }
+
+      );
+
+    }
+
+  );
+
+};
 
 module.exports = {
 
   getEmployeeTasks,
+
   getTaskFollowups,
+
   connectTaskToLead,
+
   moveTaskToNotInterested,
-  saveTaskFollowup
+
+  saveTaskFollowup,
+
+  editTaskFollowup,
+
+  addTaskFollowup
 
 };

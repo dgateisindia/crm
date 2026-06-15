@@ -24,6 +24,11 @@ export default function EmployeeTasks() {
       setShowFollowupModal] =
       useState(false);
 
+  const [
+    showLeadFollowupModal,
+    setShowLeadFollowupModal
+  ] = useState(false);
+
       const [selectedTask,
       setSelectedTask] =
       useState(null);
@@ -43,8 +48,22 @@ export default function EmployeeTasks() {
       const [openMenu,
       setOpenMenu] =
       useState(null);
+      
 
       const navigate = useNavigate();
+
+        const [
+          leadFollowupData,
+          setLeadFollowupData
+        ] = useState({
+
+          followup_mode: "call",
+
+          lead_status: "connected",
+
+          remarks: ""
+
+        });
 
 
   const handleTaskAction =
@@ -52,6 +71,7 @@ export default function EmployeeTasks() {
       task,
       action
     ) => {
+      setOpenMenu(null);
 
       if (!action) return;
 
@@ -89,14 +109,17 @@ export default function EmployeeTasks() {
 
         }
 
-        else if (action === "lead_followup") {
-          alert("Reuse lead followup")
+        else if (
+            action === "lead_followup"
+          ) {
 
-          //setSelectedTask(task);
+            setSelectedTask(task);
 
-          //setShowLeadFollowupModal(true);
+            setShowLeadFollowupModal(
+              true
+            );
 
-        }
+          }
               }
 
       catch (error) {
@@ -113,6 +136,10 @@ export default function EmployeeTasks() {
 const saveFollowup =
 async () => {
 
+  const user = JSON.parse(
+  localStorage.getItem("user")
+);
+
   try {
 
     await axios.post(
@@ -125,7 +152,8 @@ async () => {
         selectedTask.id,
 
         employee_id:
-        selectedTask.created_by_id,
+        user?.employee_id ||
+        user?.id,
 
         followup_date:
         followupDate,
@@ -176,6 +204,7 @@ async () => {
 
 };
 
+
   useEffect(() => {
 
     const fetchTasks = async () => {
@@ -210,6 +239,83 @@ async () => {
     fetchTasks();
 
   }, []);
+  const saveLeadFollowup =
+async () => {
+
+  try {
+
+    const user =
+    JSON.parse(
+      localStorage.getItem("user")
+    );
+
+    await axios.post(
+
+      "http://localhost:5000/api/followups/add",
+
+      {
+
+        lead_id:
+        selectedTask.id,
+
+        employee_id:
+        user?.employee_id ||
+        user?.id,
+
+        ...leadFollowupData
+
+      }
+
+    );
+
+    alert(
+      "Lead Followup Added"
+    );
+
+    setTasks(
+
+      tasks.filter(
+
+        task =>
+
+        task.id !==
+        selectedTask.id
+
+      )
+
+    );
+
+    setShowLeadFollowupModal(
+      false
+    );
+
+    setLeadFollowupData({
+
+      followup_mode:
+      "call",
+
+      lead_status:
+      "connected",
+
+      remarks:
+      ""
+
+    });
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Failed to save followup"
+    );
+
+  }
+
+};
+  
   
 
   return (
@@ -262,14 +368,14 @@ async () => {
 
           </div>
 
-          <h3>Pending</h3>
+          <h3>New</h3>
 
           <h2>
             {
               tasks.filter(
                 task =>
                   task.lead_status ===
-                  "pending"
+                  "new"
               ).length
             }
           </h2>
@@ -286,16 +392,10 @@ async () => {
 
           </div>
 
-          <h3>Followups</h3>
+          <h3> Task Followups</h3>
 
           <h2>
-            {
-              tasks.filter(
-                task =>
-                  task.lead_status ===
-                  "followup"
-              ).length
-            }
+          0
           </h2>
 
         </div>
@@ -643,6 +743,252 @@ showFollowupModal && (
 
 )
 }
+{showLeadFollowupModal && (
+
+<div className="crmModalOverlay">
+
+  <div className="crmModalCard">
+
+    {/* Header */}
+    <div className="crmModalHeader">
+
+      <div>
+
+        <h2>
+
+          Add Lead Followup
+
+        </h2>
+
+        <p>
+
+          {selectedTask?.company_name}
+
+        </p>
+
+      </div>
+
+      <button
+
+        className="closeBtn"
+
+        onClick={() =>
+          setShowLeadFollowupModal(false)
+        }
+
+      >
+
+        ✕
+
+      </button>
+
+    </div>
+
+
+    {/* Form */}
+    <div className="crmModalForm">
+
+      {/* Mode */}
+      <div className="crmInputGroup">
+
+        <label>
+
+          Followup Mode
+
+        </label>
+
+        <select
+
+          value={
+            leadFollowupData.followup_mode
+          }
+
+          onChange={(e) =>
+
+            setLeadFollowupData({
+
+              ...leadFollowupData,
+
+              followup_mode:
+              e.target.value
+
+            })
+
+          }
+
+        >
+
+          <option value="call">
+            Call
+          </option>
+
+          <option value="whatsapp">
+            WhatsApp
+          </option>
+
+          <option value="email">
+            Email
+          </option>
+
+          <option value="meeting">
+            Meeting
+          </option>
+
+        </select>
+
+      </div>
+
+
+      {/* Lead Status */}
+      <div className="crmInputGroup">
+
+        <label>
+
+          Lead Status
+
+        </label>
+
+        <select
+
+          value={
+            leadFollowupData.lead_status
+          }
+
+          onChange={(e) =>
+
+            setLeadFollowupData({
+
+              ...leadFollowupData,
+
+              lead_status:
+              e.target.value
+
+            })
+
+          }
+
+        >
+
+          <option value="new">
+            New
+          </option>
+
+          <option value="connected">
+            Connected
+          </option>
+
+          <option value="interested">
+            Interested
+          </option>
+
+          <option value="proposal">
+            Proposal
+          </option>
+
+          <option value="offered">
+            Offered
+          </option>
+
+          <option value="meeting_scheduled">
+            Meeting Scheduled
+          </option>
+
+          <option value="not_interested">
+            Not Interested
+          </option>
+
+          <option value="converted">
+            Converted
+          </option>
+
+          <option value="lost">
+            Lost
+          </option>
+
+        </select>
+
+      </div>
+
+
+      {/* Remarks */}
+      <div className="crmInputGroup fullWidth">
+
+        <label>
+
+          Remarks
+
+        </label>
+
+        <textarea
+
+          rows="4"
+
+          placeholder="Write followup remarks..."
+
+          value={
+            leadFollowupData.remarks
+          }
+
+          onChange={(e) =>
+
+            setLeadFollowupData({
+
+              ...leadFollowupData,
+
+              remarks:
+              e.target.value
+
+            })
+
+          }
+
+        />
+
+      </div>
+
+    </div>
+
+
+    {/* Footer */}
+    <div className="crmModalFooter">
+
+      <button
+
+        className="cancelButton"
+
+        onClick={() =>
+          setShowLeadFollowupModal(false)
+        }
+
+      >
+
+        Cancel
+
+      </button>
+
+      <button
+
+        className="saveButton"
+
+        onClick={
+          saveLeadFollowup
+        }
+
+      >
+
+        Save Followup
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+)}
+        
+
 
     </EmployeeLayout>
 
