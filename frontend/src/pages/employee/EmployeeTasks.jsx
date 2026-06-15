@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetasks.css";
@@ -8,10 +9,14 @@ import {
   Clock,
   CheckCircle,
   PhoneCall,
-  MoreVertical
+  MoreVertical,
+  Eye,
+  SquarePen,
+  CalendarPlus,
+  MessageSquarePlus
 } from "lucide-react";
 
-export default function EmployeeTaskFollowups() {
+export default function EmployeeTasks() {
 
   const [tasks, setTasks] = useState([]);
 
@@ -39,6 +44,9 @@ export default function EmployeeTaskFollowups() {
       setOpenMenu] =
       useState(null);
 
+      const navigate = useNavigate();
+
+
   const handleTaskAction =
     async (
       task,
@@ -48,61 +56,48 @@ export default function EmployeeTaskFollowups() {
       if (!action) return;
 
       try {
+        if (action === "view") {
 
-        if (
-          action ===
-          "connected"
-        ) {
-
-          await axios.put(
-            `http://localhost:5000/api/tasks/connect/${task.task_id}`
-          );
-
-          alert(
-            "Task moved to Leads"
-          );
-
-        }
-        else if (
-          action === "followup"
-        ) {
-
-          setSelectedTask(
-            task
-          );
-
-          setShowFollowupModal(
-            true
+          navigate(
+            `/employee/lead/${task.id}`,
+            {
+              state:{
+                from:"/employee/tasks"
+              }
+          
+            }
           );
 
         }
 
-        else if (
-          action ===
-          "not_interested"
-        ) {
+        else if (action === "edit") {
 
-          await axios.put(
-            `http://localhost:5000/api/tasks/not-interested/${task.task_id}`
-          );
-
-          alert(
-            "Task moved to Not Interested"
-          );
+          navigate(
+              `/employee/edit-lead/${task.id}?from=tasks`
+              
+              
+            );
+        
 
         }
 
-        setTasks(
+        else if (action === "followup") {
 
-          tasks.filter(
-            t =>
-            t.task_id !==
-            task.task_id
-          )
+          setSelectedTask(task);
 
-        );
+          setShowFollowupModal(true);
 
-      }
+        }
+
+        else if (action === "lead_followup") {
+          alert("Reuse lead followup")
+
+          //setSelectedTask(task);
+
+          //setShowLeadFollowupModal(true);
+
+        }
+              }
 
       catch (error) {
 
@@ -126,8 +121,11 @@ async () => {
 
       {
 
-        task_id:
-        selectedTask.task_id,
+        lead_id:
+        selectedTask.id,
+
+        employee_id:
+        selectedTask.created_by_id,
 
         followup_date:
         followupDate,
@@ -151,8 +149,8 @@ async () => {
 
         task =>
 
-        task.task_id !==
-        selectedTask.task_id
+        task.id !==
+        selectedTask.id
 
       )
 
@@ -270,7 +268,7 @@ async () => {
             {
               tasks.filter(
                 task =>
-                  task.task_status ===
+                  task.lead_status ===
                   "pending"
               ).length
             }
@@ -294,7 +292,7 @@ async () => {
             {
               tasks.filter(
                 task =>
-                  task.task_status ===
+                  task.lead_status ===
                   "followup"
               ).length
             }
@@ -318,8 +316,8 @@ async () => {
             {
               tasks.filter(
                 task =>
-                  task.task_status ===
-                  "completed"
+                  task.lead_status ===
+                  "converted"
               ).length
             }
           </h2>
@@ -365,7 +363,7 @@ async () => {
                   tasks.map(task => (
 
                     <tr
-                      key={task.task_id}
+                      key={task.id}
                     >
 
                       <td>
@@ -385,11 +383,11 @@ async () => {
                       <td>
 
                         <span
-                          className={`status-badge ${task.task_status}`}
+                          className={`status-badge ${task.lead_status}`}
                         >
 
                           {
-                            task.task_status
+                            task.lead_status
                           }
 
                         </span>
@@ -413,9 +411,9 @@ async () => {
                         className="action-menu-btn"
                         onClick={() =>
                           setOpenMenu(
-                            openMenu === task.task_id
+                            openMenu === task.id
                               ? null
-                              : task.task_id
+                              : task.id
                           )
                         }
                       >
@@ -429,41 +427,47 @@ async () => {
                       {
 
                         openMenu ===
-                        task.task_id && (
+                        task.id && (
 
                           <div className="action-dropdown">
-
                             <div
                               onClick={() =>
-                                handleTaskAction(
-                                  task,
-                                  "connected"
-                                )
+                                handleTaskAction(task, "view")
                               }
+                              className="action-item"
                             >
-                              Connected
+                              <Eye size={16} />
+                              View Task
                             </div>
 
                             <div
                               onClick={() =>
-                                handleTaskAction(
-                                  task,
-                                  "followup"
-                                )
+                                handleTaskAction(task, "edit")
                               }
+                              className="action-item"
                             >
-                              Schedule Followup
+                              <SquarePen size={16} />
+                              Edit Task
                             </div>
 
                             <div
                               onClick={() =>
-                                handleTaskAction(
-                                  task,
-                                  "not_interested"
-                                )
+                                handleTaskAction(task, "followup")
                               }
+                              className="action-item"
                             >
-                              Not Interested
+                              <CalendarPlus size={16} />
+                              Add Task Followup
+                            </div>
+
+                            <div
+                              onClick={() =>
+                                handleTaskAction(task, "lead_followup")
+                              }
+                              className="action-item"
+                            >
+                              <MessageSquarePlus size={16} />
+                              Add Lead Followup
                             </div>
 
                           </div>

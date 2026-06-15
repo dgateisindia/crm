@@ -701,16 +701,17 @@ lead.lead_status ===
 
                 </td>
 
-
                 <td className="table-data">
 
-                  {
+                  {lead.created_by_name}
 
-              lead.full_name ||
+                  <br />
 
-              "Manager"
+                  <small>
 
-                  }
+                    ({lead.created_by_type})
+
+                  </small>
 
                 </td>
 

@@ -521,6 +521,15 @@ export default function Employees() {
                                 >
                                   Delete
                                 </button>
+                                <button
+                                    onClick={() =>
+                                      navigate(
+                                        `/manager/edit-employee/${employee.employee_id}`
+                                      )
+                                    }
+                                  >
+                                    Edit
+                                  </button>
 
                               </div>
 

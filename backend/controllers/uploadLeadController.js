@@ -65,28 +65,80 @@ const uploadLeads =
     const created_by_name =
     req.body
     .created_by_name;
+  ;
 
 
     rows.forEach(
 
       (row) => {
 
-        const {
+      const company_name =
+        row.company_name ||
+        row["Company Name"];
 
-          company_name,
-          contact_person_name,
-          designation,
-          email,
-          phone,
-          address,
-          website,
-          source,
-          city,
-          remarks,
-          lead_status,
-          lead_mode,
-          important_lead
-        } = row;
+      const contact_person_name =
+        row.contact_person_name ||
+        row["Contact Person"];
+
+      const designation =
+        row.designation ||
+        row["Designation"] ||
+        "";
+
+      const email =
+        row.email ||
+        row["Email"] ||
+        "";
+
+      const phone =
+        row.phone ||
+        row["Phone"];
+
+      const address =
+        row.address ||
+        row["Address"] ||
+        "";
+
+      const website =
+        row.website ||
+        row["Website"] ||
+        "";
+
+      const source =
+        row.source ||
+        row["Source"] ||
+        "";
+
+      const city =
+        row.city ||
+        row["City"] ||
+        "";
+
+      const remarks =
+        row.remarks ||
+        row["Remarks"] ||
+        "";
+
+      const lead_status =
+        (
+          row.lead_status ||
+          row["Lead Status"] ||
+          row["Status"] ||
+          "new"
+        )
+        .toString()
+        .trim()
+        .toLowerCase();
+
+      const lead_mode =
+        row.lead_mode ||
+        row["Lead Mode"] ||
+        "phone_call";
+
+      const important_lead =
+        row.important_lead ||
+        row["Important Lead"] ||
+        false;
 
 
         const duplicateSql = `
@@ -164,6 +216,13 @@ const uploadLeads =
                 ?
               )
             `;
+            console.log({
+              company_name,
+              source,
+              lead_status,
+              lead_mode,
+              designation
+            });
 
 db.query(
 
@@ -181,9 +240,9 @@ db.query(
     source || "",
     city || "",
     remarks || "",
-    lead_status || "new",
-    lead_mode || "phone_call",
-    important_lead || false,
+    lead_status ,
+    lead_mode ,
+    important_lead ,
     created_by_id,
     created_by_type,
     created_by_name

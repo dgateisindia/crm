@@ -5,12 +5,14 @@ import {
 
 import {
   useParams,
-  useNavigate
+  useNavigate,
+  useLocation
 } from "react-router-dom";
 
 import axios from "axios";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
+
 
 import {
   ArrowLeft,
@@ -30,6 +32,8 @@ export default function EmployeeLeadDetails() {
 
   const navigate =
   useNavigate();
+
+  const location = useLocation();
 
   const [
     lead,
@@ -178,7 +182,7 @@ export default function EmployeeLeadDetails() {
         <button
 
           onClick={() =>
-navigate("/employee/my-leads")
+            navigate(location.state?.from || "/employee/my-leads")
           }
 
           className="flex items-center gap-2 border px-4 py-2 rounded-xl hover:bg-gray-100"

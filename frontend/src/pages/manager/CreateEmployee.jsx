@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import axios from "axios";
-
+import { useParams,useNavigate } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/createEmployee.css";
 
@@ -20,6 +20,51 @@ export default function CreateEmployee() {
   const [employee, setEmployee] =
     useState(initialState);
 
+
+    const { id } = useParams();
+
+    const navigate = useNavigate();
+    useEffect(() => {
+
+  if (id) {
+
+    axios.get(
+
+      `http://localhost:5000/api/employee/${id}`
+
+    )
+
+    .then((res) => {
+
+      console.log(
+        "Employee Data:",
+        res.data
+      );
+
+      setEmployee({
+
+        ...res.data,
+
+        password: ""
+
+      });
+
+    })
+
+    .catch((err) => {
+
+      console.log(err);
+
+      alert(
+        "Failed to fetch employee details"
+      );
+
+    });
+
+  }
+
+}, [id]);
+
   // ==========================
   // Handle Input Change
   // ==========================
@@ -38,18 +83,44 @@ export default function CreateEmployee() {
     e.preventDefault();
 
     try {
-      const response =
-        await axios.post(
-          "http://localhost:5000/api/employee/create",
-          employee
-        );
+      if (id) {
 
-      alert(
-        `${response.data.message}
+  await axios.put(
+
+    `http://localhost:5000/api/employee/update/${id}`,
+
+    employee
+
+  );
+
+  alert(
+    "Employee Updated Successfully"
+  );
+
+}
+
+else {
+
+  const response =
+    await axios.post(
+
+      "http://localhost:5000/api/employee/create",
+
+      employee
+
+    );
+
+  alert(
+
+    `${response.data.message}
 
 Employee ID:
 ${response.data.employee_code}`
-      );
+
+  );
+
+}
+navigate("/manager/employees");
 
       setEmployee(initialState);
 
@@ -67,9 +138,19 @@ ${response.data.employee_code}`
 
         {/* Header */}
         <div className="createEmployeeHeader">
-          <h1>
-            Create Employee Login
-          </h1>
+         <h1>
+
+          {
+
+            id
+
+            ? "Edit Employee"
+
+            : "Create Employee Login"
+
+          }
+
+        </h1>
 
           <p>
             Create an account for a new employee and
@@ -204,7 +285,15 @@ ${response.data.employee_code}`
 
                   <input
                     type="text"
-                    value="Auto Generated"
+                    value={
+
+                      id
+
+                      ? employee.employee_code || ""
+
+                      : "Auto Generated"
+
+                    }
                     disabled
                     className="bg-gray-100 cursor-not-allowed"
                   />
@@ -233,8 +322,16 @@ ${response.data.employee_code}`
                     onChange={
                       handleChange
                     }
-                    placeholder="Enter password"
-                    required
+                    placeholder={
+
+                      id
+
+                      ? "Leave blank to keep current password"
+
+                      : "Enter password"
+
+                    }
+                    required={!id}
                   />
                 </div>
 
@@ -246,6 +343,11 @@ ${response.data.employee_code}`
                 <button
                   type="button"
                   className="cancelBtn"
+                  onClick={() =>
+
+                    navigate("/manager/employees")
+
+                  }
                 >
                   Cancel
                 </button>
@@ -254,7 +356,15 @@ ${response.data.employee_code}`
                   type="submit"
                   className="submitBtn"
                 >
-                  Create Employee
+                 {
+
+                    id
+
+                    ? "Update Employee"
+
+                    : "Create Employee"
+
+                  }
                 </button>
 
               </div>
@@ -298,8 +408,19 @@ ${response.data.employee_code}`
               </p>
 
               <p>
+
                 Employee ID:
-                Auto Generated
+
+                {
+
+                  id
+
+                  ? employee.employee_code || ""
+
+                  : "Auto Generated"
+
+                }
+
               </p>
 
             </div>

@@ -12,12 +12,29 @@ const getEmployeeTasks =
 
   const sql = `
 
-    SELECT *
-    FROM tasks
-    WHERE employee_id = ?
-    ORDER BY task_id DESC
+        SELECT *
 
-  `;
+        FROM leads
+
+        WHERE
+
+        lead_status = 'new'
+
+        AND created_by_type = 'employee'
+
+        AND created_by_id = ?
+
+        AND id NOT IN (
+
+        SELECT lead_id
+
+        FROM task_followups
+
+        )
+
+        ORDER BY id DESC
+
+        `;
 
   db.query(
 
@@ -46,219 +63,91 @@ const getEmployeeTasks =
 const connectTaskToLead =
 (req, res) => {
 
-  const taskId =
-  req.params.taskId;
+    const leadId =
+    req.params.leadId;
 
-  db.query(
+    const sql = `
 
-    "SELECT * FROM tasks WHERE task_id = ?",
+    UPDATE leads
 
-    [taskId],
+    SET lead_status = 'interested'
 
-    (err, result) => {
+    WHERE id = ?
 
-      if (err) {
-        return res.status(500).json(err);
-      }
+    `;
 
-      if (result.length === 0) {
-        return res.status(404).json({
-          message: "Task not found"
-        });
-      }
+    db.query(
 
-      const task =
-      result[0];
+        sql,
 
-      const insertSql = `
-
-        INSERT INTO leads
-        (
-          company_name,
-          contact_person_name,
-          phone,
-          email,
-          city,
-          source,
-          lead_mode,
-          lead_status,
-          created_by_id
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-
-      `;
-
-      db.query(
-
-        insertSql,
-
-        [
-
-          task.company_name,
-          task.contact_person_name,
-          task.phone,
-          task.email,
-          task.city,
-
-          "task",
-
-          "phone_call",
-
-          "new",
-
-          task.employee_id
-
-        ],
+        [leadId],
 
         (err) => {
 
-          if (err) {
-            return res.status(500).json(err);
-          }
+            if (err) {
 
-          db.query(
-
-            "DELETE FROM tasks WHERE task_id = ?",
-
-            [taskId],
-
-            (err) => {
-
-              if (err) {
-                return res.status(500).json(err);
-              }
-
-              res.json({
-                message:
-                "Task converted to Lead"
-              });
+                return res
+                .status(500)
+                .json(err);
 
             }
 
-          );
+            res.json({
+
+                message:
+                "Task moved to Leads"
+
+            });
 
         }
 
-      );
-
-    }
-
-  );
+    );
 
 };
 
 const moveTaskToNotInterested =
 (req, res) => {
 
-  const taskId =
-  req.params.taskId;
+    const leadId =
+    req.params.leadId;
 
-  db.query(
+    const sql = `
 
-    "SELECT * FROM tasks WHERE task_id = ?",
+    UPDATE leads
 
-    [taskId],
+    SET lead_status =
+    'not_interested'
 
-    (err, result) => {
+    WHERE id = ?
 
-      if (err) {
-        return res.status(500).json(err);
-      }
+    `;
 
-      if (result.length === 0) {
-        return res.status(404).json({
-          message: "Task not found"
-        });
-      }
+    db.query(
 
-      const task =
-      result[0];
+        sql,
 
-      const insertSql = `
-
-        INSERT INTO leads
-        (
-          company_name,
-          contact_person_name,
-          phone,
-          email,
-          city,
-          source,
-          lead_mode,
-          lead_status,
-          created_by_id
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-
-      `;
-
-      db.query(
-
-        insertSql,
-
-        [
-
-          task.company_name,
-          task.contact_person_name,
-          task.phone,
-          task.email,
-          task.city,
-
-          "task",
-
-          "phone_call",
-
-          "not_interested",
-
-          task.employee_id
-
-        ],
+        [leadId],
 
         (err) => {
 
-         if (err) {
+            if (err) {
 
-            //console.log(
-             // "NOT INTERESTED ERROR:",
-             // err
-           // );
-
-            return res
-              .status(500)
-              .json(err);
-
-          }
-
-          db.query(
-
-            "DELETE FROM tasks WHERE task_id = ?",
-
-            [taskId],
-
-            (err) => {
-
-              if (err) {
-                return res.status(500).json(err);
-              }
-
-              res.json({
-                message:
-                "Task moved to Not Interested"
-              });
+                return res
+                .status(500)
+                .json(err);
 
             }
 
-          );
+            res.json({
+
+                message:
+                "Moved to Not Interested"
+
+            });
 
         }
 
-      );
-
-    }
-
-  );
+    );
 
 };
 const saveTaskFollowup =
@@ -266,7 +155,9 @@ const saveTaskFollowup =
 
   const {
 
-    task_id,
+    lead_id,
+
+    employee_id,
 
     followup_date,
 
@@ -281,7 +172,9 @@ const saveTaskFollowup =
     INSERT INTO task_followups
     (
 
-      task_id,
+      lead_id,
+
+      employee_id,
 
       followup_date,
 
@@ -292,7 +185,7 @@ const saveTaskFollowup =
     )
 
     VALUES
-    (?, ?, ?, ?)
+    (?, ?, ?, ?, ?)
 
   `;
 
@@ -302,7 +195,9 @@ const saveTaskFollowup =
 
     [
 
-      task_id,
+      lead_id,
+
+      employee_id,
 
       followup_date,
 
@@ -322,30 +217,6 @@ const saveTaskFollowup =
 
       }
 
-      db.query(
-
-        `
-
-        UPDATE tasks
-
-        SET task_status = 'followup'
-
-        WHERE task_id = ?
-
-        `,
-
-        [task_id],
-
-        (err) => {
-
-          if (err) {
-
-            return res
-            .status(500)
-            .json(err);
-
-          }
-
           res.json({
 
             message:
@@ -353,172 +224,13 @@ const saveTaskFollowup =
 
           });
 
-        }
-
-      );
-
     }
 
   );
 
 };
 
-const uploadTasks =
-(req, res) => {
 
-  try {
-
-    if (!req.file) {
-
-      return res
-      .status(400)
-      .json({
-        message:
-        "No file uploaded"
-      });
-
-    }
-
-    const workbook =
-    XLSX.readFile(
-      req.file.path
-    );
-
-    const sheetName =
-    workbook.SheetNames[0];
-
-    const sheet =
-    workbook.Sheets[sheetName];
-
-    const rows =
-    XLSX.utils.sheet_to_json(
-      sheet
-    );
-
-    let inserted = 0;
-    let duplicates = 0;
-
-    const employee_id =
-    req.body.created_by_id;
-
-    rows.forEach(
-
-      (row) => {
-
-        const company_name =
-        row["Company Name"] ||
-        row.company_name;
-
-        const contact_person_name =
-        row["Contact Person"] ||
-        row.contact_person_name;
-
-        const phone =
-        row["Phone"] ||
-        row.phone;
-
-        const email =
-        row["Email"] ||
-        row.email;
-
-        const city =
-        row["City"] ||
-        row.city;
-
-        db.query(
-
-          "SELECT * FROM tasks WHERE phone = ?",
-
-          [phone],
-
-          (
-            err,
-            duplicateResult
-          ) => {
-
-            if (
-              duplicateResult.length > 0
-            ) {
-
-              duplicates++;
-
-              return;
-
-            }
-
-            db.query(
-
-              `
-
-              INSERT INTO tasks
-              (
-                company_name,
-                contact_person_name,
-                phone,
-                email,
-                city,
-                task_status,
-                employee_id
-              )
-
-              VALUES
-              (?, ?, ?, ?, ?, ?, ?)
-
-              `,
-
-              [
-
-                company_name,
-                contact_person_name,
-                phone,
-                email || "",
-                city || "",
-                "pending",
-                employee_id
-
-              ]
-
-            );
-
-            inserted++;
-
-          }
-
-        );
-
-      }
-
-    );
-
-    setTimeout(() => {
-
-      res.json({
-
-        message:
-        "Tasks Uploaded",
-
-        inserted,
-
-        duplicates
-
-      });
-
-    }, 3000);
-
-  }
-
-  catch (error) {
-
-    res.status(500).json({
-
-      message:
-      "Task upload failed"
-
-    });
-
-  }
-
-};
 const getTaskFollowups =
 (req, res) => {
 
@@ -527,30 +239,37 @@ const getTaskFollowups =
 
   const sql = `
 
-    SELECT
+        SELECT
 
-      tf.*,
+            tf.*,
 
-      t.company_name,
+            l.company_name,
 
-      t.contact_person_name,
+            l.contact_person_name,
 
-      t.phone,
+            l.phone,
 
-      t.task_status
+            l.email,
 
-    FROM task_followups tf
+            l.city,
 
-    JOIN tasks t
+            l.lead_status
 
-    ON tf.task_id = t.task_id
+        FROM task_followups tf
 
-    WHERE t.employee_id = ?
+        JOIN leads l
 
-    ORDER BY tf.followup_date ASC
+        ON tf.lead_id = l.id
 
-  `;
+        WHERE
 
+        tf.employee_id = ?
+
+        AND l.lead_status = 'new'
+
+        ORDER BY tf.followup_date ASC
+
+        `;
   db.query(
 
     sql,
@@ -581,7 +300,6 @@ module.exports = {
   getTaskFollowups,
   connectTaskToLead,
   moveTaskToNotInterested,
-  uploadTasks,
   saveTaskFollowup
 
 };

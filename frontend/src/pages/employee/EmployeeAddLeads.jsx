@@ -1,20 +1,28 @@
 import axios from "axios";
 import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate,useParams,useLocation } from "react-router-dom";
 import EmployeLayout from "../../layouts/EmployeeLayout";
-import {Briefcase,PhoneCall} from "lucide-react";
+//import {Briefcase,PhoneCall} from "lucide-react";
 import "../../styles/addlead.css";
-
+import {useSearchParams} from "react-router-dom";
 function AddLeads() {
 
   const { id } = useParams();
 
-  const [uploadType, setUploadType] = useState("leads");
+  //const [uploadType, setUploadType] = useState("leads");
 
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  //const [showUploadModal, setShowUploadModal] = useState(false);
+
+  const location = useLocation();
+
+  const [searchParams] =
+useSearchParams();
+
+const from =
+searchParams.get("from");
 
   const [leadData, setLeadData] =
   useState({
@@ -160,6 +168,29 @@ function AddLeads() {
           "user"
         )
       );
+      if (!leadData.company_name.trim()) {
+
+          return alert(
+            "Company Name is required"
+          );
+
+        }
+
+        if (!leadData.contact_person_name.trim()) {
+
+          return alert(
+            "Contact Person Name is required"
+          );
+
+        }
+
+        if (!/^\d{10}$/.test(leadData.phone)) {
+
+          return alert(
+            "Phone Number must contain exactly 10 digits"
+          );
+
+        }
 
       if (id) {
 
@@ -172,7 +203,17 @@ function AddLeads() {
           );
 
           alert("Lead Updated Successfully");
-          navigate("/employee/my-leads");
+            console.log(location.state);
+
+          navigate(
+
+              from === "tasks"
+
+              ? "/employee/tasks"
+
+              : "/employee/my-leads"
+
+            );
 
         }
 
@@ -265,15 +306,12 @@ function AddLeads() {
               selectedFile
             );
 
-            formData.append(
-              "uploadType",
-              uploadType
-            );
-
+          
             formData.append(
               "created_by_id",
               user?.id || 1
             );
+            console.log(user);
 
             formData.append(
               "created_by_type",
@@ -284,14 +322,8 @@ function AddLeads() {
               "created_by_name",
               user?.full_name || "Employee Name"
             );
-
-      const uploadUrl =
-
-          uploadType === "tasks"
-
-          ? "http://localhost:5000/api/tasks/upload"
-
-          : "http://localhost:5000/api/leads/upload";
+  const uploadUrl =
+    "http://localhost:5000/api/tasks/upload";
 
           const response =
           await axios.post(
@@ -311,13 +343,13 @@ function AddLeads() {
 
           alert(
 
-            `${response.data.inserted}
-            Leads Inserted
+              `${response.data.inserted}
+              Records Inserted
 
-            ${response.data.duplicates}
-            Duplicates Skipped`
+              ${response.data.duplicates}
+              Duplicates Skipped`
 
-          );
+            );
           navigate("/employee/my-leads");
 
         }
@@ -368,7 +400,9 @@ function AddLeads() {
 
               onClick={() =>
                 navigate(
-                  "/employee/my-leads"
+                  from === "tasks"
+                  ? "/employee/tasks"
+                  : "/employee/my-leads"
                 )
               }
               >
@@ -471,12 +505,22 @@ function AddLeads() {
                     </label>
 
                     <input
-                      type="text"
-                      name="phone"
-                      value={leadData.phone}
-                      onChange={handleChange}
-                      required
-                    />
+                        type="text"
+                        name="phone"
+                        value={leadData.phone}
+                        onChange={(e) => {
+
+                          const value = e.target.value
+                            .replace(/\D/g, "")   // Only digits
+                            .slice(0, 10);        // Max 10 digits
+
+                          setLeadData({
+                            ...leadData,
+                            phone: value
+                          });
+
+                        }}
+                      />                   
 
                   </div>
 
@@ -734,7 +778,7 @@ function AddLeads() {
                   <Upload size={18} />
 
                   <h3>
-                    IMPORT LEADS
+                    IMPORT DATA
                   </h3>
 
                 </div>
@@ -780,9 +824,7 @@ function AddLeads() {
 
                   <button
                     className="uploadBtn"
-                    onClick={() =>
-                      setShowUploadModal(true)
-                    }
+                    onClick={handleUpload}
                   >
                     Upload Excel
                   </button>
@@ -794,120 +836,7 @@ function AddLeads() {
             </div>
 
           </div>
-          {
-showUploadModal && (
-
-<div className="crmModalOverlay">
-
-  <div className="crmModalCard">
-
-   <h2>
-  Upload Excel File
-</h2>
-
-<p className="modalSubtitle">
-  Select where the imported data should go
-</p>
-
-    <div
-      style={{
-        marginTop: "20px"
-      }}
-    >
-
-      <label>
-        Upload Type
-      </label>
-
-      <div className="uploadTypeGrid">
-
-  <div
-    className={`uploadCard ${
-      uploadType === "leads"
-        ? "active"
-        : ""
-    }`}
-    onClick={() =>
-      setUploadType("leads")
-    }
-  >
-    <Briefcase size={36} />
-
-    <h3>Leads</h3>
-
-    <p>
-      CRM prospects and leads
-    </p>
-  </div>
-
-  <div
-    className={`uploadCard ${
-      uploadType === "tasks"
-        ? "active"
-        : ""
-    }`}
-    onClick={() =>
-      setUploadType("tasks")
-    }
-  >
-    <PhoneCall size={36} />
-
-    <h3>Tasks</h3>
-
-    <p>
-      Employee calling list
-    </p>
-  </div>
-
-</div>
-
-    </div>
-
-    <div
-      style={{
-        marginTop: "20px"
-      }}
-    >
-
-      <button
-
-        className="cancelButton"
-
-        onClick={() =>
-          setShowUploadModal(false)
-        }
-
-      >
-
-        Cancel
-
-      </button>
-
-      <button
-
-        className="saveButton"
-
-        onClick={() => {
-
-          handleUpload();
-
-          setShowUploadModal(false);
-
-        }}
-
-      >
-
-        Upload
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-)}
+          
     </EmployeLayout>
 
   );
