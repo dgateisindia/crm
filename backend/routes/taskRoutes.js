@@ -12,43 +12,54 @@ multer({
   dest: "uploads/"
 });
 
+const taskController =
+require("../controllers/taskController");
+
 const {
-  getEmployeeTasks,
-  getTaskFollowups,
-  connectTaskToLead,
-  moveTaskToNotInterested,
-  saveTaskFollowup
-} = require(
-  "../controllers/taskController"
-);
-const{
   uploadLeads
-}= require("../controllers/uploadLeadController");
+} = require(
+  "../controllers/uploadLeadController"
+);
 
 router.get(
   "/employee/:employeeId",
-  getEmployeeTasks
+  taskController.getEmployeeTasks
 );
+
 router.get(
   "/followups/:employeeId",
-  getTaskFollowups
+  taskController.getTaskFollowups
 );
+
 router.put(
   "/connect/:leadId",
-  connectTaskToLead
+  taskController.connectTaskToLead
 );
+
 router.put(
   "/not-interested/:leadId",
-  moveTaskToNotInterested
+  taskController.moveTaskToNotInterested
 );
+
+router.post(
+  "/followup",
+  taskController.saveTaskFollowup
+);
+
+router.put(
+  "/followups/edit/:leadId",
+  taskController.editTaskFollowup
+);
+
+router.put(
+  "/followups/add/:leadId",
+  taskController.addTaskFollowup
+);
+
 router.post(
   "/upload",
   upload.single("file"),
   uploadLeads
-);
-router.post(
-  "/followup",
-  saveTaskFollowup
 );
 
 module.exports =
