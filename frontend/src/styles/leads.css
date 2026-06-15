@@ -883,6 +883,14 @@ td{
   background:#e5e7eb;
   color:#4b5563;
 }
+
+/* Meeting Scheduled */
+.meeting_scheduled{
+
+  background:#cffafe;
+  color:#0e7490;
+}
+
 /* ==========================
    Lead Top Cards
 ========================== */

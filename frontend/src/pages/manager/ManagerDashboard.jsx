@@ -320,17 +320,11 @@ export default function ManagerDashboard() {
 
                       <span
                         className={`status-badge ${
-                          lead.lead_status ===
-                          "converted"
-
-                          ? "converted"
-
-                          : lead.lead_status ===
-                          "new"
-
-                          ? "new"
-
-                          : "connected"
+                          lead.lead_status === "converted"
+                            ? "converted"
+                            : lead.lead_status === "new"
+                            ? "new"
+                            : "connected"
                         }`}
                       >
 

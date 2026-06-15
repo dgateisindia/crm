@@ -80,6 +80,7 @@
 .purple-card {
   border-left: 6px solid #a855f7;
 }
+.connected
 
 /* Recent Table */
 .recent-card {
@@ -129,4 +130,8 @@ tbody td {
 
 .connected {
   @apply bg-orange-100 text-orange-700;
+}
+
+.meeting-scheduled {
+  @apply bg-cyan-100 text-cyan-700;
 }
