@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetasks.css";
+import "../../styles/employeetaskfollowup.css";
 import {
   CalendarClock,
   Clock,
