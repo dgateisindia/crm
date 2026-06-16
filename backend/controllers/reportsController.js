@@ -204,7 +204,8 @@ const getEmployeeReport =
 
     `SELECT COUNT(*) totalLeads
      FROM leads
-     WHERE created_by_id = ?
+     WHERE created_by_type = 'employee'
+     AND created_by_id = ?
      AND ${dateCondition}`,
 
     [employeeId],
@@ -238,7 +239,8 @@ const getEmployeeReport =
 
             `SELECT COUNT(*) convertedLeads
              FROM leads
-             WHERE created_by_id = ?
+             WHERE created_by_type = 'employee'
+             AND created_by_id = ?
              AND lead_status = 'converted'
              AND ${dateCondition}`,
 
@@ -256,7 +258,8 @@ const getEmployeeReport =
 
                 `SELECT COUNT(*) pendingLeads
                  FROM leads
-                 WHERE created_by_id = ?
+                 WHERE created_by_type = 'employee'
+                 AND created_by_id = ?
                  AND lead_status != 'converted'
                  AND ${dateCondition}`,
 

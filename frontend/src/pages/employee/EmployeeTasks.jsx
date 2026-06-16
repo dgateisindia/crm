@@ -19,16 +19,16 @@ import {
 
 export default function EmployeeTasks() {
 
-  const [tasks, setTasks] = useState([]);
+      const [tasks, setTasks] = useState([]);
 
-  const [showFollowupModal,
-      setShowFollowupModal] =
-      useState(false);
+      const [showFollowupModal,
+          setShowFollowupModal] =
+          useState(false);
 
-  const [
-    showLeadFollowupModal,
-    setShowLeadFollowupModal
-  ] = useState(false);
+      const [
+        showLeadFollowupModal,
+        setShowLeadFollowupModal
+      ] = useState(false);
 
       const [selectedTask,
       setSelectedTask] =
@@ -88,20 +88,13 @@ export default function EmployeeTasks() {
           
             }
           );
-
         }
-
         else if (action === "edit") {
 
           navigate(
               `/employee/edit-lead/${task.id}?from=tasks`
-              
-              
             );
-        
-
         }
-
         else if (action === "followup") {
 
           setSelectedTask(task);
@@ -988,9 +981,6 @@ showFollowupModal && (
 </div>
 
 )}
-        
-
-
     </EmployeeLayout>
 
   );
