@@ -136,7 +136,7 @@ const getEmployeeTasks =
 
     AND id NOT IN (
 
-      SELECT task_id
+      SELECT lead_id
 
       FROM task_followups
 
