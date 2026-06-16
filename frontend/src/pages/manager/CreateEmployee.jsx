@@ -81,6 +81,21 @@ export default function CreateEmployee() {
   // ==========================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+
+  !/^\d{10}$/.test(employee.phone)
+
+) {
+
+  alert(
+
+    "Phone number must contain exactly 10 digits"
+
+  );
+
+  return;
+
+}
 
     try {
       if (id) {
@@ -227,13 +242,26 @@ navigate("/manager/employees");
                   <input
                     type="tel"
                     name="phone"
-                    value={
-                      employee.phone
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    placeholder="Enter phone number"
+                    value={employee.phone}
+                    onChange={(e) => {
+
+                      const value =
+                        e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+
+                      setEmployee({
+
+                        ...employee,
+
+                        phone: value
+
+                      });
+
+                    }}
+                    placeholder="Enter 10-digit phone number"
+                    maxLength={10}
+                    required
                   />
                 </div>
 
