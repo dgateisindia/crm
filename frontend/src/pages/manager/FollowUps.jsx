@@ -10,7 +10,7 @@ import {
   Eye,
  // Pencil,
   PhoneCall,
-  Trash2,
+ // Trash2,
   Users,
   BadgeCheck,
   UserX
@@ -536,16 +536,6 @@ const handleFollowupSubmit = async () => {
 </button>
 
    
-
-    <button
-      className="menuItem deleteBtn"
-    >
-
-      <Trash2 size={16} />
-
-      Delete Followup
-
-    </button>
 
   </div>
 

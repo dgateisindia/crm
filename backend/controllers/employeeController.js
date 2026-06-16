@@ -59,112 +59,163 @@ if (
 
 }
 
-  const sql = `
-    INSERT INTO employees (
+ const checkSql = `
+  SELECT employee_id
+  FROM employees
+  WHERE email = ?
+  OR (phone IS NOT NULL AND phone = ?)
+`;
 
-      manager_id,
-      role_id,
-      full_name,
-      email,
-      phone,
-      password,
-      department,
-      designation,
-      status
+db.query(
 
-    )
+  checkSql,
 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  [email, phone],
 
+  (checkErr, checkResult) => {
 
-  db.query(
-    sql,
-    [
+    if (checkErr) {
 
-      manager_id,
-      designation?.toLowerCase() === "manager"
+      return res.status(500).json({
 
-        ? 2
+        message:
+        "Failed to validate employee details"
 
-        : 1,
-      full_name,
-      email,
-      phone,
-      password,
-      department,
-      designation,
-      status || "active"
+      });
 
-    ],
+    }
 
-    (err, result) => {
+    if (checkResult.length > 0) {
 
-      if (err) {
+      return res.status(400).json({
 
-        //console.log(err);
+        message:
+        "Email or phone number already exists"
 
-        return res.status(500)
-        .json({
-          message:
-          "Failed to create employee",
-        });
+      });
 
-      }
+    }
 
-      // Generate EMP001
-      const employeeCode =
-      `EMP${String(
-        result.insertId
-      ).padStart(3, "0")}`;
+    // ==========================
+    // Insert Employee
+    // ==========================
 
-      // Save employee code
-      const updateSql = `
-        UPDATE employees
-        SET employee_code = ?
-        WHERE employee_id = ?
-      `;
+    const sql = `
+      INSERT INTO employees (
 
-      db.query(
-        updateSql,
-        [
-          employeeCode,
-          result.insertId
-        ],
+        manager_id,
+        role_id,
+        full_name,
+        email,
+        phone,
+        password,
+        department,
+        designation,
+        status
 
-        (updateErr) => {
+      )
 
-          if (updateErr) {
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-            //console.log(updateErr);
+    db.query(
 
-            return res.status(500)
-            .json({
-              message:
-              "Employee created but code generation failed",
-            });
+      sql,
 
-          }
+      [
 
-          res.status(201)
-          .json({
+        manager_id,
+
+        designation?.toLowerCase() === "manager"
+
+          ? 2
+
+          : 1,
+
+        full_name,
+        email,
+        phone,
+        password,
+        department,
+        designation,
+        status || "active"
+
+      ],
+
+      (err, result) => {
+
+        if (err) {
+
+          return res.status(500).json({
 
             message:
-            "Employee created successfully",
-
-            employee_code:
-            employeeCode,
+            "Failed to create employee"
 
           });
 
         }
-      );
 
-    }
+        // Generate Employee Code
 
-  );
+        const employeeCode =
+          `EMP${String(
+            result.insertId
+          ).padStart(3, "0")}`;
 
-};
+        const updateSql = `
+          UPDATE employees
+          SET employee_code = ?
+          WHERE employee_id = ?
+        `;
+
+        db.query(
+
+          updateSql,
+
+          [
+
+            employeeCode,
+            result.insertId
+
+          ],
+
+          (updateErr) => {
+
+            if (updateErr) {
+
+              return res.status(500).json({
+
+                message:
+                "Employee created but code generation failed"
+
+              });
+
+            }
+
+            res.status(201).json({
+
+              message:
+              "Employee created successfully",
+
+              employee_code:
+              employeeCode
+
+            });
+
+          }
+
+        );
+
+      }
+
+    );
+
+  }
+
+)};
+      
+
+     
 
 // ==========================
 // Get All Employees
@@ -312,6 +363,8 @@ async (req, res) => {
 
   const { status } =
   req.body;
+
+  
 
   try {
 
@@ -469,7 +522,8 @@ const getEmployeeStats =
 
     `SELECT COUNT(*) totalLeads
      FROM leads
-     WHERE created_by_id = ?`,
+      WHERE created_by_type = 'employee'
+      AND created_by_id = ?`,
 
     [employeeId],
 
@@ -494,7 +548,6 @@ const getEmployeeStats =
         `SELECT COUNT(*) totalFollowups
          FROM follow_ups
          WHERE employee_id = ?`,
-
         [employeeId],
 
         (err, followupResult) => {
@@ -519,7 +572,8 @@ const getEmployeeStats =
 
             `SELECT COUNT(*) convertedLeads
              FROM leads
-             WHERE created_by_id = ?
+              WHERE created_by_type = 'employee'
+              AND created_by_id = ?
              AND lead_status = 'converted'`,
 
             [employeeId],
@@ -545,7 +599,8 @@ const getEmployeeStats =
 
                 `SELECT COUNT(*) pendingLeads
                  FROM leads
-                 WHERE created_by_id = ?
+                  WHERE created_by_type = 'employee'
+                  AND created_by_id = ?
                  AND lead_status NOT IN
                  ('converted','closed')`,
 
@@ -587,6 +642,7 @@ const getEmployeeStats =
   );
 
 };
+
 const updateEmployee =
 async (req, res) => {
 
@@ -605,6 +661,32 @@ async (req, res) => {
       status
 
     } = req.body;
+    const [duplicate] =
+        await db.promise().query(
+
+          `SELECT employee_id
+          FROM employees
+          WHERE (email = ? OR phone = ?)
+          AND employee_id != ?`,
+
+          [
+            email,
+            phone,
+            id
+          ]
+
+        );
+
+        if (duplicate.length > 0) {
+
+          return res.status(400).json({
+
+            message:
+            "Email or phone number already exists"
+
+          });
+
+        }
 
     await db.promise().query(
 
