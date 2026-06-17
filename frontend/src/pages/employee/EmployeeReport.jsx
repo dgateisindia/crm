@@ -37,7 +37,7 @@ export default function EmployeeReports() {
 
   useEffect(() => {
 
-    axios
+    api
       .get(
         `/reports/employee/${employeeId}?range=${range}`
       )
