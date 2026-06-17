@@ -20,7 +20,7 @@ export default function Reports() {
 
   useEffect(() => {
 
-    axios
+    api
       .get(
         `/reports/company?range=${range}`
       )
