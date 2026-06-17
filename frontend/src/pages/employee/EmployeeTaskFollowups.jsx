@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
@@ -125,9 +125,9 @@ const [
           user?.id;
 
         const response =
-        await axios.get(
+        await  api.get(
 
-          `http://localhost:5000/api/tasks/followups/${employeeId}`
+          `/tasks/followups/${employeeId}`
 
         );
 
@@ -308,9 +308,9 @@ async () => {
 
     );
 
-    await axios.put(
+    await  api.put(
 
-  `http://localhost:5000/api/tasks/followups/edit/${selectedTask.lead_id}`,
+  `/tasks/followups/edit/${selectedTask.lead_id}`,
       {
 
         employee_id:
@@ -362,9 +362,9 @@ async () => {
 
     );
 
-    await axios.post(
+    await  api.post(
 
-      "http://localhost:5000/api/followups",
+      "/followups",
 
       {
 
@@ -411,9 +411,9 @@ async () => {
 
   );
 
-  await axios.put(
+  await  api.put(
 
-    `http://localhost:5000/api/tasks/followups/add/${selectedTask.lead_id}`,
+    `/tasks/followups/add/${selectedTask.lead_id}`,
 
     {
 

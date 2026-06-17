@@ -1,5 +1,5 @@
 
-import axios from "axios";
+import api from "../../utils/api";
 
 import {useState,useEffect,} from "react";
 
@@ -64,9 +64,9 @@ export default function EmployeeDashboard() {
     if (!userId)
     return;
 
-    axios.get(
+     api.get(
 
-      `http://localhost:5000/api/dashboard/employee/${userId}`
+      `/dashboard/employee/${userId}`
 
     )
 

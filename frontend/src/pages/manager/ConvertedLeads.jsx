@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -13,8 +13,8 @@ export default function ConvertedLeads() {
   // ==========================
   const fetchLeads = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/leads/converted"
+      const response = await  api.get(
+        "/leads/converted"
       );
 
       setLeads(response.data);

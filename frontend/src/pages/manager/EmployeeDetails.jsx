@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -23,7 +23,7 @@ export default function EmployeeDetails() {
   useEffect(() => {
 
             axios
-              .get(`http://localhost:5000/api/employee/${id}`)
+              .get(`/employee/${id}`)
               .then((res) => {
 
                 setEmployee(res.data);
@@ -36,7 +36,7 @@ export default function EmployeeDetails() {
               });
 
             axios
-              .get(`http://localhost:5000/api/employee/stats/${id}`)
+              .get(`/employee/stats/${id}`)
               .then((res) => {
 
                 console.log("Stats:", res.data);

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 
 import {
   useEffect,
@@ -61,9 +61,9 @@ const handleFollowupSubmit = async () => {
       localStorage.getItem("user")
     );
 
-    await axios.post(
+    await  api.post(
 
-      "http://localhost:5000/api/followups/add",
+      "/followups/add",
 
       {
 
@@ -117,9 +117,9 @@ const handleFollowupSubmit = async () => {
     try {
 
       const response =
-      await axios.get(
+      await  api.get(
 
-"http://localhost:5000/api/followups/all"
+"/followups/all"
 
       );
 
@@ -152,8 +152,8 @@ const handleFollowupSubmit = async () => {
   try {
 
     const response =
-      await axios.get(
-        `http://localhost:5000/api/followups/lead-history/${leadId}`
+      await  api.get(
+        `/followups/lead-history/${leadId}`
       );
 
     setHistory({

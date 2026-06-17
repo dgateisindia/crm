@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate }
 from "react-router-dom";
 import {useEffect,useState} from "react";
@@ -30,8 +30,8 @@ export default function ManagerDashboard() {
 
   useEffect(() => {
 
-    axios.get(
-      "http://localhost:5000/api/dashboard/stats"
+     api.get(
+      "/dashboard/stats"
     )
     .then((res) => {
 

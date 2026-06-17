@@ -3,7 +3,7 @@ import { useState } from "react";
 import ManagerLayout
 from "../../layouts/ManagerLayout";
 
-import axios from "axios";
+import api from "../../utils/api";
 
 import "../../styles/createEmployee.css";
 
@@ -44,9 +44,9 @@ export default function CreateManager() {
     try {
 
       const response =
-      await axios.post(
+      await  api.post(
 
-        "http://localhost:5000/api/managers/create",
+        "/managers/create",
 
         manager
 

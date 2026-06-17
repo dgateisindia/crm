@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useParams,useNavigate } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/createEmployee.css";
@@ -28,9 +28,9 @@ export default function CreateEmployee() {
 
   if (id) {
 
-    axios.get(
+     api.get(
 
-      `http://localhost:5000/api/employee/${id}`
+      `/employee/${id}`
 
     )
 
@@ -100,9 +100,9 @@ export default function CreateEmployee() {
     try {
       if (id) {
 
-  await axios.put(
+  await  api.put(
 
-    `http://localhost:5000/api/employee/update/${id}`,
+    `/employee/update/${id}`,
 
     employee
 
@@ -117,9 +117,9 @@ export default function CreateEmployee() {
 else {
 
   const response =
-    await axios.post(
+    await  api.post(
 
-      "http://localhost:5000/api/employee/create",
+      "/employee/create",
 
       employee
 

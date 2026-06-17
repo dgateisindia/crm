@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
@@ -19,8 +19,8 @@ export default function NotInterestedLeads() {
   // ==========================
   const fetchLeads = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/leads/employee/${employeeId}/not-interested`
+      const response = await  api.get(
+        `/leads/employee/${employeeId}/not-interested`
       );
 
       setLeads(response.data);

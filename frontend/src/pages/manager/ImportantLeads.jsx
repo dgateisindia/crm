@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import {
   useEffect,
   useState
@@ -49,8 +49,8 @@ export default function ImportantLeads() {
     try {
 
       const response =
-      await axios.get(
-        "http://localhost:5000/api/leads/important"
+      await  api.get(
+        "/leads/important"
       );
 
       setLeads(
@@ -71,8 +71,8 @@ export default function ImportantLeads() {
   try {
 
     const response =
-    await axios.get(
-      "http://localhost:5000/api/leads/all"
+    await  api.get(
+      "/leads/all"
     );
 
     setAllLeads(
@@ -124,8 +124,8 @@ export default function ImportantLeads() {
 
     try {
 
-      await axios.delete(
-        `http://localhost:5000/api/leads/delete/${id}`
+      await  api.delete(
+        `/leads/delete/${id}`
       );
 
       alert(

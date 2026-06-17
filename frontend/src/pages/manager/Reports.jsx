@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { Briefcase, PhoneCall, BadgeCheck, Clock3, Users } from "lucide-react" ;
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/managerDashboard.css";
@@ -22,7 +22,7 @@ export default function Reports() {
 
     axios
       .get(
-        `http://localhost:5000/api/reports/company?range=${range}`
+        `/reports/company?range=${range}`
       )
       .then((res) => {
 

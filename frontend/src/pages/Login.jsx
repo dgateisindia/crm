@@ -2,8 +2,7 @@ import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-
+import api from "../utils/api";
 import "../styles/login.css";
 import { Link } from "react-router-dom";
 
@@ -21,6 +20,7 @@ export default function Login() {
   const [password,
     setPassword] =
     useState("");
+    
 
 
   // ==========================
@@ -35,9 +35,9 @@ export default function Login() {
     try {
 
       const response =
-      await axios.post(
+      await api.post(
 
-        "https://extrominds.com/api/auth/login",
+        "/auth/login",
         {
 
           email,

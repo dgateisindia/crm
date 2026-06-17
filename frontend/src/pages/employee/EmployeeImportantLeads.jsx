@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import {
   useEffect,
   useState
@@ -55,8 +55,8 @@ export default function ImportantLeads() {
     try {
 
       const response =
-      await axios.get(
-         `http://localhost:5000/api/leads/employee/${employeeId}/important`
+      await  api.get(
+         `/leads/employee/${employeeId}/important`
       );
 
 
@@ -76,8 +76,8 @@ export default function ImportantLeads() {
 const fetchAllLeads = async () => {
 
   const response =
-  await axios.get(
-    `http://localhost:5000/api/leads/employee/${employeeId}`
+  await  api.get(
+    `/leads/employee/${employeeId}`
   );
 
   setAllLeads(response.data);
@@ -118,8 +118,8 @@ const fetchAllLeads = async () => {
 
     try {
 
-      await axios.delete(
-        `http://localhost:5000/api/leads/delete/${id}`
+      await  api.delete(
+        `/leads/delete/${id}`
       );
 
       alert(

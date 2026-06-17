@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import {
   Briefcase,
   PhoneCall,
@@ -39,7 +39,7 @@ export default function EmployeeReports() {
 
     axios
       .get(
-        `http://localhost:5000/api/reports/employee/${employeeId}?range=${range}`
+        `/reports/employee/${employeeId}?range=${range}`
       )
       .then((res) => {
 

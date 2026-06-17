@@ -3,7 +3,7 @@ import {
   useEffect
 } from "react";
 
-import axios from "axios";
+import api from "../../utils/api";
 import "../../styles/employeeprofile.css";
 import EmployeeLayout
 from "../../layouts/EmployeeLayout";
@@ -33,9 +33,9 @@ export default function EmployeeProfile() {
         );
 
         const response =
-        await axios.get(
+        await  api.get(
 
-          `http://localhost:5000/api/employee/profile/${user.id}`
+          `/employee/profile/${user.id}`
 
         );
 
@@ -62,9 +62,9 @@ export default function EmployeeProfile() {
 
     try {
 
-      await axios.put(
+      await  api.put(
 
-        `http://localhost:5000/api/employee/change-password/${profile.id}`,
+        `/employee/change-password/${profile.id}`,
 
         {
 
