@@ -311,7 +311,7 @@ const forgotPassword = (req, res) => {
         return res.json({
           message: "Reset link generated",
           resetLink:
-            `http://localhost:5173/reset-password/${token}`
+            `https://extrominds.com/reset-password/${token}`
         });
       }
 
@@ -334,7 +334,7 @@ const forgotPassword = (req, res) => {
             return res.json({
               message: "Reset link generated",
               resetLink:
-                `http://localhost:5173/reset-password/${token}`
+                `https://extrominds.com/reset-password/${token}`
             });
           }
 
