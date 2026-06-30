@@ -172,6 +172,108 @@ const getEmployeePerformance = (req, res) => {
   );
 
 };
+const getEmployeeLeadStatusChart = (req, res) => {
+
+  const employeeId = req.params.id;
+
+  db.query(
+
+    `
+    SELECT
+      lead_status,
+      COUNT(*) AS total
+    FROM leads
+    WHERE created_by_type='employee'
+    AND created_by_id=?
+    GROUP BY lead_status
+    `,
+
+    [employeeId],
+
+    (err, result) => {
+
+      if (err)
+        return res.status(500).json(err);
+
+      res.json(result);
+
+    }
+
+  );
+
+};
+const getEmployeeLeadTrend = (req, res) => {
+
+  const employeeId = req.params.id;
+
+  db.query(
+
+    `
+    SELECT
+
+      DATE(created_at) AS date,
+
+      COUNT(*) AS total
+
+    FROM leads
+
+    WHERE created_by_type='employee'
+
+    AND created_by_id=?
+
+    GROUP BY DATE(created_at)
+
+    ORDER BY DATE(created_at)
+    `,
+
+    [employeeId],
+
+    (err, result) => {
+
+      if (err)
+        return res.status(500).json(err);
+
+      res.json(result);
+
+    }
+
+  );
+
+};
+const getEmployeeFollowupChart = (req, res) => {
+
+  const employeeId = req.params.id;
+
+  db.query(
+
+    `
+    SELECT
+
+      status,
+
+      COUNT(*) AS total
+
+    FROM follow_ups
+
+    WHERE employee_id=?
+
+    GROUP BY status
+    `,
+
+    [employeeId],
+
+    (err, result) => {
+
+      if (err)
+        return res.status(500).json(err);
+
+      res.json(result);
+
+    }
+
+  );
+
+};
 const getLeadTrend = (req, res) => {
 
   db.query(
@@ -393,5 +495,11 @@ module.exports = {
   getLeadStatusChart,
   getEmployeePerformance,
   getLeadTrend,
+
+
+  getEmployeeLeadStatusChart,
+  getEmployeeLeadTrend,
+  getEmployeeFollowupChart
+
 
 };

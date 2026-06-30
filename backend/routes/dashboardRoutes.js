@@ -9,7 +9,10 @@ const {
   getLeadStatusChart,
   getEmployeePerformance,
   getLeadTrend,
-  getEmployeeStats
+  getEmployeeStats,
+  getEmployeeFollowupChart,
+  getEmployeeLeadStatusChart,
+  getEmployeeLeadTrend
 } = require(
   "../controllers/dashboardController"
 );
@@ -21,6 +24,20 @@ router.get("/lead-status", getLeadStatusChart);
 router.get("/employee-performance", getEmployeePerformance);
 
 router.get("/lead-trend", getLeadTrend);
+router.get(
+"/employee/:id/lead-status",
+getEmployeeLeadStatusChart
+);
+
+router.get(
+"/employee/:id/lead-trend",
+getEmployeeLeadTrend
+);
+
+router.get(
+"/employee/:id/followup-chart",
+getEmployeeFollowupChart
+);
 
 router.get(
   "/employee/:id",
