@@ -58,3 +58,13 @@
   hover:bg-blue-700
   transition;
 }
+/* Hide Edge/IE default password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Hide Edge password eye */
+::-ms-reveal {
+  display: none;
+}

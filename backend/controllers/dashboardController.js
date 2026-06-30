@@ -112,6 +112,96 @@ const getDashboardStats =
   );
 
 };
+const getLeadStatusChart = (req, res) => {
+
+  db.query(
+
+    `
+    SELECT
+      lead_status,
+      COUNT(*) AS total
+    FROM leads
+    GROUP BY lead_status
+    `,
+
+    (err, result) => {
+
+      if (err) {
+        return res.status(500).json(err);
+      }
+
+      res.json(result);
+
+    }
+
+  );
+
+};
+const getEmployeePerformance = (req, res) => {
+
+  db.query(
+
+    `
+    SELECT
+
+      e.full_name,
+
+      COUNT(l.id) AS totalLeads
+
+    FROM employees e
+
+    LEFT JOIN leads l
+
+      ON e.employee_id = l.created_by_id
+      AND l.created_by_type='employee'
+
+    GROUP BY e.employee_id
+
+    ORDER BY totalLeads DESC
+    `,
+
+    (err, result) => {
+
+      if (err)
+        return res.status(500).json(err);
+
+      res.json(result);
+
+    }
+
+  );
+
+};
+const getLeadTrend = (req, res) => {
+
+  db.query(
+
+    `
+    SELECT
+
+      DATE(created_at) AS date,
+
+      COUNT(*) AS total
+
+    FROM leads
+
+    GROUP BY DATE(created_at)
+
+    ORDER BY DATE(created_at)
+    `,
+
+    (err, result) => {
+
+      if (err)
+        return res.status(500).json(err);
+
+      res.json(result);
+
+    }
+
+  );
+
+};
 
 // ==========================
 // EMPLOYEE DASHBOARD
@@ -298,7 +388,10 @@ const getEmployeeStats =
 module.exports = {
 
   getDashboardStats,
-
   getEmployeeStats,
+
+  getLeadStatusChart,
+  getEmployeePerformance,
+  getLeadTrend,
 
 };

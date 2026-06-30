@@ -27,16 +27,20 @@ export default function EmployeeSidebar() {
   const location =
     useLocation();
 
-  const handleLogout =
-    () => {
+  const handleLogout = () => {
 
-      localStorage.removeItem(
-        "token"
+  const confirmLogout = window.confirm(
+        "Are you sure you want to logout?"
       );
 
-      localStorage.removeItem(
-        "role"
-      );
+      if (!confirmLogout) {
+        return;
+      }
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userId");
 
       navigate("/", {
         replace: true,
@@ -90,7 +94,7 @@ export default function EmployeeSidebar() {
                 size={18}
               />
 
-              My Leads
+             Total Leads
 
             </div>
           </Link>
@@ -120,7 +124,7 @@ export default function EmployeeSidebar() {
               >
                 <ClipboardList size={18} />
 
-                Tasks
+                New Leads
 
               </div>
             </Link>
@@ -136,7 +140,7 @@ export default function EmployeeSidebar() {
                 >
                   <CalendarClock size={18} />
 
-                  Task Followups
+                   Followups
 
                 </div>
               </Link>

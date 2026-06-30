@@ -1,15 +1,14 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetasks.css";
 import "../../styles/employeetaskfollowup.css";
 import {
-  CalendarClock,
-  Clock,
-  CheckCircle,
-  PhoneCall,
+  //CalendarClock,
+  //Clock,
+ // CheckCircle,
+ // PhoneCall,
   MoreVertical,
   Eye,
   SquarePen,
@@ -330,9 +329,18 @@ async () => {
 
         </div>
 
+        <button
+          className="add-lead-btn"
+          onClick={() =>
+            navigate("/employee/add-leads")
+          }
+        >
+          + Add Task
+        </button>
+
       </div>
 
-      {/* Cards */}
+      {/* Cards 
 
       <div className="dashboard-grid">
 
@@ -419,12 +427,12 @@ async () => {
         </div>
 
       </div>
+      */}
 
       {/* Table */}
 
       <div className="recent-card">
 
-        <div className="overflow-x-auto">
 
           <table className="w-full">
 
@@ -609,7 +617,7 @@ async () => {
 
         </div>
 
-      </div>
+     
       {
 showFollowupModal && (
 

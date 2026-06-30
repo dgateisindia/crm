@@ -120,10 +120,46 @@ initialState
 
   };
 
-  const handleSubmit =
-  async (e) => {
+  const handleSubmit = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
+
+  // Either Phone or Email is required
+  if (!leadData.phone.trim() && !leadData.email.trim()) {
+
+    alert("Please enter either Phone Number or Email Address.");
+
+    return;
+
+  }
+
+  // Phone validation
+  if (
+    leadData.phone &&
+    leadData.phone.length !== 10
+  ) {
+
+    alert("Phone number must be exactly 10 digits.");
+
+    return;
+
+  }
+
+  // Email validation
+  if (leadData.email) {
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(leadData.email)) {
+
+      alert("Please enter a valid Email Address.");
+
+      return;
+
+    }
+
+  }
 
     try {
 
@@ -182,6 +218,7 @@ else {
       alert(
         "Lead Added Successfully"
       );
+      navigate("/manager/leads");
 
     }
       if (!id) {
@@ -444,7 +481,7 @@ else {
                   <div className="formGroup">
 
                     <label>
-                      Phone *
+                      Phone 
                     </label>
 
                   <input
@@ -470,7 +507,7 @@ else {
                   <div className="formGroup">
 
                     <label>
-                      Email *
+                      Email 
                     </label>
 
                     <input
@@ -478,7 +515,7 @@ else {
                       name="email"
                       value={leadData.email}
                       onChange={handleChange}
-                      required
+                      
                     />
 
                   </div>

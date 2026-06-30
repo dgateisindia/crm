@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -11,6 +11,9 @@ export default function Login() {
 
   const navigate =
   useNavigate();
+
+  const [showPassword, setShowPassword] =
+useState(false);
 
 
   const [email,
@@ -256,38 +259,50 @@ export default function Login() {
 
 
             {/* Password */}
-            <div>
+              <div>
 
-              <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium">
+                  Password
+                </label>
 
-                Password
+                <div style={{ position: "relative" }}>
 
-              </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="form-input"
+                    style={{ paddingRight: "50px" }}
+                    required
+                    minLength="5"
+                  />
 
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: "absolute",
+                      right: "12px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      border: "none",
+                      background: "transparent",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
 
-              <input
+                </div>
 
-                type="password"
-
-                placeholder="Enter Password"
-
-                value={password}
-
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
-
-                className="form-input"
-
-                required
-
-                minLength="5"
-
-              />
-
-            </div>
+              </div>
             {/* Forgot Password Link */}
             <div className="text-right">
 

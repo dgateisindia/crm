@@ -507,6 +507,83 @@ const changePassword =
   );
 
 };
+const updateEmployeeProfile = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const {
+
+      full_name,
+      phone,
+      designation
+
+    } = req.body;
+
+    const [duplicate] =
+      await db.promise().query(
+
+        `SELECT employee_id
+         FROM employees
+         WHERE phone = ?
+         AND employee_id != ?`,
+
+        [phone, id]
+
+      );
+
+    if (duplicate.length > 0) {
+
+      return res.status(400).json({
+
+        message: "Phone number already exists"
+
+      });
+
+    }
+
+    await db.promise().query(
+
+      `UPDATE employees
+       SET
+         full_name = ?,
+         phone = ?,
+         designation = ?
+       WHERE employee_id = ?`,
+
+      [
+
+        full_name,
+        phone,
+        designation,
+        id
+
+      ]
+
+    );
+
+    res.json({
+
+      message: "Profile Updated Successfully"
+
+    });
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+
+      message: "Failed to update profile"
+
+    });
+
+  }
+
+};
 // ==========================
 // Employee Statistics
 // ==========================
@@ -643,84 +720,112 @@ const getEmployeeStats =
 
 };
 
-const updateEmployee =
-async (req, res) => {
+const updateEmployee = async (req, res) => {
 
   try {
 
-    const { id } =
-    req.params;
+    const { id } = req.params;
 
     const {
 
       full_name,
       email,
       phone,
+      password,
       department,
       designation,
       status
 
     } = req.body;
-    const [duplicate] =
-        await db.promise().query(
 
-          `SELECT employee_id
-          FROM employees
-          WHERE (email = ? OR phone = ?)
-          AND employee_id != ?`,
+    const [duplicate] = await db.promise().query(
 
-          [
-            email,
-            phone,
-            id
-          ]
-
-        );
-
-        if (duplicate.length > 0) {
-
-          return res.status(400).json({
-
-            message:
-            "Email or phone number already exists"
-
-          });
-
-        }
-
-    await db.promise().query(
-
-      `UPDATE employees
-
-       SET
-
-       full_name = ?,
-       email = ?,
-       phone = ?,
-       department = ?,
-       designation = ?,
-       status = ?
-
-       WHERE employee_id = ?`,
+      `SELECT employee_id
+       FROM employees
+       WHERE (email = ? OR phone = ?)
+       AND employee_id != ?`,
 
       [
-
-        full_name,
         email,
         phone,
-        department,
-        designation,
-        status,
         id
-
       ]
 
     );
 
+    if (duplicate.length > 0) {
+
+      return res.status(400).json({
+
+        message: "Email or phone number already exists"
+
+      });
+
+    }
+
+    // If password is entered update it
+    if (password && password.trim() !== "") {
+
+      await db.promise().query(
+
+        `UPDATE employees
+         SET
+           full_name = ?,
+           email = ?,
+           phone = ?,
+           password = ?,
+           department = ?,
+           designation = ?,
+           status = ?
+         WHERE employee_id = ?`,
+
+        [
+          full_name,
+          email,
+          phone,
+          password,
+          department,
+          designation,
+          status,
+          id
+        ]
+
+      );
+
+    }
+
+    // Otherwise keep existing password
+    else {
+
+      await db.promise().query(
+
+        `UPDATE employees
+         SET
+           full_name = ?,
+           email = ?,
+           phone = ?,
+           department = ?,
+           designation = ?,
+           status = ?
+         WHERE employee_id = ?`,
+
+        [
+          full_name,
+          email,
+          phone,
+          department,
+          designation,
+          status,
+          id
+        ]
+
+      );
+
+    }
+
     res.json({
 
-      message:
-      "Employee Updated Successfully"
+      message: "Employee Updated Successfully"
 
     });
 
@@ -728,10 +833,11 @@ async (req, res) => {
 
   catch (error) {
 
+    console.log(error);
+
     res.status(500).json({
 
-      message:
-      "Failed to update employee"
+      message: "Failed to update employee"
 
     });
 
@@ -755,6 +861,7 @@ module.exports = {
   getEmployeeProfile,
   changePassword,
   getEmployeeStats,
-  updateEmployee
+  updateEmployee,
+  updateEmployeeProfile
 
 };

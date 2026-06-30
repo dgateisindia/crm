@@ -13,7 +13,6 @@ import {useNavigate} from "react-router-dom";
 import {
 
 Search,
-
 Eye,
 Pencil,
 PhoneCall,
@@ -49,6 +48,7 @@ export default function Leads() {
   const [selectedLead,
     setSelectedLead] =
     useState(null);
+    const [openMenu, setOpenMenu] = useState(null);
 
   const [
 
@@ -563,10 +563,9 @@ lead.lead_status ===
         </div>
 
         {/* Table */}
-        <div className="leads-card tableWrapper overflow-hidden">
+        <div className="leads-card tableWrapper">
 
-          <div className="overflow-x-auto">
-
+         
             <table className="w-full">
 
 
@@ -706,34 +705,40 @@ lead.lead_status ===
 
                   <br />
 
-                  <small>
-
-                    ({lead.created_by_type})
-
-                  </small>
 
                 </td>
 
 
-                <td className="p-4 relative">
-
-                  <details
-                    className="dropdownMenu"
+                <td
+                      className="p-4"
+                      style={{
+                          position: "relative",
+                          overflow: "visible"
+                      }}
                   >
 
-                    <summary
-                      className="actionBtn"
+                  <div className="dropdownMenu">
+
+                    <button
+                        className="actionBtn"
+                        onClick={() =>
+                            setOpenMenu(
+                                openMenu === lead.id
+                                    ? null
+                                    : lead.id
+                            )
+                        }
                     >
 
-                      <MoreVertical
-                        size={20}
-                      />
+                        <MoreVertical size={20} />
 
-                    </summary>
+                    </button>
 
-                    <div
-                      className="actionMenu"
-                    >
+                    {
+
+                    openMenu === lead.id && (
+
+                        <div className="actionMenu">
 
                       <button
 
@@ -820,7 +825,11 @@ lead.lead_status ===
 
                     </div>
 
-                  </details>
+                      )
+
+                      }
+
+                  </div>
 
                 </td>
 
@@ -854,7 +863,7 @@ lead.lead_status ===
           </table>
           </div>
 
-        </div>
+       
 
      
 

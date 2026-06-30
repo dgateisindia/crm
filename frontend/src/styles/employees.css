@@ -25,212 +25,115 @@
   font-size:13px;
 }
 
+/* ==========================
+   Table
+========================== */
+
 .employeesTableCard{
-  background:white;
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  overflow:hidden;
+    margin-top:20px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    position:relative;
+    overflow:visible;
 }
 
 .employeesTableWrapper{
-  overflow-x:auto;
+    width:100%;
+    overflow:visible;
 }
 
 .employeesTable{
-  width:100%;
-  min-width:1200px;
-  border-collapse:collapse;
+    width:100%;
+    min-width:1200px;
+    border-collapse:collapse;
 }
 
 .employeesTable thead{
-  background:#f9fafb;
+    background:#f9fafb;
 }
 
 .employeesTable th{
-  text-align:left;
-  padding:14px;
-  font-size:13px;
-  font-weight:600;
-  color:#071739;
-  border-bottom:1px solid #e5e7eb;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    font-weight:600;
+    color:#071739;
+    border-bottom:1px solid #e5e7eb;
 }
 
 .employeesTable td{
-  padding:14px;
-  font-size:13px;
-  color:#374151;
-  border-bottom:1px solid #f1f5f9;
+    padding:14px;
+    font-size:13px;
+    color:#374151;
+    border-bottom:1px solid #f1f5f9;
 }
 
 .employeesTable tbody tr:hover{
-  background:#f9fafb;
+    background:#f9fafb;
 }
 
 .employeeName{
-  font-weight:600;
-  color:#111827;
-}
-
-.roleBadge{
-  background:#dbeafe;
-  color:#2563eb;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:500;
-}
-
-.statusBadge{
-  background:#dcfce7;
-  color:#16a34a;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:500;
-}
-
-.actionCell{
-  text-align:center;
-}
-
-.deleteBtn{
-  border:none;
-  background:none;
-  color:#ef4444;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.deleteBtn:hover{
-  color:#dc2626;
+    font-weight:600;
+    color:#111827;
 }
 
 .noData{
-  text-align:center;
-  padding:20px;
-  color:#6b7280;
+    text-align:center;
+    padding:20px;
+    color:#6b7280;
 }
 
-@media(max-width:768px){
+/* ==========================
+   Status
+========================== */
 
-  .employeesPage{
-    padding:6px;
-  }
-
-  .employeesHeader h1{
-    font-size:22px;
-  }
-
-}
-.dashboard-grid {
-  display: grid;
-  grid-template-columns:
-    repeat(4, 1fr);
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.crm-card {
-  @apply bg-white rounded-[18px] p-2 shadow-sm border border-gray-100 transition-all duration-100;
-}
-
-.crm-card:hover {
-  @apply shadow-lg;
-}
-
-.crm-card-top {
-  @apply flex justify-between items-center mb-1;
-}
-
-.crm-card h3 {
-  @apply text-gray-500 text-sm font-medium;
-}
-
-.crm-card h2 {
-  @apply text-2xl font-bold mt-2 text-[#0F172A];
-}
-
-.icon-circle {
-  @apply w-14 h-14 rounded-2xl flex items-center justify-center text-white;
-}
-
-.blue-bg {
-  @apply bg-blue-500;
-}
-
-.green-bg {
-  @apply bg-green-500;
-}
-
-.orange-bg {
-  @apply bg-orange-500;
-}
-
-.purple-bg {
-  @apply bg-purple-500;
-}
-
-.blue-card {
-  border-left: 6px solid #3b82f6;
-}
-
-.green-card {
-  border-left: 6px solid #22c55e;
-}
-
-.orange-card {
-  border-left: 6px solid #f97316;
-}
-
-.purple-card {
-  border-left: 6px solid #a855f7;
-}
 .statusSelect{
-  min-width:120px;
-  padding:6px 10px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  background:white;
-  cursor:pointer;
-}
-.employeesTableCard{
-  margin-top:20px;
-  background:white;
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  overflow:hidden;
-}
-.actionCell {
-  position: relative;
+    min-width:120px;
+    padding:6px 10px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:#fff;
+    cursor:pointer;
 }
 
-.actionMenuBtn {
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  cursor: pointer;
+/* ==========================
+   Action Menu
+========================== */
+
+.actionCell{
+    position:relative;
+    overflow:visible;
+    text-align:center;
 }
 
-.actionDropdown {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  min-width: 160px;
-  z-index: 100;
+.actionMenuBtn{
+    border:none;
+    background:transparent;
+    font-size:20px;
+    cursor:pointer;
 }
 
-.actionDropdown button {
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 10px 15px;
-  text-align: left;
-  cursor: pointer;
+.actionDropdown{
+    position:absolute;
+    top:42px;
+    right:0;
+    width:180px;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    z-index:99999;
 }
 
-.actionDropdown button:hover {
-  background: #f5f5f5;
+.actionDropdown button{
+    width:100%;
+    border:none;
+    background:none;
+    padding:10px 15px;
+    text-align:left;
+    cursor:pointer;
+}
+
+.actionDropdown button:hover{
+    background:#f5f5f5;
 }

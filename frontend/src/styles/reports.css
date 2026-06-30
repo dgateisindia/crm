@@ -2,4 +2,309 @@
 
 .reports-title {
   @apply text-3xl font-bold;
+}/* ==========================
+   Custom Date Filter
+========================== */
+
+.customDateFilter {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 25px;
+  padding: 18px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+.customDateFilter input[type="date"] {
+  min-width: 180px;
+  padding: 10px 14px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  background: #fff;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.customDateFilter input[type="date"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.customDateFilter button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.customDateFilter button:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+}
+
+.customDateFilter button:active {
+  transform: scale(0.98);
+}
+/* ===========================
+   Custom Filter Card
+=========================== */
+
+.customDateFilter {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  margin: 20px 0 30px;
+  padding: 20px 24px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  animation: slideDown .3s ease;
+  flex-wrap: wrap;
+}
+
+/* ===========================
+   Date Fields
+=========================== */
+
+.dateField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dateField label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.dateField input {
+  width: 180px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: .25s;
+  background: #fff;
+}
+
+.dateField input:hover {
+  border-color: #3b82f6;
+}
+
+.dateField input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* ===========================
+   Apply Button
+=========================== */
+
+.applyBtn {
+  height: 42px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#2563eb,#1d4ed8);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.applyBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(37,99,235,.3);
+}
+
+.applyBtn:active {
+  transform: scale(.97);
+}
+
+/* ===========================
+   Animation
+=========================== */
+
+@keyframes slideDown {
+
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:768px){
+
+.customDateFilter{
+    flex-direction:column;
+    align-items:stretch;
+}
+
+.dateField input{
+    width:100%;
+}
+
+.applyBtn{
+    width:100%;
+}
+
+}
+.reportInfo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    border-radius:14px;
+    padding:18px 22px;
+    margin:20px 0;
+    border-left:5px solid #2563eb;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.reportInfoLeft h4{
+    margin:0;
+    color:#111827;
+    font-size:16px;
+}
+
+.reportInfoLeft p{
+    margin-top:8px;
+    color:#2563eb;
+    font-weight:600;
+    font-size:15px;
+}
+
+.changeBtn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:10px 18px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.changeBtn:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+    box-shadow:0 8px 16px rgba(37,99,235,.25);
+}
+
+@media(max-width:768px){
+
+.reportInfo{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+}
+
+.changeBtn{
+    width:100%;
+}
+
+}
+.reportInfo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    border-radius:14px;
+    padding:18px 22px;
+    margin:20px 0;
+    border:1px solid #e5e7eb;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.reportInfoLeft{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.reportIcon{
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.reportInfo h4{
+    margin:0;
+    font-size:16px;
+    font-weight:700;
+    color:#111827;
+}
+
+.reportInfo p{
+    margin-top:6px;
+    color:#64748b;
+    font-size:14px;
+    font-weight:500;
+}
+
+.changeBtn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+}
+
+.changeBtn:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(37,99,235,.25);
+}
+
+@media(max-width:768px){
+
+.reportInfo{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:18px;
+}
+
+.changeBtn{
+    width:100%;
+    justify-content:center;
+}
+
 }

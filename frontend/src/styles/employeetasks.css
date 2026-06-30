@@ -240,3 +240,43 @@
 .action-item:hover {
   background: #f3f4f6;
 }
+/* Add Lead Button */
+
+.add-lead-btn{
+  min-width:140px;
+  height:44px;
+  border:none;
+  border-radius:12px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #0452f8,
+    #0351ed
+  );
+
+  color:white;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  flex-shrink:0;
+
+  transition:.2s;
+
+  box-shadow:
+  0 8px 18px
+  rgba(7,23,57,.18);
+}
+
+.add-lead-btn:hover{
+  background:
+  linear-gradient(
+    135deg,
+    #0f2c68,
+    #1d4ed8
+  );
+
+  transform:
+  translateY(-2px);
+}
+

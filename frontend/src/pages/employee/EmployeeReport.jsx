@@ -1,32 +1,37 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import {
   Briefcase,
   PhoneCall,
   BadgeCheck,
-  Clock3
+  Clock3,
+  CalendarRange,
+  PencilLine
 } from "lucide-react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import "../../styles/managerDashboard.css";
-import "../../styles/report.css";
+import "../../styles/reports.css";
 
 export default function EmployeeReports() {
 
-  const user =
-  JSON.parse(
-    localStorage.getItem("user")
-  );
+  const user = JSON.parse(localStorage.getItem("user"));
+  const employeeId = user.id;
+  const [showCustomFilter, setShowCustomFilter] = useState(false);
+  const [range, setRange] = useState("today");
 
-  const employeeId =
-  user.id;
+  const [selectedRange, setSelectedRange] = useState("");
 
-  const [range, setRange] =
-  useState("today");
+  // Date inputs
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  const [report, setReport] =
-  useState({
+  // Applied dates
+  const [appliedStartDate, setAppliedStartDate] = useState("");
+  const [appliedEndDate, setAppliedEndDate] = useState("");
+
+  const [report, setReport] = useState({
     totalLeads: 0,
     totalFollowups: 0,
     convertedLeads: 0,
@@ -34,25 +39,32 @@ export default function EmployeeReports() {
     conversionRate: 0
   });
 
-
   useEffect(() => {
 
-    axios
-      .get(
-        `http://localhost:5000/api/reports/employee/${employeeId}?range=${range}`
-      )
-      .then((res) => {
+  let url = `/reports/employee/${employeeId}?range=${range}`;
 
-        setReport(res.data);
+  if (
+    range === "custom" &&
+    appliedStartDate
+  ) {
+    url += `&startDate=${appliedStartDate}&endDate=${appliedEndDate}`;
+  }
 
-      })
-      .catch((err) => {
+  api.get(url)
+    .then((res) => {
+      setReport(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
-        console.log(err);
-
-      });
-
-  }, [employeeId, range]);
+}, [
+  employeeId,
+  range,
+  appliedStartDate,
+  appliedEndDate
+]);
+const today = new Date().toISOString().split("T")[0];
 
   return (
 
@@ -64,13 +76,9 @@ export default function EmployeeReports() {
 
           <div>
 
-            <h1>
-              My Report
-            </h1>
+            <h1>My Report</h1>
 
-            <p>
-              My Performance Summary
-            </p>
+            <p>My Performance Summary</p>
 
           </div>
 
@@ -83,12 +91,14 @@ export default function EmployeeReports() {
           <button
             className={
               range === "today"
-              ? "reportBtn active"
-              : "reportBtn"
+                ? "reportBtn active"
+                : "reportBtn"
             }
-            onClick={() =>
-              setRange("today")
-            }
+            onClick={() => {
+              setRange("today");
+               setShowCustomFilter(false);
+               setSelectedRange("");
+            }}
           >
             Today
           </button>
@@ -96,12 +106,15 @@ export default function EmployeeReports() {
           <button
             className={
               range === "15days"
-              ? "reportBtn active"
-              : "reportBtn"
+                ? "reportBtn active"
+                : "reportBtn"
             }
-            onClick={() =>
-              setRange("15days")
-            }
+            onClick={() =>{
+
+            setRange("15days");
+            setShowCustomFilter(false);
+            setSelectedRange("");
+            }}
           >
             Last 15 Days
           </button>
@@ -109,12 +122,13 @@ export default function EmployeeReports() {
           <button
             className={
               range === "month"
-              ? "reportBtn active"
-              : "reportBtn"
+                ? "reportBtn active"
+                : "reportBtn"
             }
-            onClick={() =>
-              setRange("month")
-            }
+            onClick={() =>{ setRange("month");
+              setShowCustomFilter(false);
+              setSelectedRange("");
+            }}
           >
             This Month
           </button>
@@ -122,17 +136,185 @@ export default function EmployeeReports() {
           <button
             className={
               range === "year"
-              ? "reportBtn active"
-              : "reportBtn"
+                ? "reportBtn active"
+                : "reportBtn"
             }
-            onClick={() =>
-              setRange("year")
-            }
+            onClick={() =>{ setRange("year");
+              setShowCustomFilter(false);
+              setSelectedRange("");
+            }}
           >
             This Year
           </button>
+          <button
+            className={
+              range === "custom"
+                ? "reportBtn active"
+                : "reportBtn"
+            }
+            onClick={() => {
+
+              setRange("custom");
+              setShowCustomFilter(true);
+
+            }}
+          >
+            Custom
+          </button>
+        </div>
+
+            {
+          !showCustomFilter && (
+
+                <div className="reportInfo">
+
+                    <div className="reportInfoLeft">
+
+                      <div className="reportIcon">
+
+                        <CalendarRange size={22} />
+
+                      </div>
+
+                      <div>
+
+                        <h4>Report Period</h4>
+
+                       <p>
+
+                            {
+                            range==="today"
+                            ? "Today"
+
+                            :range==="15days"
+                            ? "Last 15 Days"
+
+                            :range==="month"
+                            ? "This Month"
+
+                            :range==="year"
+                            ? "This Year"
+
+                            :selectedRange
+
+                            }
+
+                            </p>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      className="changeBtn"
+                      onClick={() => setShowCustomFilter(true)}
+                    >
+                      <PencilLine size={16} />
+
+                      <span>Change Date</span>
+                    </button>
+
+                  </div>
+
+              )
+            }
+
+
+
+        {/* Custom Date Filter */}
+
+        {range === "custom" && showCustomFilter && (
+
+          <div className="customDateFilter">
+
+        <div className="dateField">
+
+          <label>From Date</label>
+
+          <input
+            type="date"
+            value={startDate}
+            max={today}
+            onChange={(e) => {
+
+              setStartDate(e.target.value);
+
+              // Clear To Date if it becomes invalid
+              if (
+                endDate &&
+                endDate < e.target.value
+              ) {
+                setEndDate("");
+              }
+
+            }}
+          />
 
         </div>
+
+        <div className="dateField">
+
+          <label>To Date (Optional)</label>
+
+          <input
+            type="date"
+            value={endDate}
+            min={startDate} 
+            max={today}     // Cannot select before From Date
+            disabled={!startDate} // Disabled until From Date is selected
+            onChange={(e) =>
+              setEndDate(e.target.value)
+            }
+          />
+
+        </div>
+
+          <button
+            className="applyBtn"
+            onClick={() => {
+
+                  if (!startDate) {
+                    alert("Please select From Date.");
+                    return;
+                  }
+
+                  const finalEnd = endDate || startDate;
+
+                  setAppliedStartDate(startDate);
+                  setAppliedEndDate(finalEnd);
+
+                  const format = (date) =>
+                    new Date(date).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      }
+                    );
+
+                  if (startDate === finalEnd) {
+                    setSelectedRange(format(startDate));
+                  } else {
+                    setSelectedRange(
+                      `${format(startDate)} → ${format(finalEnd)}`
+                    );
+                  }
+
+                  setShowCustomFilter(false);
+                  // Optional: clear the inputs
+                  setStartDate("");
+                  setEndDate("");
+
+                }}
+          >
+            Apply
+          </button>
+          
+
+        </div>
+
+        )}
 
         {/* Cards */}
 
@@ -150,13 +332,9 @@ export default function EmployeeReports() {
 
             </div>
 
-            <h3>
-              My Leads
-            </h3>
+            <h3>My Leads</h3>
 
-            <h2>
-              {report.totalLeads}
-            </h2>
+            <h2>{report.totalLeads}</h2>
 
           </div>
 
@@ -172,13 +350,9 @@ export default function EmployeeReports() {
 
             </div>
 
-            <h3>
-              Followups
-            </h3>
+            <h3>Followups</h3>
 
-            <h2>
-              {report.totalFollowups}
-            </h2>
+            <h2>{report.totalFollowups}</h2>
 
           </div>
 
@@ -194,13 +368,9 @@ export default function EmployeeReports() {
 
             </div>
 
-            <h3>
-              Converted
-            </h3>
+            <h3>Converted</h3>
 
-            <h2>
-              {report.convertedLeads}
-            </h2>
+            <h2>{report.convertedLeads}</h2>
 
           </div>
 
@@ -216,13 +386,9 @@ export default function EmployeeReports() {
 
             </div>
 
-            <h3>
-              Pending
-            </h3>
+            <h3>Pending</h3>
 
-            <h2>
-              {report.pendingLeads}
-            </h2>
+            <h2>{report.pendingLeads}</h2>
 
           </div>
 
@@ -232,9 +398,7 @@ export default function EmployeeReports() {
 
         <div className="reportSection">
 
-          <h3>
-            Performance Summary
-          </h3>
+          <h3>Performance Summary</h3>
 
           <p>
 

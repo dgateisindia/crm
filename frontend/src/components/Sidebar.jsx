@@ -24,13 +24,24 @@ export default function Sidebar() {
   const location = useLocation();
 
   const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
 
-  navigate("/", {
-    replace: true,
-  });
-};
+  const confirmLogout = window.confirm(
+        "Are you sure you want to logout?"
+      );
+
+      if (!confirmLogout) {
+        return;
+      }
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userId");
+
+      navigate("/", {
+        replace: true,
+      });
+    };
 
   return (
     <div className="sidebar">

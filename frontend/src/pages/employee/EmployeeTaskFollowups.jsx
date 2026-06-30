@@ -675,7 +675,6 @@ window.location.reload();
 
         {/* Table */}
 
-        <div className="overflow-x-auto">
 
           <table className="w-full">
 
@@ -1002,7 +1001,7 @@ window.location.reload();
 
         </div>
 
-      </div>
+     
       {
 showTaskFollowupModal && (
 

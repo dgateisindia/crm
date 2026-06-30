@@ -6,39 +6,48 @@ const db = require("../db");
 const getCompanyReport =
 (req, res) => {
 
-  const range =
-  req.query.range || "today";
+  const range = req.query.range || "today";
+  const { startDate, endDate } = req.query;
 
   let dateCondition = "";
 
   if (range === "today") {
-
-    dateCondition =
-    "DATE(created_at) = CURDATE()";
-
+    dateCondition = "DATE(created_at) = CURDATE()";
   }
 
   else if (range === "15days") {
-
-    dateCondition =
-    "created_at >= DATE_SUB(NOW(), INTERVAL 15 DAY)";
-
+    dateCondition = "created_at >= DATE_SUB(NOW(), INTERVAL 15 DAY)";
   }
 
   else if (range === "month") {
-
-    dateCondition =
-    `MONTH(created_at)=MONTH(NOW())
-     AND YEAR(created_at)=YEAR(NOW())`;
-
+    dateCondition = `
+      MONTH(created_at) = MONTH(NOW())
+      AND YEAR(created_at) = YEAR(NOW())
+    `;
   }
 
   else if (range === "year") {
-
-    dateCondition =
-    "YEAR(created_at)=YEAR(NOW())";
-
+    dateCondition = "YEAR(created_at) = YEAR(NOW())";
   }
+
+  else if (range === "custom") {
+
+  if (!startDate) {
+    return res.status(400).json({
+      message: "Start date is required"
+    });
+  }
+
+  // If end date is not selected, use start date
+  const fromDate = startDate;
+  const toDate = endDate || startDate;
+
+  dateCondition = `
+    DATE(created_at)
+    BETWEEN '${fromDate}'
+    AND '${toDate}'
+  `;
+}
 
   const report = {};
 
@@ -164,39 +173,48 @@ const getEmployeeReport =
   const employeeId =
   req.params.id;
 
-  const range =
-  req.query.range || "today";
+  const range = req.query.range || "today";
+  const { startDate, endDate } = req.query;
 
   let dateCondition = "";
 
   if (range === "today") {
-
-    dateCondition =
-    "DATE(created_at) = CURDATE()";
-
+    dateCondition = "DATE(created_at) = CURDATE()";
   }
 
   else if (range === "15days") {
-
-    dateCondition =
-    "created_at >= DATE_SUB(NOW(), INTERVAL 15 DAY)";
-
+    dateCondition = "created_at >= DATE_SUB(NOW(), INTERVAL 15 DAY)";
   }
 
   else if (range === "month") {
-
-    dateCondition =
-    `MONTH(created_at)=MONTH(NOW())
-     AND YEAR(created_at)=YEAR(NOW())`;
-
+    dateCondition = `
+      MONTH(created_at)=MONTH(NOW())
+      AND YEAR(created_at)=YEAR(NOW())
+    `;
   }
 
   else if (range === "year") {
-
-    dateCondition =
-    "YEAR(created_at)=YEAR(NOW())";
-
+    dateCondition = "YEAR(created_at)=YEAR(NOW())";
   }
+
+  else if (range === "custom") {
+
+  if (!startDate) {
+    return res.status(400).json({
+      message: "Start date is required"
+    });
+  }
+
+  // If end date is not selected, use start date
+  const fromDate = startDate;
+  const toDate = endDate || startDate;
+
+  dateCondition = `
+    DATE(created_at)
+    BETWEEN '${fromDate}'
+    AND '${toDate}'
+  `;
+}
 
   const report = {};
 

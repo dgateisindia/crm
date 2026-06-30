@@ -307,8 +307,6 @@ allLeads.filter((lead) => {
 
       <div className="leads-container">
 
-
-        
         <div className="dashboard-grid">
 
           <div className="crm-card blue-card">
@@ -344,7 +342,7 @@ allLeads.filter((lead) => {
 
             </div>
 
-            <h3>New Leads</h3>
+            <h3>Followups</h3>
 
             <h2>
 
@@ -514,8 +512,7 @@ allLeads.filter((lead) => {
         {/* Table */}
         <div className="leads-card tableWrapper overflow-hidden">
 
-          <div className="overflow-x-auto">
-
+         
           <table className="w-full">
 
 
@@ -774,7 +771,7 @@ allLeads.filter((lead) => {
 
           </table>
           </div>
-        </div>
+        
 
       
 

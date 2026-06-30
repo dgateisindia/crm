@@ -6,15 +6,22 @@ express.Router();
 
 const {
   getDashboardStats,
-  getEmployeeStats,
+  getLeadStatusChart,
+  getEmployeePerformance,
+  getLeadTrend,
+  getEmployeeStats
 } = require(
   "../controllers/dashboardController"
 );
 
-router.get(
-  "/stats",
-  getDashboardStats
-);
+router.get("/stats", getDashboardStats);
+
+router.get("/lead-status", getLeadStatusChart);
+
+router.get("/employee-performance", getEmployeePerformance);
+
+router.get("/lead-trend", getLeadTrend);
+
 router.get(
   "/employee/:id",
   getEmployeeStats

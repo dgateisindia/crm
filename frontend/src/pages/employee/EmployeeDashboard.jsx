@@ -213,7 +213,7 @@ export default function EmployeeDashboard() {
 
           <h3>
 
-            NEW
+            Followup
 
           </h3>
 

@@ -1,13 +1,29 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { Briefcase, PhoneCall, BadgeCheck, Clock3, Users } from "lucide-react" ;
-import ManagerLayout from "../../layouts/ManagerLayout";
+import api from "../../utils/api";
+import {
+  Briefcase,
+  PhoneCall,
+  BadgeCheck,
+  Clock3,
+  Users,
+  CalendarRange,
+  PencilLine
+} from "lucide-react";import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/managerDashboard.css";
 import "../../styles/report.css";
 export default function Reports() {
 
   const [range, setRange] =
   useState("today");
+  const [showCustomFilter, setShowCustomFilter] = useState(false);
+
+  const [selectedRange, setSelectedRange] = useState("");
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const [appliedStartDate, setAppliedStartDate] = useState("");
+  const [appliedEndDate, setAppliedEndDate] = useState("");
 
   const [report, setReport] =
   useState({
@@ -15,27 +31,34 @@ export default function Reports() {
     totalFollowups: 0,
     convertedLeads: 0,
     pendingLeads: 0,
-    totalEmployees: 0
+    totalEmployees: 0,
+    conversionRate: 0
   });
 
   useEffect(() => {
 
-    axios
-      .get(
-        `http://localhost:5000/api/reports/company?range=${range}`
-      )
-      .then((res) => {
+  if (range === "custom" && !appliedStartDate) {
+    return;
+  }
 
-        setReport(res.data);
+  let url = `/reports/company?range=${range}`;
 
-      })
-      .catch((err) => {
+  if (range === "custom") {
+    url += `&startDate=${appliedStartDate}&endDate=${appliedEndDate}`;
+  }
 
-        console.log(err);
+  api.get(url)
+    .then((res) => {
+      setReport(res.data);
+    })
+    .catch(console.log);
 
-      });
-
-  }, [range]);
+}, [
+  range,
+  appliedStartDate,
+  appliedEndDate
+]);
+const today = new Date().toISOString().split("T")[0];
 
   return (
 
@@ -43,23 +66,19 @@ export default function Reports() {
 
       <div className="reportsPage">
 
-        <div className="reportsHeader">
+        <div className="employeesHeader">
 
           <div>
 
-            <h1>
-              Reports
-            </h1>
+            <h1>Company Report</h1>
 
-            <p>
-              Company Performance Report
-            </p>
+            <p>Company Performance Summary</p>
 
           </div>
 
         </div>
 
-        {/* Filters */}
+      {/* Filters */}
 
         <div className="reportFilters">
 
@@ -69,9 +88,11 @@ export default function Reports() {
                 ? "reportBtn active"
                 : "reportBtn"
             }
-            onClick={() =>
-              setRange("today")
-            }
+            onClick={() => {
+              setRange("today");
+               setShowCustomFilter(false);
+               setSelectedRange("");
+            }}
           >
             Today
           </button>
@@ -82,9 +103,12 @@ export default function Reports() {
                 ? "reportBtn active"
                 : "reportBtn"
             }
-            onClick={() =>
-              setRange("15days")
-            }
+            onClick={() =>{
+
+            setRange("15days");
+            setShowCustomFilter(false);
+            setSelectedRange("");
+            }}
           >
             Last 15 Days
           </button>
@@ -95,9 +119,10 @@ export default function Reports() {
                 ? "reportBtn active"
                 : "reportBtn"
             }
-            onClick={() =>
-              setRange("month")
-            }
+            onClick={() =>{ setRange("month");
+              setShowCustomFilter(false);
+              setSelectedRange("");
+            }}
           >
             This Month
           </button>
@@ -108,14 +133,182 @@ export default function Reports() {
                 ? "reportBtn active"
                 : "reportBtn"
             }
-            onClick={() =>
-              setRange("year")
-            }
+            onClick={() =>{ setRange("year");
+              setShowCustomFilter(false);
+              setSelectedRange("");
+            }}
           >
             This Year
           </button>
+          <button
+            className={
+              range === "custom"
+                ? "reportBtn active"
+                : "reportBtn"
+            }
+            onClick={() => {
+
+              setRange("custom");
+              setShowCustomFilter(true);
+
+            }}
+          >
+            Custom
+          </button>
+        </div>
+
+           {
+            !showCustomFilter && (
+
+                <div className="reportInfo">
+
+                    <div className="reportInfoLeft">
+
+                      <div className="reportIcon">
+
+                        <CalendarRange size={22} />
+
+                      </div>
+
+                      <div>
+
+                        <h4>Report Period</h4>
+
+                       <p>
+
+                        {
+                        range==="today"
+                        ? "Today"
+
+                        :range==="15days"
+                        ? "Last 15 Days"
+
+                        :range==="month"
+                        ? "This Month"
+
+                        :range==="year"
+                        ? "This Year"
+
+                        :selectedRange
+
+                        }
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      className="changeBtn"
+                      onClick={() => setShowCustomFilter(true)}
+                    >
+                      <PencilLine size={16} />
+
+                      <span>Change Date</span>
+                    </button>
+
+                  </div>
+
+              )
+            }
+
+
+
+        {/* Custom Date Filter */}
+
+        {range === "custom" && showCustomFilter && (
+
+          <div className="customDateFilter">
+
+        <div className="dateField">
+
+          <label>From Date</label>
+
+          <input
+            type="date"
+            value={startDate}
+            max={today}
+            onChange={(e) => {
+
+              setStartDate(e.target.value);
+
+              // Clear To Date if it becomes invalid
+              if (
+                endDate &&
+                endDate < e.target.value
+              ) {
+                setEndDate("");
+              }
+
+            }}
+          />
 
         </div>
+
+        <div className="dateField">
+
+          <label>To Date (Optional)</label>
+
+          <input
+            type="date"
+            value={endDate}
+            min={startDate} 
+            max={today}     // Cannot select before From Date
+            disabled={!startDate} // Disabled until From Date is selected
+            onChange={(e) =>
+              setEndDate(e.target.value)
+            }
+          />
+
+        </div>
+
+          <button
+            className="applyBtn"
+            onClick={() => {
+
+                  if (!startDate) {
+                    alert("Please select From Date.");
+                    return;
+                  }
+
+                  const finalEnd = endDate || startDate;
+
+                  setAppliedStartDate(startDate);
+                  setAppliedEndDate(finalEnd);
+
+                  const format = (date) =>
+                    new Date(date).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      }
+                    );
+
+                  if (startDate === finalEnd) {
+                    setSelectedRange(format(startDate));
+                  } else {
+                    setSelectedRange(
+                      `${format(startDate)} → ${format(finalEnd)}`
+                    );
+                  }
+
+                  setShowCustomFilter(false);
+                  // Optional: clear the inputs
+                  setStartDate("");
+                  setEndDate("");
+
+                }}
+          >
+            Apply
+          </button>
+          
+
+        </div>
+
+        )}
 
         {/* Report Cards */}
 
@@ -177,40 +370,39 @@ export default function Reports() {
             </div>
 
           </div>
-          {/* Overview */}
-
           <div className="reportSection">
 
-            <h3>Report Overview</h3>
+                <h3>Company Performance Summary</h3>
 
-            <p>
-              Showing company performance for
-              <strong> {range}</strong>
-            </p>
+                <p>
 
-          </div>
+                  Conversion Rate :
 
-          {/* Future Section */}
+                  <strong>
 
-          <div className="reportSection">
+                    {" "}
 
-            <h3>Top Employees</h3>
+                    {Number(report.conversionRate || 0).toFixed(2)}%
 
-            <p>
-              Top employee performance data will appear here.
-            </p>
+                  </strong>
 
-          </div>
+                </p>
 
-          <div className="reportSection">
+                <p>
 
-            <h3>Lead Status Breakdown</h3>
+                  Total Employees :
 
-            <p>
-              Lead status analytics will appear here.
-            </p>
+                  <strong>
 
-          </div>
+                    {" "}
+
+                    {report.totalEmployees}
+
+                  </strong>
+
+                </p>
+
+              </div>
       </div>
 
     </ManagerLayout>

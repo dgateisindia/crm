@@ -1,12 +1,11 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate }
 from "react-router-dom";
 import {useEffect,useState} from "react";
-
+import LeadStatusChart from "../../components/charts/LeadStatusChart";
 import ManagerLayout from "../../layouts/ManagerLayout";
-
-import "../../styles/managerDashboard.css";
-
+import EmployeePerformanceChart from "../../components/charts/EmployeePerformanceChart";
+import LeadTrendChart from "../../components/charts/LeadTrendChart";
 import {
   Users,
   UserCheck,
@@ -17,6 +16,7 @@ import {
 export default function ManagerDashboard() {
 
   const navigate = useNavigate();
+  const [leadStatus, setLeadStatus] = useState([]);
 
   const [stats,
     setStats] =
@@ -27,26 +27,61 @@ export default function ManagerDashboard() {
       convertedLeads: 0,
       recentLeads: [],
     });
+    const [
+    employeePerformance,
+    setEmployeePerformance
+    ] = useState([]);
+    const [
+    leadTrend,
+    setLeadTrend
+    ] = useState([]);
 
   useEffect(() => {
 
-    axios.get(
-      "http://localhost:5000/api/dashboard/stats"
-    )
-    .then((res) => {
+  const fetchDashboard = async () => {
 
-      setStats(
-        res.data
-      );
+    try {
 
-    })
-    .catch((err) => {
+      const statsRes =
+        await api.get("/dashboard/stats");
+
+      setStats(statsRes.data);
+
+      const leadStatusRes =
+        await api.get("/dashboard/lead-status");
+
+      setLeadStatus(leadStatusRes.data);
+      const employeeRes =
+        await api.get(
+        "/dashboard/employee-performance"
+        );
+
+        setEmployeePerformance(
+        employeeRes.data
+        );
+        const trendRes =
+        await api.get(
+        "/dashboard/lead-trend"
+        );
+
+        setLeadTrend(
+        trendRes.data
+        );
+
+    }
+
+    catch (err) {
 
       console.log(err);
 
-    });
+    }
 
-  }, []);
+  };
+
+  fetchDashboard();
+
+}, []);
+  
 
   return (
 
@@ -54,24 +89,6 @@ export default function ManagerDashboard() {
 
       {/* Header */}
       <div className="dashboard-header">
-
-        <div>
-
-          <h1 className="dashboard-title">
-
-            Manager Dashboard
-
-          </h1>
-
-          <p className="dashboard-subtitle">
-
-            Welcome back,
-            here's what is happening
-            in your CRM today.
-
-          </p>
-
-        </div>
 
       </div>
 
@@ -160,8 +177,7 @@ export default function ManagerDashboard() {
           </h2>
 
         </div>
-
-
+      
         {/* New Leads */}
         <div
 
@@ -246,6 +262,24 @@ export default function ManagerDashboard() {
         </div>
 
       </div>
+      <div className="dashboard-charts">
+
+          <LeadStatusChart
+            data={leadStatus}
+          />
+
+          <EmployeePerformanceChart
+              data={employeePerformance}
+          />
+          
+
+              <LeadTrendChart
+              data={leadTrend}
+              />
+
+              
+
+        </div>
       {/* Recent Leads */}
       <div className="recent-card">
 

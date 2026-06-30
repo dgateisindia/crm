@@ -184,13 +184,38 @@ searchParams.get("from");
 
         }
 
-        if (!/^\d{10}$/.test(leadData.phone)) {
+    // Either Phone or Email is required
+      if (!leadData.phone.trim() && !leadData.email.trim()) {
+        return alert(
+          "Please enter either Phone Number or Email Address."
+        );
+      }
+
+      // Validate phone only if entered
+      if (
+        leadData.phone &&
+        !/^\d{10}$/.test(leadData.phone)
+      ) {
+        return alert(
+          "Phone Number must contain exactly 10 digits"
+        );
+      }
+
+      // Validate email only if entered
+      if (leadData.email) {
+
+        const emailRegex =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(leadData.email)) {
 
           return alert(
-            "Phone Number must contain exactly 10 digits"
+            "Please enter a valid Email Address."
           );
 
         }
+
+      }
 
       if (id) {
 
@@ -454,7 +479,7 @@ searchParams.get("from");
                   <div className="formGroup">
 
                     <label>
-                      Company Name *
+                      Company Name 
                     </label>
 
                     <input
@@ -470,7 +495,7 @@ searchParams.get("from");
                   <div className="formGroup">
 
                     <label>
-                      Contact Person *
+                      Contact 
                     </label>
 
                     <input
@@ -501,7 +526,7 @@ searchParams.get("from");
                   <div className="formGroup">
 
                     <label>
-                      Phone *
+                      Phone 
                     </label>
 
                     <input
@@ -527,7 +552,7 @@ searchParams.get("from");
                   <div className="formGroup">
 
                     <label>
-                      Email *
+                      Email 
                     </label>
 
                     <input
@@ -535,10 +560,11 @@ searchParams.get("from");
                       name="email"
                       value={leadData.email}
                       onChange={handleChange}
-                      required
+                      
                     />
 
                   </div>
+                  
 
                   <div className="formGroup">
 

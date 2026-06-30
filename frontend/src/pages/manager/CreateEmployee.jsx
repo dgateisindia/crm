@@ -186,6 +186,7 @@ navigate("/manager/employees");
             <form
               onSubmit={handleSubmit}
               className="employeeForm"
+              autoComplete="off"
             >
 
               {/* Row 1 */}
@@ -225,6 +226,7 @@ navigate("/manager/employees");
                       handleChange
                     }
                     placeholder="Enter email address"
+                     autoComplete="off"
                     required
                   />
                 </div>
@@ -359,6 +361,7 @@ navigate("/manager/employees");
                       : "Enter password"
 
                     }
+                     autoComplete="new-password"
                     required={!id}
                   />
                 </div>
