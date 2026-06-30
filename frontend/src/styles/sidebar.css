@@ -13,14 +13,47 @@
   overflow-hidden;
 }
 
-/* Logo */
-.sidebar-logo {
-  @apply mb-4
-  flex
-  items-center
-  gap-2;
+/* ==========================
+   Sidebar Logo
+========================== */
+
+.sidebar-logo{
+    width:165px;
+    height:48px;
+
+    margin:20px auto 22px;
+
+    background:#FCFCFC;
+
+    border-left:3px solid #FF8C1A;
+
+    border-radius:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.10);
+
+    transition:.25s ease;
 }
 
+.sidebar-logo:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px rgba(0,0,0,.14);
+}
+
+.logo-brand{
+    font-size:22px;
+    font-weight:800;
+    color:#FF8C1A;
+    letter-spacing:-0.6px;
+    line-height:1;
+}
+
+.logo-d{
+    color:#111827;
+}
 .sidebar-logo-image {
   @apply w-10
   h-10
@@ -149,4 +182,16 @@
   rounded-lg
   border-l-4
   border-blue-500;
+}
+.sidebar-brand{
+    font-size:28px;
+    font-weight:800;
+    color:#ffffff;
+    letter-spacing:1px;
+    text-align:center;
+    user-select:none;
+}
+
+.sidebar-brand span{
+    color:#3B82F6;
 }

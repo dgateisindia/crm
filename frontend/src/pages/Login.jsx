@@ -28,105 +28,64 @@ export default function Login() {
   // ==========================
   const handleLogin =
   async (e) => {
-
     e.preventDefault();
 
-
     try {
-
       const response =
       await axios.post(
-
         "http://localhost:5000/api/auth/login",
-
         {
-
           email,
-
           password,
-
         }
-
       );
-
-
       const {
-
         token,
-
         role,
-
         user,
-
       } = response.data;
 
-
       console.log(role);
-
-
       // ==========================
       // Save Login Data
       // ==========================
       localStorage.setItem(
-
         "token",
-
         token
-
       );
 
-
       localStorage.setItem(
-
         "role",
-
         role
-
       );
 
 
       // Save User ID
       localStorage.setItem(
-
         "userId",
-
         role === "manager"
-
         ? user.manager_id
-
         : user.employee_id
-
       );
 
 
       // Optional:
       // Save Full User Data
       localStorage.setItem(
-
         "user",
-
         JSON.stringify(user)
-
       );
-
 
       // ==========================
       // Role Based Redirect
       // ==========================
       if (role === "manager") {
-
         navigate(
-
           "/manager/dashboard",
-
           {
-
             replace: true,
-
           }
-
         );
-
       }
 
       else if (
@@ -134,110 +93,92 @@ export default function Login() {
       ) {
 
         navigate(
-
           "/employee/dashboard",
-
           {
-
             replace: true,
-
           }
-
         );
-
       }
-
     }
 
     catch (error) {
-
       console.log(error);
 
+      // Backend server off / network error
+      if (!error.response) {
+        navigate("/503");
+        return;
+      }
+
+      // Invalid email or password
+      if (error.response.status === 401) {
+        alert("Invalid Email or Password");
+        return;
+      }
+      
+
+      // Access denied
+      if (error.response.status === 403) {
+        navigate("/403");
+        return;
+      }
+
+      // Server error
+      if (error.response.status >= 500) {
+        navigate("/500");
+        return;
+      }
+
       alert(
-
-        error.response?.data
-        ?.message ||
-
-        "Invalid Email or Password"
-
+        error.response?.data?.message ||
+        "Login failed"
       );
-
     }
 
   };
 
 
   return (
-
     <div className="login-container">
-
 
       {/* Left Side */}
       <div className="login-left">
 
         <h1 className="text-5xl font-bold mb-6">
-
           DGATE CRM
-
         </h1>
 
-
         <p className="text-lg text-gray-300 leading-8">
-
           Manage leads, follow-ups
           and sales with a powerful
           internal CRM.
-
         </p>
-
       </div>
-
 
       {/* Right Side */}
       <div className="login-right">
-
         <div className="login-card">
-
-
           <h2 className="text-3xl font-bold mb-2">
-
             Login
-
           </h2>
 
-
           <p className="text-gray-500 mb-8">
-
             Welcome back
-
           </p>
 
-
           <form
-
             onSubmit={handleLogin}
-
-            className="space-y-5"
-
-          >
-
+            className="space-y-5">
 
             {/* Email */}
             <div>
-
               <label className="block mb-2 font-medium">
-
                 Email
-
               </label>
 
-
               <input
-
                 type="email"
-
                 placeholder="Enter Email"
-
                 value={email}
 
                 onChange={(e) =>
@@ -247,30 +188,20 @@ export default function Login() {
                 }
 
                 className="form-input"
-
                 required
-
               />
 
             </div>
 
-
             {/* Password */}
             <div>
-
               <label className="block mb-2 font-medium">
-
                 Password
-
               </label>
 
-
               <input
-
                 type="password"
-
                 placeholder="Enter Password"
-
                 value={password}
 
                 onChange={(e) =>
@@ -280,15 +211,12 @@ export default function Login() {
                 }
 
                 className="form-input"
-
                 required
-
                 minLength="5"
-
               />
 
             </div>
-            {/* Forgot Password Link */}
+            {/* Forgot Password Link
             <div className="text-right">
 
               <Link
@@ -298,30 +226,18 @@ export default function Login() {
                 Forgot Password?
               </Link>
 
-            </div>
-
+            </div> */}
 
             {/* Login Button */}
             <button
-
               type="submit"
-
               className="login-btn"
-
             >
-
               Login
-
             </button>
-
           </form>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }

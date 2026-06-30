@@ -3,61 +3,30 @@ import {
   useLocation,
 } from "react-router-dom";
 
-export default function ProtectedRoute({
-  children,
-}) {
+export default function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  const location = useLocation();
 
-  const token =
-    localStorage.getItem(
-      "token"
-    );
-
-  const role =
-    localStorage.getItem(
-      "role"
-    );
-
-  const location =
-    useLocation();
-
-  // No token → login
+  // No token → 401 page
   if (!token) {
-    return (
-      <Navigate
-        to="/"
-        replace
-      />
-    );
+    return <Navigate to="/401" replace />;
   }
 
-  // Employee trying manager page
+  // Employee trying manager page → 403 page
   if (
-    location.pathname.startsWith(
-      "/manager"
-    ) &&
+    location.pathname.startsWith("/manager") &&
     role !== "manager"
   ) {
-    return (
-      <Navigate
-        to="/employee/dashboard"
-        replace
-      />
-    );
+    return <Navigate to="/403" replace />;
   }
 
-  // Manager trying employee page
+  // Manager trying employee page → 403 page
   if (
-    location.pathname.startsWith(
-      "/employee"
-    ) &&
+    location.pathname.startsWith("/employee") &&
     role !== "employee"
   ) {
-    return (
-      <Navigate
-        to="/manager/dashboard"
-        replace
-      />
-    );
+    return <Navigate to="/403" replace />;
   }
 
   return children;

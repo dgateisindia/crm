@@ -1,22 +1,22 @@
 import {Link,useNavigate,useLocation,} from "react-router-dom";
 
-import logo from "../assets/logo.png";
+// import logo from "../assets/logo.png";
 
 import "../styles/employeesidebar.css";
 
 import {
-  LayoutDashboard,
-  Users,
-  PlusCircle,
-  PhoneCall,
-  User,
+  LayoutGrid,
+  BriefcaseBusiness,
+  CirclePlus,
+  PhoneForwarded,
+  UserRound,
   LogOut,
-  Clock,
-  AlertCircle,
+  ShieldAlert,
   BadgeCheck,
-  ClipboardList,
+  ClipboardCheck,
   CalendarClock,
-  FileText
+  FileSpreadsheet,
+  CircleOff
 } from "lucide-react";
 
 export default function EmployeeSidebar() {
@@ -50,18 +50,11 @@ export default function EmployeeSidebar() {
       <div>
 
         {/* Logo */}
+        {/* Logo */}
         <div className="sidebar-logo">
-
-          <img
-            src={logo}
-            alt="logo"
-            className="sidebar-logo-image"
-          />
-
-          <h1 className="sidebar-logo-text">
-            DGATE CRM
-          </h1>
-
+          <span className="logo-brand">
+            <span className="logo-d">D</span>GATE
+          </span>
         </div>
 
         {/* Menu */}
@@ -72,9 +65,7 @@ export default function EmployeeSidebar() {
           >
             <div className={`sidebar-menu ${location.pathname === "/employee/dashboard" ? "active-menu" : ""}`}>
 
-              <LayoutDashboard
-                size={18}
-              />
+              <LayoutGrid size={20} strokeWidth={2.2} />
 
               Dashboard
 
@@ -86,9 +77,7 @@ export default function EmployeeSidebar() {
           >
             <div className={`sidebar-menu ${location.pathname === "/employee/my-leads" ? "active-menu " : ""}`}>
 
-              <Users
-                size={18}
-              />
+              <BriefcaseBusiness size={20} strokeWidth={2.2} />
 
               My Leads
 
@@ -100,9 +89,7 @@ export default function EmployeeSidebar() {
           >
             <div className={`sidebar-menu ${location.pathname === "/employee/add-leads" ? "active-menu " : ""}`}  >
 
-              <PlusCircle
-                size={18}
-              />
+              <CirclePlus size={20} strokeWidth={2.2} />
 
               Add Lead
 
@@ -118,7 +105,7 @@ export default function EmployeeSidebar() {
                     : ""
                 }`}
               >
-                <ClipboardList size={18} />
+                <ClipboardCheck size={20} strokeWidth={2.2} />
 
                 Tasks
 
@@ -134,7 +121,7 @@ export default function EmployeeSidebar() {
                       : ""
                   }`}
                 >
-                  <CalendarClock size={18} />
+                  <CalendarClock size={20} strokeWidth={2.2} />
 
                   Task Followups
 
@@ -146,9 +133,7 @@ export default function EmployeeSidebar() {
           >
             <div className={`sidebar-menu ${location.pathname === "/employee/followups" ? "active-menu " : ""}`} >
 
-              <PhoneCall
-                size={18}
-              />
+              <PhoneForwarded size={20} strokeWidth={2.2} />
 
               Lead Follow Ups
 
@@ -160,9 +145,7 @@ export default function EmployeeSidebar() {
           >
             <div className={`sidebar-menu ${location.pathname === "/employee/profile" ? "active-menu " : ""}`} >
 
-              <User
-                size={18}
-              />
+              <UserRound size={20} strokeWidth={2.2} />
 
               Profile
 
@@ -170,7 +153,7 @@ export default function EmployeeSidebar() {
           </Link>
           <Link to="/employee/reports">
               <li className={`sidebar-menu ${location.pathname === "/employee/reports" ? "active-menu " : ""}`}  >
-                <FileText size={12} />
+                <FileSpreadsheet size={20} strokeWidth={2.2} />
                 Reports
               </li>
             </Link>
@@ -195,7 +178,7 @@ export default function EmployeeSidebar() {
               }`}
             >
               <div className="flex items-center gap-2">
-                <AlertCircle size={20} />
+                <ShieldAlert size={20} strokeWidth={2.2} />
                 Important Leads
               </div>
             </div>
@@ -210,7 +193,7 @@ export default function EmployeeSidebar() {
               }`}
             >
               <div className="flex items-center gap-2">
-                <BadgeCheck size={20} />
+                <BadgeCheck size={20} strokeWidth={2.2} />
                 Converted Leads
               </div>
             </div>
@@ -225,7 +208,7 @@ export default function EmployeeSidebar() {
               }`}
             >
               <div className="flex items-center gap-2">
-                <Clock size={20} />
+                <CircleOff size={20} strokeWidth={2.2} />
                 Not Interested
               </div>
             </div>

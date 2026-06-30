@@ -51,10 +51,10 @@
 
 .login-btn {
   @apply w-full
-  bg-blue-600
+  bg-[#071739]
   text-white
   py-3
   rounded-lg
-  hover:bg-blue-700
+  hover:bg-[#0f2c68]
   transition;
 }

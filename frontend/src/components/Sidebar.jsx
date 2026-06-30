@@ -1,6 +1,6 @@
 import {Link,useNavigate,useLocation,} from "react-router-dom";import { UserPlus, } from "lucide-react";
 import "../styles/sidebar.css";
-import logo from "../assets/logo.png";
+// import logo from "../assets/logo.png";
 //import { useState } from "react";
 //import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -38,13 +38,19 @@ export default function Sidebar() {
       <div>
 
         {/* Logo */}
-        <div className="flex justify-center mb-5">
+        {/* <div className="flex justify-center mb-5">
           <img
             src={logo}
             alt="DGATE Logo"
             className="w-12 h-12 object-contain"
           />
-        </div>
+        </div> */}
+        {/* Logo */}
+      <div className="sidebar-logo">
+        <span className="logo-brand">
+          <span className="logo-d">D</span>GATE
+        </span>
+      </div>
 
         {/* Main Menu */}
         <div>

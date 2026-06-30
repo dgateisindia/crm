@@ -10,19 +10,7 @@ import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 
-import {
-  Search,
-  Eye,
-  Pencil,
-  PhoneCall,
-  //Trash2,
-  MoreVertical,
-  Briefcase,
-  UserPlus,
-  BadgeCheck,
-  UserX
-
-} from "lucide-react";
+import { Search, Plus, Eye, Pencil, PhoneCall, MoreVertical, Briefcase, UserPlus, BadgeCheck, UserX } from "lucide-react";
 
 
 export default function Leads() {
@@ -425,90 +413,51 @@ allLeads.filter((lead) => {
                   </div>
 
                 </div>
+        <div className="leadToolbar">
+
+  <div className="searchContainer">
+
+    <Search
+      size={18}
+      className="searchIcon"
+    />
+
+    <input
+      type="text"
+      placeholder="Search company or contact..."
+      className="leadSearchInput"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
+
+  </div>
+
+  <select
+    className="leadSelect"
+    value={statusFilter}
+    onChange={(e) => setStatusFilter(e.target.value)}
+  >
+    <option value="all">All Status</option>
+    <option value="new">New</option>
+    <option value="connected">Connected</option>
+    <option value="interested">Interested</option>
+    <option value="proposal">Proposal</option>
+    <option value="converted">Converted</option>
+    <option value="not_interested">Not Interested</option>
+  </select>
+
+  <button
+    className="leadAddBtn"
+    onClick={() => navigate("/employee/add-leads")}
+  >
+    <Plus size={20} strokeWidth={3} />
+    <span>Add Lead</span>
+  </button>
+
+</div>       
 
 
-                <div className="leadToolbar">
-
-          <div className="searchContainer">
-
-            <Search
-              size={18}
-              className="searchIcon"
-            />
-
-            <input
-              type="text"
-              placeholder="Search company or contact..."
-              className="leadSearchInput"
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-            />
-
-          </div>
-
-
-          <select
-            className="leadSelect"
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(
-                e.target.value
-              )
-            }
-          >
-
-            <option value="all">
-              All Status
-            </option>
-
-            <option value="new">
-              New
-            </option>
-
-            <option value="connected">
-              Connected
-            </option>
-
-            <option value="interested">
-              Interested
-            </option>
-
-            <option value="proposal">
-              Proposal
-            </option>
-
-            <option value="converted">
-              Converted
-            </option>
-
-            <option value="not_interested">
-              Not Interested
-            </option>
-
-          </select>
-
-        </div>
-        {/* Add Lead */}
-          <button
-            className="leadAddBtn"
-            onClick={() =>
-              navigate(
-                "/employee/add-leads"
-              )
-            }
-          >
-
-            + Add Lead
-
-          </button>
-
-          
-
-        </div>
+        
 
 
         {/* Table */}
@@ -631,11 +580,10 @@ allLeads.filter((lead) => {
 
 
                     <td className="table-data">
-
-                      {lead.lead_status}
-
+                      <span className={`status-badge ${lead.lead_status}`}>
+                        {lead.lead_status.replace("_", " ")}
+                      </span>
                     </td>
-
 
                     <td className="p-4 relative">
 
@@ -1028,7 +976,7 @@ handleFollowupSubmit
 
 )
 }
-
+     </div>
     </EmployeeLayout>
 
   );

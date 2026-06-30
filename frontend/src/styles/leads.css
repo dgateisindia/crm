@@ -867,7 +867,7 @@ td{
 .not_interested{
 
   background:#fee2e2;
-  color:#dc2626;
+  color:#c02929;
 }
 
 /* Converted */
@@ -1038,27 +1038,67 @@ td{
   padding:10px;
   border-bottom:1px solid #f1f5f9;
 }
-.status-connected{
+/* ==========================
+   Status Badge
+========================== */
+
+.status-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  width:120px;
+  height:34px;
+
+  border-radius:8px;
+
+  font-size:13px;
+  font-weight:600;
+  text-transform:capitalize;
+}
+
+/* New */
+.status-badge.new{
+   background:#DBEAFE;
+  color:#2563EB;
+}
+
+/* Connected */
+.status-badge.connected{
+  background:#DCFCE7;
+  color:#15803D;
+}
+
+/* Interested */
+.status-badge.interested{
+    background:#FEF3C7;
+    color:#D97706;
+}
+
+/* Proposal */
+.status-badge.proposal{
+  background:#EDE9FE;
+  color:#7C3AED;
+}
+
+/* Converted */
+.status-badge.converted{
+  background:#D1FAE5;
+  color:#059669;
+}
+
+/* Not Interested */
+.status-badge.not_interested{
+  background:#FEE2E2;
+  color:#DC2626;
+}
+
+/* Closed */
+.status-badge.closed{
+  background:#E5E7EB;
+  color:#4B5563;
+}
+.status-badge.meeting_scheduled{
   background:#dcfce7;
-  color:#16a34a;
-}
-
-.status-interested{
-  background:#ffedd5;
-  color:#ea580c;
-}
-
-.status-proposal{
-  background:#f3e8ff;
-  color:#9333ea;
-}
-
-.status-converted{
-  background:#dbeafe;
-  color:#2563eb;
-}
-
-.status-not_interested{
-  background:#fee2e2;
-  color:#dc2626;
+  color:#4B5563;
 }
