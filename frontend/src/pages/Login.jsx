@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-
+import api from "../utils/api";
 import "../styles/login.css";
 import { Link } from "react-router-dom";
 
@@ -24,6 +23,7 @@ useState(false);
   const [password,
     setPassword] =
     useState("");
+    
 
 
   // ==========================
@@ -38,10 +38,9 @@ useState(false);
     try {
 
       const response =
-      await axios.post(
+      await api.post(
 
-        "http://localhost:5000/api/auth/login",
-
+        "/auth/login",
         {
 
           email,

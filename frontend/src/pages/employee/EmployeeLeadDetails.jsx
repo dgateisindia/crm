@@ -9,7 +9,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-import axios from "axios";
+import api from "../../utils/api";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
@@ -57,9 +57,9 @@ export default function EmployeeLeadDetails() {
     try {
 
       const response =
-      await axios.get(
+      await  api.get(
 
-`http://localhost:5000/api/leads/${id}`
+`/leads/${id}`
 
       );
 
@@ -89,9 +89,9 @@ export default function EmployeeLeadDetails() {
     try {
 
       const response =
-      await axios.get(
+      await  api.get(
 
-`http://localhost:5000/api/followups/lead/${id}`
+`/followups/lead/${id}`
 
       );
 

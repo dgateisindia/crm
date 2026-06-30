@@ -8,7 +8,7 @@ import {
   useNavigate
 } from "react-router-dom";
 
-import axios from "axios";
+import api from "../../utils/api";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 
@@ -53,9 +53,9 @@ export default function LeadDetails() {
     try {
 
       const response =
-      await axios.get(
+      await  api.get(
 
-`http://localhost:5000/api/leads/${id}`
+`/leads/${id}`
 
       );
 
@@ -85,9 +85,9 @@ export default function LeadDetails() {
     try {
 
       const response =
-      await axios.get(
+      await  api.get(
 
-`http://localhost:5000/api/followups/lead/${id}`
+`/followups/lead/${id}`
 
       );
 

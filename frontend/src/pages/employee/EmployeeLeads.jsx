@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 
 import {
   useState,
@@ -90,9 +90,9 @@ async () => {
       user?.id;
 
     const response =
-    await axios.get(
+    await  api.get(
 
-`http://localhost:5000/api/leads/employee/${employeeId}`
+`/leads/employee/${employeeId}`
 
     );
 
@@ -146,9 +146,9 @@ useEffect(() => {
 
     try {
 
-      await axios.delete(
+      await  api.delete(
 
-        `http://localhost:5000/api/leads/delete/${id}`
+        `/leads/delete/${id}`
 
       );
 
@@ -185,8 +185,8 @@ useEffect(() => {
   async()=>{
     try{
       const user = JSON.parse(localStorage.getItem("user"));
-      await axios.post(
-        "http://localhost:5000/api/followups/add",
+      await  api.post(
+        "/followups/add",
         {
           lead_id: selectedLead.id,
           employee_id:

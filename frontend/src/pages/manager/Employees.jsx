@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import {
 
 //Trash2,
@@ -62,8 +62,8 @@ export default function Employees() {
       );
 
       const response =
-      await axios.get(
-        "http://localhost:5000/api/employee/all"
+      await  api.get(
+        "/employee/all"
       );
 
       console.log(
@@ -109,8 +109,8 @@ export default function Employees() {
 
     try {
 
-      await axios.delete(
-        `http://localhost:5000/api/employee/delete/${employee_id}`
+      await  api.delete(
+        `/employee/delete/${employee_id}`
       );
 
       alert(
@@ -150,8 +150,8 @@ export default function Employees() {
 
   try {
 
-    await axios.put(
-      `http://localhost:5000/api/employee/status/${employeeId}`,
+    await  api.put(
+      `/employee/status/${employeeId}`,
       { status }
     );
 

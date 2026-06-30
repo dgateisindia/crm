@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -13,8 +13,8 @@ export default function NotInterestedLeads() {
   // ==========================
   const fetchLeads = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/leads/not-interested"
+      const response = await  api.get(
+        "/leads/not-interested"
       );
 
       setLeads(response.data);

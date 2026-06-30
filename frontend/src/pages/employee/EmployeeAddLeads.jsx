@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
 import { useNavigate,useParams,useLocation } from "react-router-dom";
@@ -58,8 +58,8 @@ searchParams.get("from");
           try {
 
             const response =
-            await axios.get(
-              `http://localhost:5000/api/leads/${id}`
+            await  api.get(
+              `/leads/${id}`
             );
             console.log(response.data);
 
@@ -219,9 +219,9 @@ searchParams.get("from");
 
       if (id) {
 
-          await axios.put(
+          await  api.put(
 
-            `http://localhost:5000/api/leads/update/${id}`,
+            `/leads/update/${id}`,
 
             leadData
 
@@ -244,9 +244,9 @@ searchParams.get("from");
 
         else {
 
-          await axios.post(
+          await  api.post(
 
-            "http://localhost:5000/api/leads/add",
+            "/leads/add",
 
             {
               ...leadData,
@@ -348,10 +348,10 @@ searchParams.get("from");
               user?.full_name || "Employee Name"
             );
   const uploadUrl =
-    "http://localhost:5000/api/tasks/upload";
+    "/tasks/upload";
 
           const response =
-          await axios.post(
+          await  api.post(
 
             uploadUrl,
 

@@ -1,5 +1,5 @@
 
-import axios from "axios";
+import api from "../../utils/api";
 
 import {useState,useEffect,} from "react";
 
@@ -8,6 +8,15 @@ import {useNavigate} from "react-router-dom";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import "../../styles/managerDashboard.css";
+
+import LeadStatusChart
+from "../../components/charts/LeadStatusChart";
+
+import LeadTrendChart
+from "../../components/charts/LeadTrendChart";
+
+import EmployeePerformanceChart
+from "../../components/charts/EmployeePerformanceChart";
 
 import {
 
@@ -35,6 +44,14 @@ export default function EmployeeDashboard() {
       recentLeads: [],
 
     });
+    const [leadStatus, setLeadStatus] =
+    useState([]);
+
+    const [leadTrend, setLeadTrend] =
+    useState([]);
+
+    const [followupChart, setFollowupChart] =
+    useState([]);
 
 
   // ==========================
@@ -61,30 +78,37 @@ export default function EmployeeDashboard() {
   // ==========================
   useEffect(() => {
 
-    if (!userId)
-    return;
+  if (!userId) return;
 
-    axios.get(
-
-      `http://localhost:5000/api/dashboard/employee/${userId}`
-
-    )
-
+  // Dashboard Cards
+  api.get(`/dashboard/employee/${userId}`)
     .then((res) => {
-
-      setStats(
-        res.data
-      );
-
+      setStats(res.data);
     })
+    .catch(console.error);
 
-    .catch((err) => {
+  // Lead Status Chart
+  api.get(`/dashboard/employee/${userId}/lead-status`)
+    .then((res) => {
+      setLeadStatus(res.data);
+    })
+    .catch(console.error);
 
-      console.log(err);
+  // Lead Trend Chart
+  api.get(`/dashboard/employee/${userId}/lead-trend`)
+    .then((res) => {
+      setLeadTrend(res.data);
+    })
+    .catch(console.error);
 
-    });
+  // Follow-up Chart
+  api.get(`/dashboard/employee/${userId}/followup-chart`)
+    .then((res) => {
+      setFollowupChart(res.data);
+    })
+    .catch(console.error);
 
-  }, [userId]);
+}, [userId]);
 
 
   return (
@@ -268,6 +292,22 @@ export default function EmployeeDashboard() {
           </h2>
 
         </div>
+
+      </div>
+      {/* Charts */}
+      <div className="dashboard-charts">
+
+        <LeadStatusChart
+          data={leadStatus}
+        />
+
+        <LeadTrendChart
+          data={leadTrend}
+        />
+
+        <EmployeePerformanceChart
+          data={followupChart}
+        />
 
       </div>
 

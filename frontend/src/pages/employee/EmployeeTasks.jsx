@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
@@ -135,9 +135,9 @@ async () => {
 
   try {
 
-    await axios.post(
+    await  api.post(
 
-      "http://localhost:5000/api/tasks/followup",
+      "/tasks/followup",
 
       {
 
@@ -213,8 +213,8 @@ async () => {
           user?.id;
 
         const response =
-          await axios.get(
-            `http://localhost:5000/api/tasks/employee/${employeeId}`
+          await  api.get(
+            `/tasks/employee/${employeeId}`
           );
 
         setTasks(response.data);
@@ -242,9 +242,9 @@ async () => {
       localStorage.getItem("user")
     );
 
-    await axios.post(
+    await  api.post(
 
-      "http://localhost:5000/api/followups/add",
+      "/followups/add",
 
       {
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useState,useEffect } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
 import { useNavigate,useParams } from "react-router-dom";
@@ -63,8 +63,8 @@ initialState
     const fetchLead = async () => {
 
         try {
-          const response = await axios.get(
-            `http://localhost:5000/api/leads/${id}`
+          const response = await  api.get(
+            `/leads/${id}`
           );
 
           setLeadData({
@@ -172,9 +172,9 @@ initialState
 
       if (id) {
 
-  await axios.put(
+  await  api.put(
 
-`http://localhost:5000/api/leads/update/${id}`,
+`/leads/update/${id}`,
 
     
 
@@ -191,9 +191,9 @@ navigate("/manager/leads");
 
 else {
 
-      await axios.post(
+      await  api.post(
 
-        "http://localhost:5000/api/leads/add",
+        "/leads/add",
 
         {
 
@@ -290,9 +290,9 @@ else {
             );
 
           const response =
-          await axios.post(
+          await  api.post(
 
-            "http://localhost:5000/api/leads/upload",
+            "/leads/upload",
 
             formData,
 
