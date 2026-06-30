@@ -21,8 +21,8 @@ MoreVertical,
 Briefcase,
 UserPlus,
 BadgeCheck,
-UserX
-
+UserX,
+Plus
 }
 from "lucide-react";
 
@@ -547,15 +547,10 @@ lead.lead_status ===
             {/* Add Lead */}
             <button
               className="leadAddBtn"
-              onClick={() =>
-                navigate(
-                  "/manager/add-leads"
-                )
-              }
+              onClick={() => navigate("/manager/add-leads")}
             >
-
-              + Add Lead
-
+              <Plus size={20} strokeWidth={3} />
+              <span>Add Lead</span>
             </button>
 
           </div>
@@ -694,9 +689,9 @@ lead.lead_status ===
 
 
                 <td className="table-data">
-
-                  {lead.lead_status}
-
+                  <span className={`status-badge ${lead.lead_status}`}>
+                    {lead.lead_status.replaceAll("_", " ")}
+                  </span>
                 </td>
 
                 <td className="table-data">

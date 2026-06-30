@@ -31,6 +31,12 @@ import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
 import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 import EmployeeReport from "./pages/employee/EmployeeReport";
+import Error401 from "./pages/errors/401";
+import Error403 from "./pages/errors/403";
+import Error404 from "./pages/errors/404";
+import Error500 from "./pages/errors/500";
+import Error503 from "./pages/errors/503";
+
 
 function App() {
   return (
@@ -261,6 +267,25 @@ function App() {
           path="/manager/edit-employee/:id"
           element={<CreateEmployee />}
         />
+        {/* Error routes */}
+        <Route
+         path="/401" 
+         element={<Error401 />} 
+         />
+        <Route
+         path="/403" element={<Error403 />} 
+         />
+        <Route 
+        path="/500" element={<Error500 />} 
+        />
+        <Route 
+        path="/503" element={<Error503 />} 
+        />
+        
+
+        {/* 404 must be last */}
+        <Route 
+        path="*" element={<Error404 />} />
 
     </Routes>
   );

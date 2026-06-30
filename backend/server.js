@@ -114,7 +114,6 @@ app.get(
     res.send(
       "Backend Running Successfully"
     );
-
   }
 );
 
@@ -123,7 +122,6 @@ app.get(
 app.get(
   "/api/test-db",
   (req, res) => {
-
     db.query(
       "SELECT * FROM employee_roles",
       (err, result) => {
@@ -151,7 +149,6 @@ app.get(
 
   }
 );
-
 
 // Server
 const PORT =

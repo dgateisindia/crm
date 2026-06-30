@@ -204,28 +204,20 @@
   display:flex;
   align-items:center;
   gap:10px;
-
   padding:0 14px;
-
   background:#f8fafc;
-
   border:
   1px solid #dbe2ea;
-
   border-radius:12px;
-
   min-width:300px;
 }
 
 .manager-search-input{
   width:100%;
   height:100%;
-
   border:none;
   outline:none;
-
   background:transparent;
-
   font-size:14px;
   color:#0f172a;
 }
@@ -239,17 +231,11 @@
 
   border:
   1px solid #dbe2ea;
-
   border-radius:12px;
-
   background:#f8fafc;
-
   padding:0 12px;
-
   outline:none;
-
   font-size:14px;
-
   flex-shrink:0;
 }
 
@@ -289,6 +275,7 @@
   font-weight:600;
   color:#475569;
   border-bottom:1px solid #e5e7eb;
+  background:#f8fafc;
 }
 
 .table-data{
@@ -336,7 +323,7 @@
 
 .status-badge{
   padding:6px 12px;
-  border-radius:999px;
+  border: radius 8px;
   font-size:12px;
   font-weight:600;
   text-transform:capitalize;
@@ -371,6 +358,10 @@
   background:#dcfce7;
   color:#15803d;
 }
+.meeting_scheduled{
+  background:#dcfce7;
+  color:#596d7a;
+}
 
 
 /* ==========================
@@ -381,13 +372,16 @@
     position:static;
 }
 
-.actionMenu{
-    position:fixed;
-    width:210px;
-    background:#fff;
-    border-radius:14px;
-    box-shadow:0 10px 30px rgba(0,0,0,.15);
-    z-index:999999;
+.actionBtn{
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:10px;
+  background:#f8fafc;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .actionMenu{
@@ -398,6 +392,7 @@
   background:#fff;
   border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.12);
+  overflow:hidden;
   z-index:9999;
 }
 
@@ -409,8 +404,8 @@
   padding:14px 18px;
   border:none;
   background:#fff;
-  cursor:pointer;
   font-size:14px;
+  cursor:pointer;
 }
 
 .menuItem:hover{
@@ -472,13 +467,9 @@ gap:12px;
 ========================== */
 
 .leadToolbar{
-
   display:flex;
-
   align-items:center;
-
   gap:16px;
-
   margin-bottom:20px;
 }
 
@@ -486,24 +477,15 @@ gap:12px;
 /* Search */
 
 .searchContainer{
-
   flex:1;
-
   display:flex;
-
   align-items:center;
-
   gap:10px;
-
   height:50px;
-
   background:#fff;
-
   border:
   1px solid #e2e8f0;
-
   border-radius:14px;
-
   padding:0 18px;
 }
 
@@ -512,15 +494,10 @@ gap:12px;
 }
 
 .leadSearchInput{
-
   width:100%;
-
   border:none;
-
   outline:none;
-
   background:transparent;
-
   font-size:15px;
 }
 
@@ -528,22 +505,14 @@ gap:12px;
 /* Dropdown */
 
 .leadSelect{
-
   width:190px;
-
   height:50px;
-
   border:
   1px solid #e2e8f0;
-
   border-radius:14px;
-
   background:#fff;
-
   padding:0 16px;
-
   font-size:14px;
-
   outline:none;
 }
 
@@ -551,35 +520,30 @@ gap:12px;
 /* Add Lead */
 
 .leadAddBtn{
-
   height:50px;
+  padding:0 24px;
 
-  padding:0 22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
 
   border:none;
-
   border-radius:14px;
 
-  background:
-  linear-gradient(
-    135deg,
-    #2563eb,
-    #1d4ed8
-  );
+  background:#2563eb;
+  color:#ffffff;
 
-  color:white;
-
+  font-size:15px;
   font-weight:600;
 
   cursor:pointer;
-
-  white-space:nowrap;
+  transition:.25s;
 }
 
 .leadAddBtn:hover{
-
-  transform:
-  translateY(-2px);
+  background:#1d4ed8;
+  transform:translateY(-2px);
 }
 .tableWrapper{
     background:white;
@@ -601,4 +565,10 @@ gap:12px;
 
 .tableWrapper .overflow-x-auto{
     scrollbar-width:none;
+}
+
+.leadAddBtn svg{
+    width:22px;
+    height:22px;
+    stroke-width:3;
 }
