@@ -9,7 +9,7 @@ import ManagerLayout from "../../layouts/ManagerLayout";
 
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
-
+import StatCard from "../../components/dashboard/StatCard";
 import {
 
 Search,
@@ -63,7 +63,7 @@ useState({
   "call",
 
   lead_status:
-  "connected",
+  "new",
 
   remarks:
   ""
@@ -194,7 +194,7 @@ useEffect(() => {
           "call",
 
           lead_status:
-          "connected",
+          "new",
 
           remarks:
           ""
@@ -211,7 +211,7 @@ useEffect(() => {
           followup_mode:
           "call",
           lead_status:
-          "connected",
+          "new",
           remarks: ""
       });
     }
@@ -336,120 +336,51 @@ useEffect(() => {
         {/* Top Cards */}
 <div className="dashboard-grid">
 
-  <div className="crm-card blue-card">
+  <StatCard
+    title="Total Leads"
+    value={allLeads.length}
+    subtitle="All CRM Leads"
+    color="blue"
+    icon={<Briefcase size={20} />}
+  />
 
-    <div className="crm-card-top">
-
-      <div className="icon-circle blue-bg">
-
-        <Briefcase size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>Total Leads</h3>
-
-    <h2>
-      {allLeads.length}
-    </h2>
-
-  </div>
-
-
-  <div className="crm-card green-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle green-bg">
-
-        <UserPlus size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>New Leads</h3>
-
-    <h2>
-
-      {
-
-allLeads.filter(
-lead =>
-lead.lead_status ===
-"new"
-).length
-
-      }
-
-    </h2>
-
-  </div>
-
-
-  <div className="crm-card purple-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle purple-bg">
-
-        <BadgeCheck size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>Converted</h3>
-
-    <h2>
-
-      {
-
-allLeads.filter(
-lead =>
-lead.lead_status ===
-"converted"
-).length
-
-      }
-
-    </h2>
-
-  </div>
-
-
-  <div className="crm-card orange-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle orange-bg">
-
-        <UserX size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>Not Interested</h3>
-
-    <h2>
-
-            {
-
+  <StatCard
+    title="New"
+    value={
       allLeads.filter(
-      lead =>
-      lead.lead_status ===
-      "not_interested"
+        lead => lead.lead_status === "new"
       ).length
+    }
+    subtitle="New Leads"
+    color="green"
+    icon={<UserPlus size={20} />}
+  />
 
-            }
+  <StatCard
+    title="Converted"
+    value={
+      allLeads.filter(
+        lead => lead.lead_status === "converted"
+      ).length
+    }
+    subtitle="Converted Leads"
+    color="purple"
+    icon={<BadgeCheck size={20} />}
+  />
 
-          </h2>
+  <StatCard
+    title="Not Interested"
+    value={
+      allLeads.filter(
+        lead => lead.lead_status === "not_interested"
+      ).length
+    }
+    subtitle="Rejected Leads"
+    color="red"
+    icon={<UserX size={20} />}
+  />
 
-        </div>
-
-      </div>
+</div>
           {/* Toolbar */}
           <div className="leadToolbar">
 
@@ -496,12 +427,6 @@ lead.lead_status ===
               <option value="new">
 
                 New
-
-              </option>
-
-              <option value="connected">
-
-                Connected
 
               </option>
 
@@ -590,7 +515,7 @@ lead.lead_status ===
                 </th>
 
                 <th className="table-head">
-                  Source
+                  Category
                 </th>
 
                 <th className="table-head">
@@ -676,7 +601,7 @@ lead.lead_status ===
 
                 <td className="table-data">
 
-                  {lead.source}
+                  {lead.category || "N/A"}
 
                 </td>
 
@@ -998,11 +923,7 @@ e.target.value
 
     </option>
 
-    <option value="connected">
-
-      Connected
-
-    </option>
+    
 
     <option value="interested">
 

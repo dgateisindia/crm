@@ -6,7 +6,7 @@ import {
   BadgeCheck,
   Clock3,
   CalendarRange,
-  PencilLine
+  //PencilLine
 } from "lucide-react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
@@ -205,14 +205,6 @@ const today = new Date().toISOString().split("T")[0];
 
                     </div>
 
-                    <button
-                      className="changeBtn"
-                      onClick={() => setShowCustomFilter(true)}
-                    >
-                      <PencilLine size={16} />
-
-                      <span>Change Date</span>
-                    </button>
 
                   </div>
 
@@ -394,24 +386,7 @@ const today = new Date().toISOString().split("T")[0];
 
         </div>
 
-        {/* Summary */}
-
-        <div className="reportSection">
-
-          <h3>Performance Summary</h3>
-
-          <p>
-
-            Conversion Rate :
-
-            <strong>
-              {" "}
-              {report.conversionRate.toFixed(2)}%
-            </strong>
-
-          </p>
-
-        </div>
+        
 
       </div>
 

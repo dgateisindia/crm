@@ -9,11 +9,8 @@ import {
   MoreVertical,
   Eye,
  // Pencil,
-  PhoneCall,
- // Trash2,
-  Users,
-  BadgeCheck,
-  UserX
+  PhoneCall
+ 
 } from "lucide-react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -41,7 +38,7 @@ const [
 
 const [followupData, setFollowupData] = useState({
   followup_mode: "call",
-  lead_status: "connected",
+  lead_status: "new",
   remarks: ""
 });
 
@@ -208,129 +205,7 @@ const handleFollowupSubmit = async () => {
           </p>
 
         </div>
-        {/* Top Cards */}
-<div className="dashboard-grid">
-
-  {/* Total Followups */}
-  <div className="crm-card blue-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle blue-bg">
-
-        <PhoneCall size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>
-      Total Followups
-    </h3>
-
-    <h2>
-      {followups.length}
-    </h2>
-
-  </div>
-
-
-  {/* Connected */}
-  <div className="crm-card green-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle green-bg">
-
-        <Users size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>
-      Connected
-    </h3>
-
-    <h2>
-
-      {
-        followups.filter(
-          item =>
-          item.lead_status ===
-          "connected"
-        ).length
-      }
-
-    </h2>
-
-  </div>
-
-
-  {/* Converted */}
-  <div className="crm-card purple-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle purple-bg">
-
-        <BadgeCheck size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>
-      Converted
-    </h3>
-
-    <h2>
-
-      {
-        followups.filter(
-          item =>
-          item.lead_status ===
-          "converted"
-        ).length
-      }
-
-    </h2>
-
-  </div>
-
-
-  {/* Not Interested */}
-  <div className="crm-card orange-card">
-
-    <div className="crm-card-top">
-
-      <div className="icon-circle orange-bg">
-
-        <UserX size={18} />
-
-      </div>
-
-    </div>
-
-    <h3>
-      Not Interested
-    </h3>
-
-    <h2>
-
-      {
-        followups.filter(
-          item =>
-          item.lead_status ===
-          "not_interested"
-        ).length
-      }
-
-    </h2>
-
-  </div>
-
-</div>
+       
 
 
         {/* Table */}
@@ -762,9 +637,7 @@ showFollowupModal && (
 
         >
 
-          <option value="connected">
-            Connected
-          </option>
+          
 
           <option value="interested">
             Interested

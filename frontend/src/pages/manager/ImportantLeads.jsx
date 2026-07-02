@@ -12,10 +12,10 @@ import {
 } from "react-router-dom";
 
 import {
-  Star,
-  BadgeCheck,
+  //Star,
+ // BadgeCheck,
   PhoneCall,
-  UserX,
+ // UserX,
   Eye,
   Pencil,
   Trash2,
@@ -37,7 +37,7 @@ export default function ImportantLeads() {
   const navigate =
   useNavigate();
 
-  const [allLeads, setAllLeads] = useState([]);
+ //const [allLeads, setAllLeads] = useState([]);
 
 
   // ==========================
@@ -70,14 +70,14 @@ export default function ImportantLeads() {
 
   try {
 
-    const response =
+    //const response =
     await  api.get(
       "/leads/all"
     );
 
-    setAllLeads(
-      response.data
-    );
+    //setAllLeads(
+    //  response.data
+    //);
 
   }
 
@@ -152,39 +152,23 @@ export default function ImportantLeads() {
   // ==========================
   // Search Filter
   // ==========================
-  const filteredLeads =
+   // ==========================
+  // Search Filter
+  // ==========================
+ const filteredLeads = leads.filter((lead) => {
+  const searchText = search.toLowerCase();
 
-  leads.filter((lead) => {
+  return (
+    lead.company_name?.toLowerCase().includes(searchText) ||
+    lead.contact_person_name?.toLowerCase().includes(searchText) ||
+    lead.phone?.includes(search) ||
+    lead.city?.toLowerCase().includes(searchText) ||
+    lead.designation?.toLowerCase().includes(searchText) ||
+    lead.lead_status?.toLowerCase().includes(searchText) ||
+    lead.email?.toLowerCase().includes(searchText)
+  );
+});
 
-    const searchText =
-    search.toLowerCase();
-
-    return (
-
-      lead.company_name
-      ?.toLowerCase()
-      .includes(searchText)
-
-      ||
-
-      lead.contact_person_name
-      ?.toLowerCase()
-      .includes(searchText)
-
-      ||
-
-      lead.phone
-      ?.includes(search)
-
-      ||
-
-      lead.city
-      ?.toLowerCase()
-      .includes(searchText)
-
-    );
-
-  });
 
 
   return (
@@ -211,135 +195,7 @@ export default function ImportantLeads() {
         </div>
 
 
-        {/* Top Cards */}
-        <div className="dashboard-grid mb-4">
-
-          {/* Important Leads */}
-          <div className="crm-card blue-card">
-
-            <div className="crm-card-top">
-
-              <div className="icon-circle blue-bg">
-
-                <Star size={20} />
-
-              </div>
-
-            </div>
-
-            <h3>
-              Important Leads
-            </h3>
-
-            <h2>
-              {leads.length}
-            </h2>
-
-          </div>
-
-
-          {/* Connected */}
-          <div className="crm-card green-card">
-
-            <div className="crm-card-top">
-
-              <div className="icon-circle green-bg">
-
-                <PhoneCall size={20} />
-
-              </div>
-
-            </div>
-
-            <h3>
-              Connected
-            </h3>
-
-            <h2>
-
-              {
-
-              allLeads.filter(
-              lead =>
-              lead.lead_status ===
-              "connected"
-              ).length
-
-              }
-
-            </h2>
-
-          </div>
-
-
-          {/* Converted */}
-          <div className="crm-card purple-card">
-
-            <div className="crm-card-top">
-
-              <div className="icon-circle purple-bg">
-
-                <BadgeCheck size={20} />
-
-              </div>
-
-            </div>
-
-            <h3>
-              Converted
-            </h3>
-
-            <h2>
-
-              {
-
-              allLeads.filter(
-              lead =>
-              lead.lead_status ===
-              "converted"
-              ).length
-
-              }
-
-            </h2>
-
-          </div>
-
-
-          {/* Not Interested */}
-          <div className="crm-card orange-card">
-
-            <div className="crm-card-top">
-
-              <div className="icon-circle orange-bg">
-
-                <UserX size={20} />
-
-              </div>
-
-            </div>
-
-            <h3>
-              Not Interested
-            </h3>
-
-            <h2>
-
-              {
-
-              allLeads.filter(
-              lead =>
-              lead.lead_status ===
-              "not_interested"
-              ).length
-
-              }
-
-            </h2>
-
-          </div>
-
-        </div>
+        
 
 
         {/* Search */}

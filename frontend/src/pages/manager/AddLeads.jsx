@@ -25,6 +25,8 @@ function AddLeads() {
 
   city: "",
 
+  category: "",
+
   source: "",
 
   lead_mode: "",
@@ -75,6 +77,7 @@ initialState
             address: response.data.address || "",
             website: response.data.website || "", 
             city: response.data.city || "",
+            category: response.data.category || "",
             source: response.data.source || "",
             lead_mode: response.data.lead_mode || "",
             designation: response.data.designation || "",
@@ -403,10 +406,7 @@ else {
                     Lead Information
                   </h2>
 
-                  <p>
-                    Fill lead details
-                  </p>
-
+                  
                 </div>
 
               </div>
@@ -420,7 +420,7 @@ else {
                   <div className="formGroup">
 
                     <label>
-                      Company Name *
+                      Company Name 
                     </label>
 
                     <input
@@ -436,7 +436,7 @@ else {
                   <div className="formGroup">
 
                     <label>
-                      Contact Person *
+                      Contact Person 
                     </label>
 
                     <input
@@ -545,6 +545,21 @@ else {
                       type="text"
                       name="city"
                       value={leadData.city}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                  <div className="formGroup">
+
+                    <label>
+                    Category
+                    </label>
+
+                    <input
+                      type="text"
+                      name="category"
+                      value={leadData.category}
                       onChange={handleChange}
                     />
 
@@ -664,11 +679,7 @@ else {
                       <option value="new">
                         New
                       </option>
-
-                      <option value="connected">
-                        Connected
-                      </option>
-
+                      
                       <option value="interested">
                         Interested
                       </option>

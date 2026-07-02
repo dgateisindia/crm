@@ -35,6 +35,7 @@ searchParams.get("from");
     address: "",
     website: "",
     city: "",
+    category: "",
     source: "",
     lead_mode: "",
     lead_status: "",
@@ -88,6 +89,9 @@ searchParams.get("from");
 
               city:
               response.data.city || "",
+
+              category:
+              response.data.category || "",
 
               source:
               response.data.source || "",
@@ -275,6 +279,7 @@ searchParams.get("from");
         address: "",
         website: "",
         city: "",
+        category: "",
         source: "",
         lead_mode: "",
         lead_status: "",
@@ -462,10 +467,7 @@ searchParams.get("from");
                     Lead Information
                   </h2>
 
-                  <p>
-                    Fill lead details
-                  </p>
-
+                  
                 </div>
 
               </div>
@@ -503,7 +505,7 @@ searchParams.get("from");
                       name="contact_person_name"
                       value={leadData.contact_person_name}
                       onChange={handleChange}
-                      required
+                      
                     />
 
                   </div>
@@ -591,6 +593,20 @@ searchParams.get("from");
                       type="text"
                       name="city"
                       value={leadData.city}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+                   <div className="formGroup">
+
+                    <label>
+                      Category
+                    </label>
+
+                    <input
+                      type="text"
+                      name="category"
+                      value={leadData.category}
                       onChange={handleChange}
                     />
 
@@ -709,10 +725,6 @@ searchParams.get("from");
 
                       <option value="new">
                         New
-                      </option>
-
-                      <option value="connected">
-                        Connected
                       </option>
 
                       <option value="interested">

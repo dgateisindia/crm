@@ -1102,3 +1102,30 @@ td{
   background:#dcfce7;
   color:#4B5563;
 }
+/* Search Input */
+.manager-search-input {
+  width: 100%;
+  max-width: 380px;
+  padding: 12px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #fff;
+  color: #1f2937;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.manager-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.manager-search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.manager-search-input:hover {
+  border-color: #2563eb;
+}

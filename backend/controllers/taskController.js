@@ -19,7 +19,7 @@ const addLeadHistory = (
 
   followup_time,
 
-  lead_status = "connected",
+  lead_status = "new",
 
   followup_mode = "call"
 
@@ -343,7 +343,7 @@ const saveTaskFollowup =
 
         UPDATE leads
 
-        SET lead_status = 'connected'
+        SET lead_status = 'new'
 
         WHERE id = ?
 
@@ -366,7 +366,7 @@ const saveTaskFollowup =
 
         followup_time,
 
-        "connected",
+        "new",
 
         "call"
 
@@ -641,7 +641,7 @@ const addTaskFollowup = (
 
           'completed',
 
-          'connected'
+          'new'
 
         )
 

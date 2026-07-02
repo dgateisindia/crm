@@ -73,6 +73,14 @@ export default function Sidebar() {
                 Dashboard
               </li>
             </Link>
+            
+            <Link to="/manager/add-leads">
+              <li
+                className={`sidebar-menu ${location.pathname === "/manager/add-leads"? "active-menu": ""}`}>
+                <ContactRound size={12} />
+                Add Lead
+              </li>
+            </Link>
 
             <Link to="/manager/leads">
               <li
@@ -82,13 +90,6 @@ export default function Sidebar() {
               </li>
             </Link>
 
-            <Link to="/manager/add-leads">
-              <li
-                className={`sidebar-menu ${location.pathname === "/manager/add-leads"? "active-menu": ""}`}>
-                <ContactRound size={12} />
-                Add Lead
-              </li>
-            </Link>
             <Link to="/manager/employees">
               <li className={`sidebar-menu ${location.pathname === "/manager/employees" ? "active-menu " : ""}`}>
                 <UserCheck size={12} />
@@ -192,15 +193,7 @@ export default function Sidebar() {
             className="w-4 h-8 rounded-full"
           />*/}
 
-          <div>
-            <h3 className="font-semibold">
-              Manager
-            </h3>
-
-            <p className="text-sm text-gray-400">
-              CRM Manager
-            </p>
-          </div>
+          
         </div>
 
           <button

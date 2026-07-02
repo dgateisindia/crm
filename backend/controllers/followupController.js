@@ -70,57 +70,73 @@ const addFollowup =
       // ==========================
       // Update Lead Status
       // ==========================
-      const updateLeadSql = `
+   const updateLeadSql = `
+UPDATE leads
+SET lead_status = ?
+WHERE id = ?
+`;
 
-        UPDATE leads
+db.query(
 
-        SET lead_status = ?
+  updateLeadSql,
 
-        WHERE id = ?
+  [
+    lead_status,
+    lead_id
+  ],
 
-      `;
+  (updateErr) => {
 
+    if (updateErr) {
 
-      db.query(
+      return res.status(500).json({
 
-        updateLeadSql,
+        message: "Failed to update lead status"
 
-        [
+      });
 
-          lead_status,
+    }
 
-          lead_id
+    // Remove from Task Followups
+    db.query(
 
-        ],
+      `
+      DELETE FROM task_followups
+      WHERE lead_id = ?
+      `,
 
-        (updateErr) => {
+      [lead_id],
 
-          if (updateErr) {
+      (deleteErr) => {
 
-            //console.log(
-            //  updateErr
-            //);
+        if (deleteErr) {
 
-          }
+          return res.status(500).json({
 
-          res.status(201)
-          .json({
-
-            message:
-            "Followup Added Successfully"
+            message: "Lead updated but failed to remove task followup"
 
           });
 
         }
 
-      );
+        res.status(201).json({
 
+          message: "Followup Added Successfully"
+
+        });
+
+      }
+
+    );
+
+  }
+
+);
     }
 
   );
 
 };
-
 
 
 

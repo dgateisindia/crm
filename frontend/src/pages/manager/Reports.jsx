@@ -7,7 +7,7 @@ import {
   Clock3,
   Users,
   CalendarRange,
-  PencilLine
+  //PencilLine
 } from "lucide-react";import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/managerDashboard.css";
 import "../../styles/report.css";
@@ -199,14 +199,6 @@ const today = new Date().toISOString().split("T")[0];
 
                     </div>
 
-                    <button
-                      className="changeBtn"
-                      onClick={() => setShowCustomFilter(true)}
-                    >
-                      <PencilLine size={16} />
-
-                      <span>Change Date</span>
-                    </button>
 
                   </div>
 
@@ -370,9 +362,9 @@ const today = new Date().toISOString().split("T")[0];
             </div>
 
           </div>
-          <div className="reportSection">
+             {/*<div className="reportSection">
 
-                <h3>Company Performance Summary</h3>
+               <h3>Company Performance Summary</h3>
 
                 <p>
 
@@ -402,7 +394,7 @@ const today = new Date().toISOString().split("T")[0];
 
                 </p>
 
-              </div>
+              </div>*/}
       </div>
 
     </ManagerLayout>

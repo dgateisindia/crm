@@ -5,10 +5,11 @@ import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetaskfollowup.css";
 
 import {
-  CalendarClock,
-  Clock,
-  CheckCircle,
-  PhoneCall,
+  //CalendarClock,
+  //Clock,
+ // CheckCircle,
+ // PhoneCall,
+ Search,
   Eye,
   Pencil,
   Plus,
@@ -23,6 +24,7 @@ export default function EmployeeTaskFollowups() {
 
       const navigate =
     useNavigate();
+    const [search, setSearch] = useState("");
 
     const menuRef = useRef(null);
 
@@ -100,7 +102,7 @@ const [
 
   followup_mode: "call",
 
-  lead_status: "connected",
+  lead_status: "new",
 
   remarks: ""
 
@@ -188,10 +190,7 @@ const [
 
 }, []);
 
-  const today =
-  new Date()
-  .toISOString()
-  .split("T")[0];
+ 
   const handleAction = (
 
   item,
@@ -364,7 +363,7 @@ async () => {
 
     await  api.post(
 
-      "/followups",
+      "/followups/add",
 
       {
 
@@ -442,6 +441,37 @@ async () => {
 window.location.reload();
 
 };
+const filteredFollowups = followups.filter((item) => {
+
+  const searchText = search.toLowerCase();
+
+  return (
+
+    (item.company_name || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (item.followup_mode || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (item.lead_status || "")
+      .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (item.remarks || "")
+      .toLowerCase()
+      .includes(searchText)
+
+  );
+
+});
 
   return (
 
@@ -465,213 +495,33 @@ window.location.reload();
 
       </div>
 
-      {/* Cards */}
+  
 
-      <div className="dashboard-grid">
-
-        <div className="crm-card blue-card">
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle blue-bg">
-
-              <CalendarClock
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-            Total Followups
-          </h3>
-
-          <h2>
-            {followups.length}
-          </h2>
-
-        </div>
-
-        <div className="crm-card green-card">
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle green-bg">
-
-              <PhoneCall
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-            Today's Followups
-          </h3>
-
-          <h2>
-
-            {
-
-              followups.filter(
-
-                item =>
-
-                item.followup_date
-                ?.split("T")[0]
-                === today
-
-              ).length
-
-            }
-
-          </h2>
-
-        </div>
-
-        <div className="crm-card orange-card">
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle orange-bg">
-
-              <Clock
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-            Upcoming
-          </h3>
-
-          <h2>
-
-            {
-
-              followups.filter(
-
-                item =>
-
-                item.followup_date
-                ?.split("T")[0]
-                > today
-
-              ).length
-
-            }
-
-          </h2>
-
-        </div>
-
-        <div className="crm-card purple-card">
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle purple-bg">
-
-              <CheckCircle
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-            Completed
-          </h3>
-
-          <h2>0</h2>
-
-        </div>
-
-      </div>
-
+      
       {/* Filters */}
 
       <div className="recent-card">
 
-        <div
+        <div className="leadToolbar">
 
-          style={{
+            <div className="searchContainer">
 
-            display: "flex",
+              <Search
+                size={18}
+                className="searchIcon"
+              />
 
-            gap: "15px",
+              <input
+                type="text"
+                placeholder="Search Company..."
+                className="leadSearchInput"
+                value={search}
+                onChange={(e)=>setSearch(e.target.value)}
+              />
 
-            marginBottom:
-            "20px",
+            </div>
 
-            flexWrap:
-            "wrap"
-
-          }}
-
-        >
-
-          <input
-
-            type="text"
-
-            placeholder=
-            "Search Company..."
-
-            style={{
-
-              padding:
-              "10px",
-
-              border:
-              "1px solid #ddd",
-
-              borderRadius:
-              "8px",
-
-              minWidth:
-              "250px"
-
-            }}
-
-          />
-
-          <select
-
-            style={{
-
-              padding:
-              "10px",
-
-              border:
-              "1px solid #ddd",
-
-              borderRadius:
-              "8px"
-
-            }}
-
-          >
-
-            <option>
-              All
-            </option>
-
-            <option>
-              Today
-            </option>
-
-            <option>
-              Upcoming
-            </option>
-
-          </select>
-
-        </div>
+          </div>
 
         {/* Table */}
 
@@ -722,13 +572,13 @@ window.location.reload();
 
               {
 
-                followups.length > 0
+                filteredFollowups.length > 0
 
                 ?
 
                 (
 
-                  followups.map(
+                 filteredFollowups.map(
 
                     (item) => (
 
@@ -788,7 +638,7 @@ window.location.reload();
 
                           <span
                             className=
-                            "status-badge connected"
+                            "status-badge new"
                           >
 
                             Followup
@@ -1281,10 +1131,6 @@ showTaskFollowupModal && (
 
           <option value="new">
             New
-          </option>
-
-          <option value="connected">
-            Connected
           </option>
 
           <option value="interested">

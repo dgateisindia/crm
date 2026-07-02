@@ -17,7 +17,7 @@ from "../../components/charts/LeadTrendChart";
 
 import EmployeePerformanceChart
 from "../../components/charts/EmployeePerformanceChart";
-
+import StatCard from "../../components/dashboard/StatCard";
 import {
 
   Briefcase,
@@ -33,25 +33,24 @@ export default function EmployeeDashboard() {
   const navigate =
   useNavigate();
 
-  const [stats,
-    setStats] =
-    useState({
+  const [leadStatus, setLeadStatus] =
+useState([]);
 
-      totalLeads: 0,
-      connected: 0,
-      new: 0,
-      converted: 0,
-      recentLeads: [],
+const [leadTrend, setLeadTrend] =
+useState([]);
 
-    });
-    const [leadStatus, setLeadStatus] =
-    useState([]);
+const [followupChart, setFollowupChart] =
+useState([]);
 
-    const [leadTrend, setLeadTrend] =
-    useState([]);
-
-    const [followupChart, setFollowupChart] =
-    useState([]);
+  const [stats, setStats] = useState({
+  totalLeads: 0,
+  newLeads: 0,
+  followups: 0,
+  converted: 0,
+  closed: 0,
+  notInterested: 0,
+  recentLeads: [],
+});
 
 
   // ==========================
@@ -123,193 +122,89 @@ export default function EmployeeDashboard() {
       </div>
 
 
-      {/* Top Cards */}
-      <div className="dashboard-grid">
+     
+        <StatCard
 
-        {/* My Leads */}
-        <div
+    type="summary"
 
-          className="crm-card blue-card cursor-pointer"
+    title="My Leads"
 
-          onClick={() =>
-            navigate(
-              "/employee/my-leads"
-            )
-          }
+    value={stats.totalLeads}
 
-        >
+    subtitle="Total leads assigned to you"
 
-          <div className="crm-card-top">
+    trend=""
 
-            <div className="icon-circle blue-bg">
+    color="blue"
 
-              <Briefcase
-                size={18}
-              />
+    icon={<Briefcase size={40}/>}
 
-            </div>
+/>
 
-          </div>
+    <div className="manager-dashboard-grid">
 
-          <h3>
+          <StatCard
+              title="New"
+              value={stats.newLeads}
+              subtitle="New Leads"
+              color="green"
+              icon={<UserPlus size={22}/>}
+              onClick={() => navigate("/employee/new-leads")}
+          />
 
-            My Leads
+          <StatCard
+              title="Follow-ups"
+              value={stats.followups}
+              subtitle="Pending Follow-ups"
+              color="orange"
+              icon={<Briefcase size={22}/>}
+              onClick={() => navigate("/employee/followups")}
+          />
 
-          </h3>
+          <StatCard
+              title="Converted"
+              value={stats.converted}
+              subtitle="Successfully Converted"
+              color="blue"
+              icon={<BadgeCheck size={22}/>}
+              onClick={() => navigate("/employee/converted-leads")}
+          />
 
-          <h2>
+          <StatCard
+              title="Closed"
+              value={stats.closed}
+              subtitle="Closed Leads"
+              color="purple"
+              icon={<Briefcase size={22}/>}
+              onClick={() => navigate("/employee/closed-leads")}
+          />
 
-            {
-              stats.totalLeads
-            }
-
-          </h2>
-
-        </div>
-
-
-        {/* New Leads */}
-        <div
-
-          className="crm-card green-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/employee/my-leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle green-bg">
-
-              <UserPlus
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Connected
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.connected
-            }
-
-          </h2>
+          <StatCard
+              title="Not Interested"
+              value={stats.notInterested}
+              subtitle="Rejected Leads"
+              color="red"
+              icon={<UserX size={22}/>}
+              onClick={() => navigate("/employee/not-interested")}
+          />
 
         </div>
-
-
-        {/* Qualified */}
-        <div
-
-          className="crm-card orange-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/employee/my-leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle orange-bg">
-
-              <UserX
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Followup
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.new
-            }
-
-          </h2>
-
-        </div>
-
-
-        {/* Converted */}
-        <div
-
-          className="crm-card purple-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/employee/converted-leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle purple-bg">
-
-              <BadgeCheck
-                size={18}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Converted
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.converted
-            }
-
-          </h2>
-
-        </div>
-
-      </div>
       {/* Charts */}
-      <div className="dashboard-charts">
+<div className="dashboard-charts">
 
-        <LeadStatusChart
-          data={leadStatus}
-        />
+  <LeadStatusChart
+    data={leadStatus}
+  />
 
-        <LeadTrendChart
-          data={leadTrend}
-        />
+  <LeadTrendChart
+    data={leadTrend}
+  />
 
-        <EmployeePerformanceChart
-          data={followupChart}
-        />
+  <EmployeePerformanceChart
+    data={followupChart}
+  />
 
-      </div>
+</div>
 
 
       {/* Recent Leads */}
@@ -400,19 +295,7 @@ export default function EmployeeDashboard() {
                       <td>
 
                         <span
-                          className={`status-badge ${
-                            lead.lead_status ===
-                            "converted"
-
-                            ? "converted"
-
-                            : lead.lead_status ===
-                            "new"
-
-                            ? "new"
-
-                            : "connected"
-                          }`}
+                      className={`status-badge ${lead.lead_status}`}
                         >
 
                           {

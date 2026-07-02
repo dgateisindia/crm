@@ -4,13 +4,16 @@ import {
   useState,
   useEffect,
 } from "react";
+import "../../styles/managerDashboard.css";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 
-import { Search, Plus, Eye, Pencil, PhoneCall, MoreVertical, Briefcase, UserPlus, BadgeCheck, UserX } from "lucide-react";
+import { Search, Plus, Eye, Pencil, CalendarClock,PhoneCall, MoreVertical, Briefcase, UserPlus, BadgeCheck, UserX } from "lucide-react";
+import StatCard from "../../components/dashboard/StatCard";
+
 
 
 export default function Leads() {
@@ -43,7 +46,7 @@ export default function Leads() {
       "call",
 
       lead_status:
-      "connected",
+      "new",
 
       remarks:
       ""
@@ -194,7 +197,7 @@ useEffect(() => {
         "call",
 
         lead_status:
-        "connected",
+        "new",
 
         remarks:
         ""
@@ -271,6 +274,12 @@ allLeads.filter((lead) => {
 
     (lead.city || "")
       .toLowerCase()
+      .includes(searchText)
+
+    ||
+
+    (lead.category || "" )
+      .toLowerCase()
       .includes(searchText);
 
   const matchesStatus =
@@ -295,122 +304,70 @@ allLeads.filter((lead) => {
 
       <div className="leads-container">
 
-        <div className="dashboard-grid">
+        <div className="manager-dashboard-grid">
 
-          <div className="crm-card blue-card">
+    <StatCard
+        title="My Leads"
+        value={allLeads.length}
+        subtitle="Total Assigned"
+        color="blue"
+        icon={<Briefcase size={24} />}
+    />
 
-            <div className="crm-card-top">
+    <StatCard
+        title="New"
+        value={
+            allLeads.filter(
+                lead => lead.lead_status === "new"
+            ).length
+        }
+        subtitle="New Leads"
+        color="green"
+        icon={<UserPlus size={24} />}
+    />
 
-              <div className="icon-circle blue-bg">
+    <StatCard
+        title="Follow-ups"
+        value={
+            allLeads.filter(lead =>
+                ![
+                    "new",
+                    "converted",
+                    "closed",
+                    "not_interested"
+                ].includes(lead.lead_status)
+            ).length
+        }
+        subtitle="Pending Follow-ups"
+        color="orange"
+        icon={<CalendarClock size={24} />}
+    />
 
-                <Briefcase size={18} />
+    <StatCard
+        title="Converted"
+        value={
+            allLeads.filter(
+                lead => lead.lead_status === "converted"
+            ).length
+        }
+        subtitle="Successfully Converted"
+        color="blue"
+        icon={<BadgeCheck size={24} />}
+    />
 
-              </div>
+    <StatCard
+        title="Not Interested"
+        value={
+            allLeads.filter(
+                lead => lead.lead_status === "not_interested"
+            ).length
+        }
+        subtitle="Rejected Leads"
+        color="red"
+        icon={<UserX size={24} />}
+    />
 
-            </div>
-
-            <h3>My Leads</h3>
-
-            <h2>
-              {allLeads.length}
-            </h2>
-
-          </div>
-
-
-          <div className="crm-card green-card">
-
-            <div className="crm-card-top">
-
-              <div className="icon-circle green-bg">
-
-                <UserPlus size={18} />
-
-              </div>
-
-            </div>
-
-            <h3>Followups</h3>
-
-            <h2>
-
-              {
-
-                allLeads.filter(
-                lead =>
-                lead.lead_status.toLowerCase() ===
-                "new"
-                ).length
-
-                      }
-
-                    </h2>
-
-                  </div>
-
-
-                  <div className="crm-card purple-card">
-
-                    <div className="crm-card-top">
-
-                      <div className="icon-circle purple-bg">
-
-                        <BadgeCheck size={18} />
-
-                      </div>
-
-                    </div>
-
-                    <h3>Converted</h3>
-
-                    <h2>
-
-                      {
-
-                allLeads.filter(
-                lead =>
-                lead.lead_status.toLowerCase() ===
-                "converted"
-                ).length
-
-                      }
-
-                    </h2>
-
-                  </div>
-
-
-                  <div className="crm-card orange-card">
-
-                    <div className="crm-card-top">
-
-                      <div className="icon-circle orange-bg">
-
-                        <UserX size={18} />
-
-                      </div>
-
-                    </div>
-
-                    <h3>Not Interested</h3>
-
-                    <h2>
-
-                      {
-
-                allLeads.filter(
-                lead =>
-                lead.lead_status.toLowerCase()   ===
-                "not_interested"
-                ).length
-
-                      }
-
-                    </h2>
-
-                  </div>
-
-                </div>
+</div>
         <div className="leadToolbar">
 
   <div className="searchContainer">
@@ -437,7 +394,6 @@ allLeads.filter((lead) => {
   >
     <option value="all">All Status</option>
     <option value="new">New</option>
-    <option value="connected">Connected</option>
     <option value="interested">Interested</option>
     <option value="proposal">Proposal</option>
     <option value="converted">Converted</option>
@@ -490,7 +446,7 @@ allLeads.filter((lead) => {
                 </th>
 
                 <th className="table-head">
-                  Source
+                  Category
                 </th>
 
                 <th className="table-head">
@@ -564,7 +520,7 @@ allLeads.filter((lead) => {
 
                     <td className="table-data">
 
-                      {lead.source}
+                      {lead.category || "N/A"}
 
                     </td>
 
@@ -854,10 +810,6 @@ setShowFollowupModal(false)
 
             <option value="new">
               New
-            </option>
-
-            <option value="connected">
-              Connected
             </option>
 
             <option value="interested">

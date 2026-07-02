@@ -12,21 +12,24 @@ import {
   Briefcase,
   BadgeCheck,
 } from "lucide-react";
+import "../../styles/managerDashboard.css";
+
+import StatCard from "../../components/dashboard/StatCard";
 
 export default function ManagerDashboard() {
 
   const navigate = useNavigate();
   const [leadStatus, setLeadStatus] = useState([]);
 
-  const [stats,
-    setStats] =
-    useState({
-      totalLeads: 0,
-      totalEmployees: 0,
-      newLeads: 0,
-      convertedLeads: 0,
-      recentLeads: [],
-    });
+  const [stats, setStats] = useState({
+  totalLeads: 0,
+  newLeads: 0,
+  followups: 0,
+  converted: 0,
+  closed: 0,
+  notInterested: 0,
+  recentLeads: [],
+});
     const [
     employeePerformance,
     setEmployeePerformance
@@ -92,176 +95,74 @@ export default function ManagerDashboard() {
 
       </div>
 
-      {/* Top Cards */}
-      <div className="dashboard-grid">
-
-        {/* Total Leads */}
-        <div
-
-          className="crm-card blue-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/manager/leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle blue-bg">
-
-              <Briefcase
-                size={16}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Total Leads
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.totalLeads
-            }
-
-          </h2>
-
-        </div>
-
-
-        {/* Employees */}
-        <div
-
-          className="crm-card green-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/manager/employees"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle green-bg">
-
-              <Users
-                size={26}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Employees
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.totalEmployees
-            }
-
-          </h2>
-
-        </div>
-      
-        {/* New Leads */}
-        <div
-
-          className="crm-card orange-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/manager/leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle orange-bg">
-
-              <UserCheck
-                size={26}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            New Leads
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.newLeads
-            }
-
-          </h2>
-
-        </div>
-
-
-        {/* Converted */}
-        <div
-
-          className="crm-card purple-card cursor-pointer"
-
-          onClick={() =>
-            navigate(
-              "/manager/leads"
-            )
-          }
-
-        >
-
-          <div className="crm-card-top">
-
-            <div className="icon-circle purple-bg">
-
-              <BadgeCheck
-                size={26}
-              />
-
-            </div>
-
-          </div>
-
-          <h3>
-
-            Converted
-
-          </h3>
-
-          <h2>
-
-            {
-              stats.convertedLeads
-            }
-
-          </h2>
-
-        </div>
-
-      </div>
+ <div className="summary-card">
+
+  <div className="summary-icon blue-bg">
+    <Briefcase size={34} />
+  </div>
+
+  <div>
+
+    <div className="summary-title">
+      Total Leads
+    </div>
+
+    <div className="summary-value">
+      {stats.totalLeads}
+    </div>
+
+    <div className="summary-subtitle">
+      Total leads in the CRM
+    </div>
+
+  </div>
+
+</div>
+
+{/* Status Cards */}
+<div className="manager-dashboard-grid">
+
+  <StatCard
+    title="New"
+    value={stats.newLeads}
+    color="green"
+    icon={<UserCheck size={18} />}
+    onClick={() => navigate("/manager/leads")}
+  />
+
+  <StatCard
+    title="Followups"
+    value={stats.followups}
+    color="blue"
+    icon={<Briefcase size={18} />}
+    onClick={() => navigate("/manager/followups")}
+  />
+
+  <StatCard
+    title="Converted"
+    value={stats.converted}
+    color="purple"
+    icon={<BadgeCheck size={18} />}
+    onClick={() => navigate("/manager/converted-leads")}
+  />
+
+  <StatCard
+    title="Closed"
+    value={stats.closed}
+    color="orange"
+    icon={<Users size={18} />}
+    onClick={() => navigate("/manager/leads")}
+  />
+
+  <StatCard
+    title="Not Interested"
+    value={stats.notInterested}
+    color="red"
+    icon={<Users size={18} />}
+    onClick={() => navigate("/manager/not-interested")}
+  />
+
+</div>
       <div className="dashboard-charts">
 
           <LeadStatusChart
@@ -351,28 +252,29 @@ export default function ManagerDashboard() {
 
                     <td>
 
-                      <span
-                        className={`status-badge ${
-                          lead.lead_status ===
-                          "converted"
+                       <span
+                      className={`status-badge ${lead.lead_status}`}
+                        >
 
-                          ? "converted"
+                          {
+                            lead.lead_status
+                          }
 
-                          : lead.lead_status ===
-                          "new"
+                        </span>
 
-                          ? "new"
+                      </td>
 
-                          : "connected"
-                        }`}
-                      >
+                      <td>
 
                         {
-                          lead.lead_status
+                          lead.lead_mode
+                          ?.replace(
+                            "_",
+                            " "
+                          ) || "N/A"
                         }
 
-                      </span>
-
+                      
                     </td>
 
                     <td>

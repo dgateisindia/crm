@@ -113,6 +113,10 @@ const uploadLeads =
         row.city ||
         row["City"] ||
         "";
+      const category =
+        row.category ||
+        row["Category"] ||
+        "";
 
       const remarks =
         row.remarks ||
@@ -139,51 +143,66 @@ const uploadLeads =
         row.important_lead ||
         row["Important Lead"] ||
         false;
+        if (!phone && !email) {
+
+    duplicates++;
+
+    return;
+
+}
+if (phone && !/^\d{10}$/.test(phone)) {
+
+    duplicates++;
+
+    return;
+
+}
 
 
-        const duplicateSql = `
+        let duplicateSql = `
+SELECT *
+FROM leads
+WHERE 1=0
+`;
 
-          SELECT *
+const duplicateValues = [];
+if (phone) {
 
-          FROM leads
+    duplicateSql += `
+    OR phone = ?
+    `;
 
-          WHERE
+    duplicateValues.push(phone);
 
-          phone = ?
+}
 
-          OR email = ?
+if (email) {
 
-        `;
+    duplicateSql += `
+    OR email = ?
+    `;
 
+    duplicateValues.push(email);
 
-        db.query(
+}
+db.query(
 
-          duplicateSql,
+duplicateSql,
 
-          [
+duplicateValues,
 
-            phone,
-            email
+(err, duplicateResult) => {
+  if (err) {
+    return;
+}
 
-          ],
+if (duplicateResult.length > 0) {
 
-          (
+    duplicates++;
 
-            err,
-            duplicateResult
+    return;
 
-          ) => {
-
-            if (
-              duplicateResult
-              .length > 0
-            ) {
-
-              duplicates++;
-
-              return;
-
-            }
+}
     
 
 
@@ -199,6 +218,7 @@ const uploadLeads =
                 website,
                 source,
                 city,
+                category,
                 remarks,
                 lead_status,
                 lead_mode,
@@ -213,7 +233,7 @@ const uploadLeads =
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?
+                ?,?
               )
             `;
             console.log({
@@ -233,12 +253,13 @@ db.query(
     company_name,
     contact_person_name,
     designation || "",
-    email,
-    phone,
+    email || null,
+    phone || null,
     address || "",
     website || "",
     source || "",
     city || "",
+    category || "",
     remarks || "",
     lead_status ,
     lead_mode ,
@@ -249,18 +270,21 @@ db.query(
 
   ],
 
-  (err, result) => {
+ (err, result) => {
 
     if (err) {
 
+        console.log(err);
 
-      return;
+        duplicates++;
+
+        return;
 
     }
 
     inserted++;
 
-  }
+}
 
 );
 

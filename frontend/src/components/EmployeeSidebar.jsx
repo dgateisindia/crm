@@ -75,6 +75,17 @@ export default function EmployeeSidebar() {
 
             </div>
           </Link>
+           <Link
+            to="/employee/add-leads"
+          >
+            <div className={`sidebar-menu ${location.pathname === "/employee/add-leads" ? "active-menu " : ""}`}  >
+
+              <CirclePlus size={20} strokeWidth={2.2} />
+
+              Add Lead
+
+            </div>
+          </Link>
 
           <Link
             to="/employee/my-leads"
@@ -88,17 +99,7 @@ export default function EmployeeSidebar() {
             </div>
           </Link>
 
-          <Link
-            to="/employee/add-leads"
-          >
-            <div className={`sidebar-menu ${location.pathname === "/employee/add-leads" ? "active-menu " : ""}`}  >
-
-              <CirclePlus size={20} strokeWidth={2.2} />
-
-              Add Lead
-
-            </div>
-          </Link>
+         
           <Link
               to="/employee/tasks"
             >
@@ -127,7 +128,7 @@ export default function EmployeeSidebar() {
                 >
                   <CalendarClock size={20} strokeWidth={2.2} />
 
-                   Followups
+                   To-Do List
 
                 </div>
               </Link>

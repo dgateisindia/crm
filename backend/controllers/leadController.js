@@ -8,6 +8,8 @@ require("../db");
 const addLead =
 async (req, res) => {
 
+  
+
   try {
 
     const {
@@ -20,6 +22,7 @@ async (req, res) => {
       address,
       website,
       city,
+      category,
       source,
       lead_mode,
       lead_status,
@@ -30,19 +33,42 @@ async (req, res) => {
     } = req.body;
 
 
-    // Phone validation
-    if (!/^\d{10}$/.test(phone)) {
+          // Either Phone or Email is required
+        if (!phone && !email) {
 
-      return res.status(400).json({
+          return res.status(400).json({
+            message: "Either Phone Number or Email is required."
+          });
 
-        message:
-        "Phone number must contain exactly 10 digits"
+        }
 
-      });
+        // Validate phone only if entered
+        if (phone && !/^\d{10}$/.test(phone)) {
 
-    }
+          return res.status(400).json({
+            message: "Phone Number must contain exactly 10 digits."
+          });
 
+        }
 
+        // Validate email only if entered
+        if (email) {
+
+          const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+          if (!emailRegex.test(email)) {
+
+            return res.status(400).json({
+              message: "Please enter a valid Email Address."
+            });
+
+          }
+
+        }
+
+    const finalPhone = phone?.trim() || null;
+    const finalEmail = email?.trim() || null;
     const [result] =
     await db.promise().query(
 
@@ -56,6 +82,7 @@ async (req, res) => {
         address,
         website,
         city,
+        category,
         source,
         lead_mode,
         lead_status,
@@ -63,18 +90,19 @@ async (req, res) => {
         created_by_type,
         created_by_name
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
 
       [
 
         company_name,
         contact_person_name,
         designation || "",
-        phone,
-        email,
+        finalPhone,
+        finalEmail,
         address || "",
         website || "",
         city,
+        category,
         source,
         lead_mode,
         lead_status,
@@ -99,19 +127,16 @@ async (req, res) => {
 
   }
 
-  catch (error) {
+ catch (error) {
+  console.log(error);
 
-    res.status(500)
-    .json({
-
-      message:
-      "Failed to Add Lead"
-
-    });
-
+  res.status(500).json({
+    message: error.message
+  });
+}
   }
 
-};
+
 
 
 // ==========================
@@ -441,6 +466,7 @@ async (req, res) => {
       address,
       website,
       city,
+      category,
       source,
       lead_mode,
       lead_status,
@@ -470,6 +496,8 @@ async (req, res) => {
         website=?,
 
         city=?,
+
+        category=?,
 
         source=?,
 

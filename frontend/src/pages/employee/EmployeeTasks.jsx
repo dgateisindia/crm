@@ -875,10 +875,6 @@ showFollowupModal && (
             New
           </option>
 
-          <option value="connected">
-            Connected
-          </option>
-
           <option value="interested">
             Interested
           </option>
