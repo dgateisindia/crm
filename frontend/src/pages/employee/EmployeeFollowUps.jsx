@@ -16,6 +16,7 @@ import {
   //BadgeCheck,
   //UserX
 } from "lucide-react";
+import "../../styles/status.css";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import React from "react";

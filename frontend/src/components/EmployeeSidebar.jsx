@@ -27,25 +27,29 @@ export default function EmployeeSidebar() {
   const location =
     useLocation();
 
-  const handleLogout = () => {
+ const handleLogout = () => {
 
   const confirmLogout = window.confirm(
-        "Are you sure you want to logout?"
-      );
+    "Are you sure you want to logout?"
+  );
 
-      if (!confirmLogout) {
-        return;
-      }
+  if (!confirmLogout) {
+    return;
+  }
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userId");
+  // Clear welcome popup session
+  sessionStorage.removeItem("employeeWelcomeShown");
 
-      navigate("/", {
-        replace: true,
-      });
-    };
+  // Clear login data
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("user");
+  localStorage.removeItem("userId");
+
+  navigate("/", {
+    replace: true,
+  });
+};
 
   return (
     <div className="sidebar">

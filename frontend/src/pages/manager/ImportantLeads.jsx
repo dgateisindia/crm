@@ -3,6 +3,7 @@ import {
   useEffect,
   useState
 } from "react";
+import "../../styles/status.css";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";

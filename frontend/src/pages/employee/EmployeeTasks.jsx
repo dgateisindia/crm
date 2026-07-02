@@ -15,6 +15,7 @@ import {
   CalendarPlus,
   MessageSquarePlus
 } from "lucide-react";
+import "../../styles/status.css";
 
 export default function EmployeeTasks() {
 
@@ -59,7 +60,7 @@ export default function EmployeeTasks() {
 
           followup_mode: "call",
 
-          lead_status: "connected",
+          lead_status: "new",
 
           remarks: ""
 
@@ -288,7 +289,7 @@ async () => {
       "call",
 
       lead_status:
-      "connected",
+      "new",
 
       remarks:
       ""

@@ -23,7 +23,7 @@
     align-items:center;
     gap:16px;
 
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    background:linear-gradient(135deg,#000e2b,#1d4ed8);
 
     color:#fff;
 
@@ -231,7 +231,7 @@
 
 .editBtn{
 
-    background:#2563eb;
+    background:#01184b;
 
     color:#fff;
 
@@ -345,7 +345,7 @@
 
     width:100%;
 
-    background:#2563eb;
+    background:#021a4e;
 
     color:#fff;
 

@@ -8,6 +8,7 @@ import {
   useNavigate,
   useLocation
 } from "react-router-dom";
+import "../../styles/status.css";
 
 import api from "../../utils/api";
 

@@ -7,62 +7,94 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-
+import { TrendingUp } from "lucide-react";
 export default function LeadTrendChart({ data }) {
 
-  return (
+  const formattedData = data.map((item) => ({
+    ...item,
+    displayDate: new Date(item.date).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+    }),
+  }));
 
+  return (
     <div
       style={{
-        background:"#fff",
-        borderRadius:"12px",
-        padding:"20px",
-        boxShadow:"0 2px 8px rgba(0,0,0,.08)",
-        height:"360px",
+        background: "#fff",
+        borderRadius: "12px",
+        padding: "20px",
+        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+        height: "360px",
       }}
     >
-
-      <h3
+      <div
         style={{
-          fontWeight:600,
-          marginBottom:"20px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          marginBottom: "20px",
         }}
       >
-        Lead Trend
-      </h3>
+        <TrendingUp
+          size={22}
+          color="#2563eb"
+        />
+
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "18px",
+            color: "#071739",
+            margin: 0,
+          }}
+        >
+          Daily Lead Trend
+        </h3>
+      </div>
 
       <ResponsiveContainer
         width="100%"
         height="80%"
       >
+        <LineChart data={formattedData}>
 
-        <LineChart
-          data={data}
-        >
-
-          <CartesianGrid
-            strokeDasharray="3 3"
-          />
+          <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis
-            dataKey="date"
+            dataKey="displayDate"
           />
 
-          <YAxis />
+          <YAxis allowDecimals={false} />
 
-          <Tooltip />
+          <Tooltip
+            labelFormatter={(label, payload) => {
+              if (payload && payload.length) {
+                return new Date(payload[0].payload.date).toLocaleDateString(
+                  "en-IN",
+                  {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }
+                );
+              }
+              return label;
+            }}
+          />
 
           <Line
             type="monotone"
-            dataKey="totalLeads"
+            dataKey="total"
+            stroke="#2563eb"
+            strokeWidth={3}
+            dot={{ r: 5 }}
+            activeDot={{ r: 7 }}
           />
 
         </LineChart>
-
       </ResponsiveContainer>
-
     </div>
-
   );
-
 }

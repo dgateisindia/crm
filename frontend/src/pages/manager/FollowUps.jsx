@@ -17,6 +17,8 @@ import ManagerLayout from "../../layouts/ManagerLayout";
 import React from "react";
 import "../../styles/leads.css";
 import "../../styles/totallead.css";
+import "../../styles/status.css";
+
 export default function FollowUps() {
 
   const [

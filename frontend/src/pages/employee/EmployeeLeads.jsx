@@ -7,6 +7,7 @@ import {
 import "../../styles/managerDashboard.css";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
+import "../../styles/status.css";
 
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";

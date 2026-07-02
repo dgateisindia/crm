@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
+import "../../styles/status.css";
 
 export default function ConvertedLeads() {
   const [leads, setLeads] = useState([]);

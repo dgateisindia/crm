@@ -1,0 +1,58 @@
+.status-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+    text-transform:capitalize;
+}
+
+/* New */
+.status-badge.new{
+    background:#DBEAFE;
+    color:#2563EB;
+}
+
+/* Interested */
+.status-badge.interested{
+    background:#DCFCE7;
+    color:#16A34A;
+}
+
+/* Proposal */
+.status-badge.proposal{
+    background:#FEF3C7;
+    color:#D97706;
+}
+
+/* Offered */
+.status-badge.offered{
+    background:#EDE9FE;
+    color:#7C3AED;
+}
+
+/* Meeting Scheduled */
+.status-badge.meeting_scheduled{
+    background:#CFFAFE;
+    color:#0891B2;
+}
+
+/* Converted */
+.status-badge.converted{
+    background:#D1FAE5;
+    color:#059669;
+}
+
+/* Not Interested */
+.status-badge.not_interested{
+    background:#FEE2E2;
+    color:#DC2626;
+}
+
+/* Closed */
+.status-badge.closed{
+    background:#E5E7EB;
+    color:#4B5563;
+}

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetaskfollowup.css";
+import "../../styles/status.css";
 
 import {
   //CalendarClock,
@@ -441,38 +442,43 @@ async () => {
 window.location.reload();
 
 };
-const filteredFollowups = followups.filter((item) => {
+const filteredFollowups = followups
+  .filter((item) => {
 
-  const searchText = search.toLowerCase();
+    const searchText = search.toLowerCase();
 
-  return (
+    return (
+      (item.company_name || "")
+        .toLowerCase()
+        .includes(searchText) ||
 
-    (item.company_name || "")
-      .toLowerCase()
-      .includes(searchText)
+      (item.followup_mode || "")
+        .toLowerCase()
+        .includes(searchText) ||
 
-    ||
+      (item.lead_status || "")
+        .toLowerCase()
+        .includes(searchText) ||
 
-    (item.followup_mode || "")
-      .toLowerCase()
-      .includes(searchText)
+      (item.remarks || "")
+        .toLowerCase()
+        .includes(searchText)
+    );
 
-    ||
+  })
+  .sort((a, b) => {
 
-    (item.lead_status || "")
-      .toLowerCase()
-      .includes(searchText)
+    const dateA = new Date(
+      `${a.followup_date} ${a.followup_time || "00:00:00"}`
+    );
 
-    ||
+    const dateB = new Date(
+      `${b.followup_date} ${b.followup_time || "00:00:00"}`
+    );
 
-    (item.remarks || "")
-      .toLowerCase()
-      .includes(searchText)
+    return dateA - dateB;
 
-  );
-
-});
-
+  });
   return (
 
     <EmployeeLayout>

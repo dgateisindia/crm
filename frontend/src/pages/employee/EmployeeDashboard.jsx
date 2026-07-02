@@ -6,17 +6,18 @@ import {useState,useEffect,} from "react";
 import {useNavigate} from "react-router-dom";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
-
+import "../../styles/status.css";
+import "../../styles/WelcomePopup.css";
+import WelcomePopup from "../../components/dashboard/WelcomePopup";
 import "../../styles/managerDashboard.css";
-
+import "../../styles/notes.css";
 import LeadStatusChart
 from "../../components/charts/LeadStatusChart";
-
+import NotesCard from "../../components/dashboard/NotesCard";
 import LeadTrendChart
 from "../../components/charts/LeadTrendChart";
 
-import EmployeePerformanceChart
-from "../../components/charts/EmployeePerformanceChart";
+
 import StatCard from "../../components/dashboard/StatCard";
 import {
 
@@ -39,8 +40,11 @@ useState([]);
 const [leadTrend, setLeadTrend] =
 useState([]);
 
-const [followupChart, setFollowupChart] =
-useState([]);
+
+
+const [showWelcome, setShowWelcome] = useState(false);
+
+const [welcomeData, setWelcomeData] = useState(null);
 
   const [stats, setStats] = useState({
   totalLeads: 0,
@@ -81,29 +85,38 @@ useState([]);
 
   // Dashboard Cards
   api.get(`/dashboard/employee/${userId}`)
-    .then((res) => {
-      setStats(res.data);
-    })
+    .then((res) => setStats(res.data))
     .catch(console.error);
 
-  // Lead Status Chart
+  // Lead Status
   api.get(`/dashboard/employee/${userId}/lead-status`)
-    .then((res) => {
-      setLeadStatus(res.data);
-    })
+    .then((res) => setLeadStatus(res.data))
     .catch(console.error);
 
-  // Lead Trend Chart
+  // Lead Trend
   api.get(`/dashboard/employee/${userId}/lead-trend`)
-    .then((res) => {
-      setLeadTrend(res.data);
-    })
+    .then((res) => setLeadTrend(res.data))
     .catch(console.error);
 
-  // Follow-up Chart
-  api.get(`/dashboard/employee/${userId}/followup-chart`)
+  
+
+  // Welcome Popup
+  api.get(`/dashboard/employee/${userId}/welcome`)
     .then((res) => {
-      setFollowupChart(res.data);
+
+      setWelcomeData(res.data);
+
+      if (!sessionStorage.getItem("employeeWelcomeShown")) {
+
+        setShowWelcome(true);
+
+        sessionStorage.setItem(
+          "employeeWelcomeShown",
+          "true"
+        );
+
+      }
+
     })
     .catch(console.error);
 
@@ -200,9 +213,11 @@ useState([]);
     data={leadTrend}
   />
 
-  <EmployeePerformanceChart
-    data={followupChart}
+  <NotesCard
+    employeeId={userId}
   />
+
+  
 
 </div>
 
@@ -350,6 +365,15 @@ useState([]);
         </div>
 
       </div>
+      <WelcomePopup
+  open={showWelcome}
+  data={welcomeData}
+  onClose={() => setShowWelcome(false)}
+  onOpenTasks={() => {
+    setShowWelcome(false);
+    navigate("/employee/task-followups");
+  }}
+/>
 
     </EmployeeLayout>
 

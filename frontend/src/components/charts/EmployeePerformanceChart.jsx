@@ -8,6 +8,8 @@ import {
   Tooltip,
 } from "recharts";
 
+import { BarChart3 } from "lucide-react";
+
 export default function EmployeePerformanceChart({ data }) {
 
   return (
@@ -22,23 +24,39 @@ export default function EmployeePerformanceChart({ data }) {
       }}
     >
 
-      <h3
+      <div
         style={{
-          fontWeight: 600,
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
           marginBottom: "20px",
         }}
       >
-        Employee Performance
-      </h3>
+
+        <BarChart3
+          size={22}
+          color="#2563eb"
+        />
+
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "18px",
+            color: "#071739",
+            margin: 0,
+          }}
+        >
+          Employee Performance
+        </h3>
+
+      </div>
 
       <ResponsiveContainer
         width="100%"
         height="90%"
       >
 
-        <BarChart
-          data={data}
-        >
+        <BarChart data={data}>
 
           <CartesianGrid
             strokeDasharray="3 3"
@@ -54,7 +72,8 @@ export default function EmployeePerformanceChart({ data }) {
 
           <Bar
             dataKey="totalLeads"
-            radius={[6,6,0,0]}
+            fill="#2563eb"
+            radius={[6, 6, 0, 0]}
           />
 
         </BarChart>

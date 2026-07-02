@@ -15,7 +15,10 @@ const {
   changePassword,
   getEmployeeStats,
   updateEmployee,
-  updateEmployeeProfile
+  updateEmployeeProfile,
+  getEmployeeNote,
+  saveEmployeeNote,
+  deleteEmployeeNote
 
 } = require(
   "../controllers/employeeController"
@@ -65,6 +68,19 @@ router.put(
 router.put(
   "/update-profile/:id",
   updateEmployeeProfile
+);
+router.get(
+  "/notes/:id",
+  getEmployeeNote
+);
+
+router.post(
+  "/notes/:id",
+  saveEmployeeNote
+);
+router.delete(
+  "/notes/:id",
+  deleteEmployeeNote
 );
 
 // ALWAYS LAST

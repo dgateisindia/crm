@@ -493,11 +493,128 @@ const getEmployeeStats = (req, res) => {
     }
   );
 
-};           
+};   
+// ==========================
+// EMPLOYEE WELCOME POPUP
+// ==========================
+const getEmployeeWelcome = async (req, res) => {
+
+  try {
+
+    const employeeId = req.params.id;
+
+    const welcome = {};
+
+    // ==========================
+    // Today's Follow-ups
+    // ==========================
+    const [todayResult] = await db.promise().query(
+      `
+      SELECT
+        l.company_name,
+        f.followup_mode,
+        f.remarks,
+        f.next_followup_date
+      FROM follow_ups f
+      JOIN leads l
+        ON l.id = f.lead_id
+      WHERE
+        f.employee_id = ?
+        AND DATE(f.next_followup_date) = CURDATE()
+        AND f.status = 'pending'
+      ORDER BY f.next_followup_date ASC
+      `,
+      [employeeId]
+    );
+
+    welcome.today = todayResult;
+    welcome.todayFollowups = todayResult.length;
+
+    // ==========================
+    // Overdue Follow-ups
+    // ==========================
+    const [overdueResult] = await db.promise().query(
+      `
+      SELECT COUNT(*) AS total
+      FROM follow_ups
+      WHERE
+        employee_id = ?
+        AND status = 'pending'
+        AND DATE(next_followup_date) < CURDATE()
+      `,
+      [employeeId]
+    );
+
+    welcome.overdueFollowups = overdueResult[0].total;
+
+    // ==========================
+    // Pending Tasks (New Leads)
+    // ==========================
+    const [pendingResult] = await db.promise().query(
+      `
+      SELECT COUNT(*) AS total
+      FROM leads
+      WHERE
+        created_by_id = ?
+        AND created_by_type = 'employee'
+        AND lead_status = 'new'
+      `,
+      [employeeId]
+    );
+
+    welcome.pendingTasks = pendingResult[0].total;
+
+    // ==========================
+    // Important Leads
+    // ==========================
+    const [importantResult] = await db.promise().query(
+      `
+      SELECT COUNT(*) AS total
+      FROM leads
+      WHERE
+        created_by_id = ?
+        AND created_by_type = 'employee'
+        AND important_lead = 1
+      `,
+      [employeeId]
+    );
+
+    welcome.importantLeads = importantResult[0].total;
+
+    // ==========================
+    // Employee Name
+    // ==========================
+    const [employee] = await db.promise().query(
+      `
+      SELECT full_name
+      FROM employees
+      WHERE employee_id = ?
+      `,
+      [employeeId]
+    );
+
+    welcome.employeeName = employee.length
+      ? employee[0].full_name
+      : "";
+
+    res.json(welcome);
+
+  } catch (err) {
+
+    console.error("Welcome Popup Error:", err);
+
+    res.status(500).json({
+      message: "Failed to load welcome data"
+    });
+
+  }
+
+};   
 module.exports = {
 
   getDashboardStats,
   getEmployeeStats,
+  getEmployeeWelcome,
 
   getLeadStatusChart,
   getEmployeePerformance,

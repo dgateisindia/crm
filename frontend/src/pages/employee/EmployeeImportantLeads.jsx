@@ -6,6 +6,7 @@ import {
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
+import "../../styles/status.css";
 
 import {
   useNavigate

@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
 } from "react";
+import "../../styles/status.css";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 

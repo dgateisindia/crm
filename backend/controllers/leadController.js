@@ -521,6 +521,7 @@ async (req, res) => {
         address,
         website,
         city,
+        category,
         source,
         lead_mode,
         lead_status,

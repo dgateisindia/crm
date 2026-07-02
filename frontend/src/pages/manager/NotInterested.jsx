@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
+import "../../styles/status.css";
 
 export default function NotInterestedLeads() {
   const [leads, setLeads] = useState([]);

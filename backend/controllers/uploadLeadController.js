@@ -67,82 +67,118 @@ const uploadLeads =
     .created_by_name;
   ;
 
+rows.forEach((row) => {
 
-    rows.forEach(
+  const company_name =
+    row.company_name ||
+    row["Company Name"] ||
+    row["company name"] ||
+    row["COMPANY NAME"] ||
+    row["Company"] ||
+    row["Client Name"] ||
+    "";
 
-      (row) => {
+  const contact_person_name =
+    row.contact_person_name ||
+    row["Contact Person"] ||
+    row["contact person"] ||
+    row["CONTACT PERSON"] ||
+    row["Contact"] ||
+    row["Contact Name"] ||
+    "";
 
-      const company_name =
-        row.company_name ||
-        row["Company Name"];
+  const designation =
+    row.designation ||
+    row["Designation"] ||
+    row["designation"] ||
+    row["Job Title"] ||
+    row["Position"] ||
+    "";
 
-      const contact_person_name =
-        row.contact_person_name ||
-        row["Contact Person"];
+  const phone =
+    row.phone ||
+    row["Phone"] ||
+    row["phone"] ||
+    row["PHONE"] ||
+    row["Phone Number"] ||
+    row["Mobile"] ||
+    row["Contact Number"] ||
+    "";
 
-      const designation =
-        row.designation ||
-        row["Designation"] ||
-        "";
+  const email =
+    row.email ||
+    row["Email"] ||
+    row["email"] ||
+    row["EMAIL"] ||
+    row["Email Address"] ||
+    "";
 
-      const email =
-        row.email ||
-        row["Email"] ||
-        "";
+  const address =
+    row.address ||
+    row["Address"] ||
+    row["address"] ||
+    "";
 
-      const phone =
-        row.phone ||
-        row["Phone"];
+  const website =
+    row.website ||
+    row["Website"] ||
+    row["website"] ||
+    row["URL"] ||
+    "";
 
-      const address =
-        row.address ||
-        row["Address"] ||
-        "";
+  const city =
+    row.city ||
+    row["City"] ||
+    row["city"] ||
+    row["Location"] ||
+    "";
 
-      const website =
-        row.website ||
-        row["Website"] ||
-        "";
+  const source =
+    row.source ||
+    row["Source"] ||
+    row["source"] ||
+    row["Lead Source"] ||
+    "";
 
-      const source =
-        row.source ||
-        row["Source"] ||
-        "";
+  const category =
+    row.category ||
+    row["Category"] ||
+    row["category"] ||
+    row["Industry"] ||
+    "";
 
-      const city =
-        row.city ||
-        row["City"] ||
-        "";
-      const category =
-        row.category ||
-        row["Category"] ||
-        "";
+  const remarks =
+    row.remarks ||
+    row["Remarks"] ||
+    row["remarks"] ||
+    row["Notes"] ||
+    row["Comments"] ||
+    "";
 
-      const remarks =
-        row.remarks ||
-        row["Remarks"] ||
-        "";
+  const lead_status =
+    (
+      row.lead_status ||
+      row["Lead Status"] ||
+      row["Lead status"] ||
+      row["Status"] ||
+      "new"
+    )
+      .toString()
+      .trim()
+      .toLowerCase();
 
-      const lead_status =
-        (
-          row.lead_status ||
-          row["Lead Status"] ||
-          row["Status"] ||
-          "new"
-        )
-        .toString()
-        .trim()
-        .toLowerCase();
+  const lead_mode =
+    row.lead_mode ||
+    row["Lead Mode"] ||
+    row["Lead mode"] ||
+    row["Mode"] ||
+    "phone_call";
 
-      const lead_mode =
-        row.lead_mode ||
-        row["Lead Mode"] ||
-        "phone_call";
-
-      const important_lead =
-        row.important_lead ||
-        row["Important Lead"] ||
-        false;
+  const important_lead =
+    row.important_lead ||
+    row["Important Lead"] ||
+    row["Important"] ||
+    false;
         if (!phone && !email) {
 
     duplicates++;

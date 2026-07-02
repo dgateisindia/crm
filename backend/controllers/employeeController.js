@@ -439,7 +439,7 @@ const getEmployeeProfile =
 
       if (err) {
 
-        console.log(err);
+        //console.log(err);
 
         return res
         .status(500)
@@ -573,7 +573,7 @@ const updateEmployeeProfile = async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500).json({
 
@@ -833,7 +833,7 @@ const updateEmployee = async (req, res) => {
 
   catch (error) {
 
-    console.log(error);
+    //console.log(error);
 
     res.status(500).json({
 
@@ -845,17 +845,147 @@ const updateEmployee = async (req, res) => {
 
 };
 // ==========================
+// GET EMPLOYEE NOTE
+// ==========================
+const getEmployeeNote = async (req, res) => {
+
+  try {
+
+    const employeeId = req.params.id;
+
+    const [rows] = await db.promise().query(
+      `
+      SELECT note
+      FROM employee_notes
+      WHERE employee_id = ?
+      `,
+      [employeeId]
+    );
+
+    if (rows.length === 0) {
+
+      return res.json({
+        note: ""
+      });
+
+    }
+
+    res.json(rows[0]);
+
+  }
+
+  catch (err) {
+
+    //console.error(err);
+
+    res.status(500).json({
+      message: "Failed to fetch note"
+    });
+
+  }
+
+};
+// ==========================
+// SAVE EMPLOYEE NOTE
+// ==========================
+const saveEmployeeNote = async (req, res) => {
+
+  try {
+
+    const employeeId = req.params.id;
+
+    const { note } = req.body;
+
+    await db.promise().query(
+      `
+      INSERT INTO employee_notes
+      (
+        employee_id,
+        note
+      )
+      VALUES
+      (
+        ?,
+        ?
+      )
+      ON DUPLICATE KEY UPDATE
+
+      note = VALUES(note)
+      `,
+      [
+        employeeId,
+        note
+      ]
+    );
+
+    res.json({
+
+      message:
+      "Note saved successfully"
+
+    });
+
+  }
+
+  catch (err) {
+
+    //console.error(err);
+
+    res.status(500).json({
+
+      message:
+      "Failed to save note"
+
+    });
+
+  }
+
+};
+// ==========================
+// DELETE EMPLOYEE NOTE
+// ==========================
+const deleteEmployeeNote = async (req, res) => {
+
+  try {
+
+    const employeeId = req.params.id;
+
+    await db.promise().query(
+      `
+      DELETE FROM employee_notes
+      WHERE employee_id = ?
+      `,
+      [employeeId]
+    );
+
+    res.json({
+      message: "Note deleted successfully"
+    });
+
+  }
+
+  catch (err) {
+
+    //console.error(err);
+
+    res.status(500).json({
+      message: "Failed to delete note"
+    });
+
+  }
+
+};
+// ==========================
 // Export
 // ==========================
 module.exports = {
 
   createEmployee,
-
-
   getEmployees,
-
   getEmployeeById,
-
+  getEmployeeNote,
+  saveEmployeeNote,
+  deleteEmployeeNote,
   deleteEmployee,
   updateEmployeeStatus,
   getEmployeeProfile,

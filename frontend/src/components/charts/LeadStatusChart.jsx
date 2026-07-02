@@ -6,7 +6,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
+import { PieChart as PieChartIcon } from "lucide-react";
 const COLORS = [
   "#2563eb",
   "#22c55e",
@@ -35,15 +35,30 @@ export default function LeadStatusChart({ data }) {
       }}
     >
 
-      <h3
+      <div
         style={{
-          fontWeight: 600,
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
           marginBottom: "20px",
         }}
       >
-        Leads by Status
-      </h3>
+        <PieChartIcon
+          size={22}
+          color="#2563eb"
+        />
 
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "18px",
+            color: "#071739",
+            margin: 0,
+          }}
+        >
+          Leads by Status
+        </h3>
+      </div>
       <ResponsiveContainer
         width="100%"
         height="90%"

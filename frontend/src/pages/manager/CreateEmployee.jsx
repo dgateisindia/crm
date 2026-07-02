@@ -3,6 +3,7 @@ import api from "../../utils/api";
 import { useParams,useNavigate } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/createEmployee.css";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CreateEmployee() {
   const initialState = {
@@ -19,6 +20,9 @@ export default function CreateEmployee() {
 
   const [employee, setEmployee] =
     useState(initialState);
+
+    const [showPassword, setShowPassword] =
+useState(false);
 
 
     const { id } = useParams();
@@ -343,27 +347,35 @@ navigate("/manager/employees");
                     Password
                   </label>
 
-                  <input
-                    type="password"
-                    name="password"
-                    value={
-                      employee.password
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    placeholder={
+                 <div className="passwordField">
 
-                      id
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={employee.password}
+                      onChange={handleChange}
+                      placeholder={
+                        id
+                          ? "Leave blank to keep current password"
+                          : "Enter password"
+                      }
+                      autoComplete="new-password"
+                      required={!id}
+                    />
 
-                      ? "Leave blank to keep current password"
+                    <button
+                      type="button"
+                      className="passwordToggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <Eye size={18} />
+                      ) : (
+                        <EyeOff size={18} />
+                      )}
+                    </button>
 
-                      : "Enter password"
-
-                    }
-                     autoComplete="new-password"
-                    required={!id}
-                  />
+                  </div>
                 </div>
 
               </div>

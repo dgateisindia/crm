@@ -12,7 +12,8 @@ const {
   getEmployeeStats,
   getEmployeeFollowupChart,
   getEmployeeLeadStatusChart,
-  getEmployeeLeadTrend
+  getEmployeeLeadTrend,
+  getEmployeeWelcome
 } = require(
   "../controllers/dashboardController"
 );
@@ -38,11 +39,17 @@ router.get(
 "/employee/:id/followup-chart",
 getEmployeeFollowupChart
 );
+router.get(
+  "/employee/:id/welcome",
+  getEmployeeWelcome
+);
+
 
 router.get(
   "/employee/:id",
   getEmployeeStats
 );
+
 
 module.exports =
 router;

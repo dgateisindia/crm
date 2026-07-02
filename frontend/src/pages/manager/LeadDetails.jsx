@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 
 import api from "../../utils/api";
+import "../../styles/status.css";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 

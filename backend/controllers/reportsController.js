@@ -291,7 +291,7 @@ const getEmployeeReport =
                   report.pendingLeads =
                   pendingResult[0].pendingLeads;
 
-                  {/*report.conversionRate =
+                  report.conversionRate =
                   report.totalLeads > 0
                     ? (
                         report.convertedLeads /
@@ -299,7 +299,7 @@ const getEmployeeReport =
                       ) * 100
                     : 0;
 
-                  res.json(report);*/}
+                  res.json(report);
 
                 }
 

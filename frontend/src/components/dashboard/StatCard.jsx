@@ -56,10 +56,10 @@ export default function StatCard({
   // ==========================
   return (
     <div
-      className={`crm-card ${color}-card cursor-pointer`}
+      className={`dashboard-card ${color}-card cursor-pointer`}
       onClick={onClick}
     >
-      <div className="crm-card-top">
+      <div className="dashboard-card-top">
 
         <div className={`icon-circle ${color}-bg`}>
           {icon}
@@ -71,9 +71,7 @@ export default function StatCard({
 
       <h2>{value}</h2>
 
-      <p className="card-subtitle">
-        {subtitle}
-      </p>
+      
 
     </div>
   );
