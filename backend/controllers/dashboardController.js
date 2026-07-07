@@ -377,28 +377,33 @@ const getEmployeeStats = (req, res) => {
 
           stats.newLeads = newResult[0].newLeads;
 
-          // Follow-ups
-          db.query(
-            `
-            SELECT COUNT(*) AS followups
-            FROM leads
-            WHERE created_by_type='employee'
-            AND created_by_id=?
-            AND lead_status NOT IN
-            (
-              'new',
-              'converted',
-              'closed',
-              'not_interested'
-            )
-            `,
-            [employeeId],
-            (err, followupResult) => {
+        // Follow-ups
+    db.query(
+      `
+      SELECT COUNT(DISTINCT f.lead_id) AS followups
+      FROM follow_ups f
+      INNER JOIN leads l
+        ON l.id = f.lead_id
+      WHERE
+        f.employee_id = ?
+        AND l.created_by_type = 'employee'
+        AND l.created_by_id = ?
+        AND l.lead_status IN
+        (
+          'interested',
+          'proposed',
+          'offered',
+          'meeting scheduled'
+        )
+      `,
+      [employeeId, employeeId],
+      (err, followupResult) => {
 
-              if (err)
-                return res.status(500).json(err);
+        if (err)
+          return res.status(500).json(err);
 
-              stats.followups = followupResult[0].followups;
+        stats.followups = followupResult[0].followups;
+
 
               // Converted
               db.query(
@@ -508,27 +513,22 @@ const getEmployeeWelcome = async (req, res) => {
     // ==========================
     // Today's Follow-ups
     // ==========================
-    const [todayResult] = await db.promise().query(
-      `
-      SELECT
-        l.company_name,
-        f.followup_mode,
-        f.remarks,
-        f.next_followup_date
-      FROM follow_ups f
-      JOIN leads l
-        ON l.id = f.lead_id
-      WHERE
-        f.employee_id = ?
-        AND DATE(f.next_followup_date) = CURDATE()
-        AND f.status = 'pending'
-      ORDER BY f.next_followup_date ASC
-      `,
-      [employeeId]
-    );
+    // ==========================
+// Today's Follow-ups Count
+// ==========================
+const [todayResult] = await db.promise().query(
+  `
+  SELECT COUNT(*) AS total
+  FROM follow_ups
+  WHERE
+    employee_id = ?
+    AND status = 'pending'
+    AND DATE(next_followup_date) = CURDATE()
+  `,
+  [employeeId]
+);
 
-    welcome.today = todayResult;
-    welcome.todayFollowups = todayResult.length;
+welcome.todayFollowups = todayResult[0].total;
 
     // ==========================
     // Overdue Follow-ups

@@ -591,7 +591,7 @@ showFollowupModal && (
     <div className="crmModalHeader">
 
       <h2>
-        Add Followup
+        Add Lead Followup
       </h2>
 
       <button
@@ -687,8 +687,8 @@ showFollowupModal && (
             Interested
           </option>
 
-          <option value="proposal">
-            Proposal
+          <option value="proposed">
+            Proposed
           </option>
 
           <option value="offered">

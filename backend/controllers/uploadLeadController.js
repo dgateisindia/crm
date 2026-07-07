@@ -319,6 +319,41 @@ db.query(
     }
 
     inserted++;
+    const followupStatuses = [
+  "interested",
+  "proposed",
+  "offered",
+  "meeting scheduled"
+];
+
+if (followupStatuses.includes(lead_status)) {
+
+  db.query(
+
+   `INSERT INTO follow_ups
+  (
+    lead_id,
+    employee_id,
+    followup_mode,
+    remarks,
+    lead_status,
+    status,
+    contact_date,
+    next_followup_date
+  )
+  VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+  [
+    result.insertId,
+    created_by_id,
+    lead_mode,
+    "Lead created with status " + lead_status,
+    lead_status,
+    "pending"
+  ]
+
+  );
+
+}
 
 }
 

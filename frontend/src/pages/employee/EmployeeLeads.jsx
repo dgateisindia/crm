@@ -396,7 +396,7 @@ allLeads.filter((lead) => {
     <option value="all">All Status</option>
     <option value="new">New</option>
     <option value="interested">Interested</option>
-    <option value="proposal">Proposal</option>
+    <option value="proposed">proposed</option>
     <option value="converted">Converted</option>
     <option value="not_interested">Not Interested</option>
   </select>
@@ -615,7 +615,7 @@ allLeads.filter((lead) => {
                                 size={16}
                               />
 
-                              Add Followup
+                              Add  Lead Followup
 
                             </button>
 
@@ -697,7 +697,7 @@ showFollowupModal && (
 
         <h2>
 
-          Add Followup
+          Add Lead Followup
 
         </h2>
 
@@ -817,8 +817,8 @@ setShowFollowupModal(false)
               Interested
             </option>
 
-            <option value="proposal">
-              Proposal
+            <option value="proposed">
+              proposed
             </option>
 
             <option value="offered">

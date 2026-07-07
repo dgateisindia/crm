@@ -16,7 +16,7 @@ from "../../components/charts/LeadStatusChart";
 import NotesCard from "../../components/dashboard/NotesCard";
 import LeadTrendChart
 from "../../components/charts/LeadTrendChart";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
 
 import StatCard from "../../components/dashboard/StatCard";
 import {
@@ -203,23 +203,23 @@ const [welcomeData, setWelcomeData] = useState(null);
 
         </div>
       {/* Charts */}
-<div className="dashboard-charts">
+      <div className="dashboard-charts">
 
-  <LeadStatusChart
-    data={leadStatus}
-  />
+        <LeadStatusChart
+          data={leadStatus}
+        />
 
-  <LeadTrendChart
-    data={leadTrend}
-  />
+        <LeadTrendChart
+          data={leadTrend}
+        />
 
-  <NotesCard
-    employeeId={userId}
-  />
+        <NotesCard
+          employeeId={userId}
+        />
 
-  
+        
 
-</div>
+      </div>
 
 
       {/* Recent Leads */}
@@ -310,14 +310,28 @@ const [welcomeData, setWelcomeData] = useState(null);
                       <td>
 
                         <span
-                      className={`status-badge ${lead.lead_status}`}
-                        >
 
-                          {
-                            lead.lead_status
-                          }
+                              className="status-badge"
 
-                        </span>
+                              style={{
+
+                              background:
+                              STATUS_THEME[
+                              lead.lead_status.replace(/\s+/g,"_")
+                              ]?.bg,
+
+                              color:
+                              STATUS_THEME[
+                              lead.lead_status.replace(/\s+/g,"_")
+                              ]?.color,
+
+                              }}
+
+                              >
+
+                              {lead.lead_status}
+
+                              </span>
 
                       </td>
 

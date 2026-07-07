@@ -113,6 +113,41 @@ async (req, res) => {
       ]
 
     );
+    const followupStatuses = [
+  "interested",
+  "proposed",
+  "offered",
+  "meeting scheduled"
+];
+
+if (followupStatuses.includes(lead_status)) {
+
+  await db.promise().query(
+
+     `INSERT INTO follow_ups
+  (
+    lead_id,
+    employee_id,
+    followup_mode,
+    remarks,
+    lead_status,
+    status,
+    contact_date,
+    next_followup_date
+  )
+  VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+  [
+    result.insertId,
+    created_by_id,
+    lead_mode,
+    "Lead created with status " + lead_status,
+    lead_status,
+    "pending"
+  ]
+
+  );
+
+}
 
     res.status(201)
     .json({
@@ -128,7 +163,7 @@ async (req, res) => {
   }
 
  catch (error) {
-  console.log(error);
+  //console.log(error);
 
   res.status(500).json({
     message: error.message

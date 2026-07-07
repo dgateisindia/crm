@@ -4,23 +4,28 @@ import {
   Cell,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
+
 import { PieChart as PieChartIcon } from "lucide-react";
-const COLORS = [
-  "#2563eb",
-  "#22c55e",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#06b6d4",
-];
+
+const STATUS_COLORS = {
+  new: "#2563EB",
+  interested: "#D97706",
+  proposed: "#16A34A",
+  offered: "#4F46E5",
+  "meeting scheduled": "#DB2777",
+  converted: "#059669",
+  closed: "#4B5563",
+  not_interested: "#DC2626",
+};
 
 export default function LeadStatusChart({ data }) {
 
   const chartData = data.map((item) => ({
-    name: item.lead_status.replace("_", " "),
+    name: item.lead_status.replaceAll("_", " "),
     value: item.total,
+    color:
+      STATUS_COLORS[item.lead_status] || "#94A3B8",
   }));
 
   return (
@@ -28,76 +33,140 @@ export default function LeadStatusChart({ data }) {
     <div
       style={{
         background: "#fff",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+        borderRadius: "16px",
+        padding: "22px",
+        boxShadow: "0 6px 18px rgba(0,0,0,.08)",
         height: "360px",
       }}
     >
+
+      <h3
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          fontWeight: 700,
+          fontSize: "24px",
+          marginBottom: "20px",
+        }}
+      >
+        <PieChartIcon color="#2563eb" />
+        Leads by Status
+      </h3>
 
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "10px",
-          marginBottom: "20px",
+          justifyContent: "space-between",
+          height: "280px",
         }}
       >
-        <PieChartIcon
-          size={22}
-          color="#2563eb"
-        />
 
-        <h3
+        <div
           style={{
-            fontWeight: 600,
-            fontSize: "18px",
-            color: "#071739",
-            margin: 0,
+            width: "55%",
+            height: "100%",
           }}
         >
-          Leads by Status
-        </h3>
+
+          <ResponsiveContainer>
+
+            <PieChart>
+
+              <Pie
+                data={chartData}
+                dataKey="value"
+                innerRadius={65}
+                outerRadius={100}
+                paddingAngle={3}
+              >
+
+                {chartData.map((entry, index) => (
+
+                  <Cell
+                    key={index}
+                    fill={entry.color}
+                  />
+
+                ))}
+
+              </Pie>
+
+              <Tooltip />
+
+            </PieChart>
+
+          </ResponsiveContainer>
+
+        </div>
+
+        <div
+          style={{
+            width: "40%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+
+          {chartData.map((item, index) => (
+
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: "15px",
+                fontWeight: 500,
+              }}
+            >
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+
+                <span
+                  style={{
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    background: item.color,
+                    display: "inline-block",
+                  }}
+                />
+
+                <span
+                  style={{
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {item.name}
+                </span>
+
+              </div>
+
+              <span
+                style={{
+                  fontWeight: 700,
+                  color: "#1F2937",
+                }}
+              >
+                {item.value}
+              </span>
+
+            </div>
+
+          ))}
+
+        </div>
+
       </div>
-      <ResponsiveContainer
-        width="100%"
-        height="90%"
-      >
-
-        <PieChart>
-
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius={70}
-            outerRadius={110}
-            dataKey="value"
-            label
-          >
-
-            {chartData.map((entry, index) => (
-
-              <Cell
-                key={index}
-                fill={
-                  COLORS[
-                    index % COLORS.length
-                  ]
-                }
-              />
-
-            ))}
-
-          </Pie>
-
-          <Tooltip />
-
-          <Legend />
-
-        </PieChart>
-
-      </ResponsiveContainer>
 
     </div>
 

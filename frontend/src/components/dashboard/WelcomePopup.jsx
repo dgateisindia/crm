@@ -9,8 +9,8 @@ import {
   CalendarCheck,
   ClipboardList,
   Star,
-  Clock3,
-  Building2,
+  //Clock3,
+ // Building2,
 } from "lucide-react";
 
 export default function WelcomePopup({
@@ -163,83 +163,7 @@ const { greeting, Icon: GreetingIcon } = getGreeting();
 
         </div>
 
-        {/* Today's Schedule */}
-
-        <div className="todaySchedule">
-
-          <h3>
-
-            Today's Schedule
-
-          </h3>
-
-          {
-
-            data.today?.length === 0
-
-            ?
-
-            (
-
-              <p className="noTasks">
-
-                🎉 No follow-ups scheduled for today.
-
-              </p>
-
-            )
-
-            :
-
-            (
-
-              data.today?.map((item, index) => (
-
-                <div
-
-                  key={index}
-
-                  className="scheduleItem"
-
-                >
-
-                  <div className="scheduleLeft">
-
-                    <Clock3 size={16} />
-
-                    <span>
-
-                        {new Date(item.next_followup_date).toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                        })}
-                    </span>
-
-                  </div>
-
-                  <div className="scheduleRight">
-
-                    <Building2 size={16} />
-
-                    <strong>
-
-                      {item.company_name}
-
-                    </strong>
-
-                  </div>
-
-                </div>
-
-              ))
-
-            )
-
-          }
-
-        </div>
-
+        
         {/* Footer */}
 
         <div className="welcomeButtons">

@@ -540,7 +540,7 @@ async () => {
                               className="action-item"
                             >
                               <Eye size={16} />
-                              View Task
+                              View New Lead
                             </div>
 
                             <div
@@ -550,7 +550,7 @@ async () => {
                               className="action-item"
                             >
                               <SquarePen size={16} />
-                              Edit Task
+                              Edit New Lead
                             </div>
 
                             <div
@@ -560,7 +560,7 @@ async () => {
                               className="action-item"
                             >
                               <CalendarPlus size={16} />
-                              Add Task Followup
+                              Add TO-Do List
                             </div>
 
                             <div
@@ -637,20 +637,11 @@ showFollowupModal && (
       </label>
 
       <input
-
-        type="date"
-
-        value={followupDate}
-
-        onChange={(e)=>
-
-          setFollowupDate(
-            e.target.value
-          )
-
-        }
-
-      />
+    type="date"
+    value={followupDate}
+    min={new Date().toISOString().split("T")[0]}
+    onChange={(e)=>setFollowupDate(e.target.value)}
+/>
 
     </div>
 
@@ -880,8 +871,8 @@ showFollowupModal && (
             Interested
           </option>
 
-          <option value="proposal">
-            Proposal
+          <option value="proposed">
+            Proposed
           </option>
 
           <option value="offered">
@@ -900,9 +891,6 @@ showFollowupModal && (
             Converted
           </option>
 
-          <option value="lost">
-            Lost
-          </option>
 
         </select>
 

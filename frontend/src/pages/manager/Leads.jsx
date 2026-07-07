@@ -437,9 +437,9 @@ useEffect(() => {
 
               </option>
 
-              <option value="proposal">
+              <option value="proposed">
 
-                Proposal
+                proposed
 
               </option>
 
@@ -932,9 +932,9 @@ e.target.value
 
     </option>
 
-    <option value="proposal">
+    <option value="proposed">
 
-      Proposal
+      proposed
 
     </option>
 

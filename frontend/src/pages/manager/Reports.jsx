@@ -11,6 +11,9 @@ import {
 } from "lucide-react";import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/managerDashboard.css";
 import "../../styles/report.css";
+import LeadStatusChart from "../../components/charts/LeadStatusChart";
+import LeadTrendChart from "../../components/charts/LeadTrendChart";
+import EmployeePerformanceChart from "../../components/charts/EmployeePerformanceChart";
 export default function Reports() {
 
   const [range, setRange] =
@@ -32,7 +35,11 @@ export default function Reports() {
     convertedLeads: 0,
     pendingLeads: 0,
     totalEmployees: 0,
-    conversionRate: 0
+
+    statusChart: [],
+    trendChart: [],
+    employeePerformance: [],
+    
   });
 
   useEffect(() => {
@@ -360,8 +367,24 @@ const today = new Date().toISOString().split("T")[0];
               <h3>Employees</h3>
               <h2>{report.totalEmployees}</h2>
             </div>
+            
 
           </div>
+          <div className="report-charts">
+
+              <LeadStatusChart
+                data={report.statusChart}
+              />
+
+              <EmployeePerformanceChart
+                data={report.employeePerformance}
+              />
+
+              <LeadTrendChart
+                data={report.trendChart}
+              />
+
+            </div>
              {/*<div className="reportSection">
 
                <h3>Company Performance Summary</h3>

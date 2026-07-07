@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
 export default function ConvertedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
@@ -168,10 +168,28 @@ export default function ConvertedLeads() {
                     <td className="table-data">
 
                       <span
-                        className={`status-badge ${lead.lead_status}`}
-                      >
-                        {lead.lead_status}
-                      </span>
+
+                          className="status-badge"
+
+                          style={{
+
+                          background:
+                          STATUS_THEME[
+                          lead.lead_status.replace(/\s+/g,"_")
+                          ]?.bg,
+
+                          color:
+                          STATUS_THEME[
+                          lead.lead_status.replace(/\s+/g,"_")
+                          ]?.color,
+
+                          }}
+
+                          >
+
+                          {lead.lead_status}
+
+                          </span>
 
                     </td>
 

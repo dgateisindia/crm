@@ -726,7 +726,7 @@ const filteredFollowups = followups
 
                                   <Eye size={16} />
 
-                                  View Task Followup
+                                  View To-Do List
 
                                 </button>
 
@@ -750,7 +750,7 @@ const filteredFollowups = followups
 
                                   <Pencil size={16} />
 
-                                  Edit Task Followup
+                                  Edit To-Do List
 
                                 </button>
 
@@ -774,7 +774,7 @@ const filteredFollowups = followups
 
                                   <Plus size={16} />
 
-                                  Add Task Followup
+                                  Add To-Do List
 
                                 </button>
 
@@ -890,20 +890,11 @@ showTaskFollowupModal && (
       </label>
 
       <input
-
-        type="date"
-
-        value={followupDate}
-
-        onChange={(e)=>
-
-          setFollowupDate(
-            e.target.value
-          )
-
-        }
-
-      />
+    type="date"
+    value={followupDate}
+    min={new Date().toISOString().split("T")[0]}
+    onChange={(e)=>setFollowupDate(e.target.value)}
+/>
 
     </div>
 
@@ -1143,8 +1134,8 @@ showTaskFollowupModal && (
             Interested
           </option>
 
-          <option value="proposal">
-            Proposal
+          <option value="proposed">
+            Proposed
           </option>
 
           <option value="offered">
@@ -1163,9 +1154,7 @@ showTaskFollowupModal && (
             Converted
           </option>
 
-          <option value="lost">
-            Lost
-          </option>
+          
 
         </select>
 

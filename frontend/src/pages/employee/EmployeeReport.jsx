@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
-
+import LeadStatusChart from "../../components/charts/LeadStatusChart";
+import LeadTrendChart from "../../components/charts/LeadTrendChart";
 import "../../styles/managerDashboard.css";
 import "../../styles/reports.css";
 
@@ -36,7 +37,10 @@ export default function EmployeeReports() {
     totalFollowups: 0,
     convertedLeads: 0,
     pendingLeads: 0,
-    conversionRate: 0
+    conversionRate: 0,
+
+    statusChart: [],
+    trendChart: [],
   });
 
   useEffect(() => {
@@ -385,6 +389,17 @@ const today = new Date().toISOString().split("T")[0];
           </div>
 
         </div>
+        <div className="dashboard-charts">
+
+    <LeadStatusChart
+        data={report.statusChart}
+    />
+
+    <LeadTrendChart
+        data={report.trendChart}
+    />
+
+</div>
 
         
 

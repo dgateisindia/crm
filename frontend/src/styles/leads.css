@@ -849,8 +849,8 @@ td{
   color:#ea580c;
 }
 
-/* Proposal */
-.proposal{
+/* proposed */
+.proposed{
 
   background:#f3e8ff;
   color:#9333ea;
@@ -1075,8 +1075,8 @@ td{
     color:#D97706;
 }
 
-/* Proposal */
-.status-badge.proposal{
+/* proposed */
+.status-badge.proposed{
   background:#EDE9FE;
   color:#7C3AED;
 }

@@ -645,8 +645,8 @@ showFollowupModal && (
             Interested
           </option>
 
-          <option value="proposal">
-            Proposal
+          <option value="proposed">
+            proposed
           </option>
 
           <option value="offered">

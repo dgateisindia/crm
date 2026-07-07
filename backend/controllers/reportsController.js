@@ -138,10 +138,93 @@ const getCompanyReport =
                       }
 
                       report.totalEmployees =
-                      employeeResult[0]
-                      .totalEmployees;
+                      employeeResult[0].totalEmployees;
 
-                      res.json(report);
+                      // ==========================
+                      // Lead Status Chart
+                      // ==========================
+                      db.query(
+
+                        `
+                        SELECT
+                          lead_status,
+                          COUNT(*) AS total
+                        FROM leads
+                        WHERE ${dateCondition}
+                        GROUP BY lead_status
+                        ORDER BY total DESC
+                        `,
+
+                        (err, statusResult) => {
+
+                          if (err) {
+                            return res.status(500).json(err);
+                          }
+
+                          report.statusChart = statusResult;
+
+                          // ==========================
+                          // Lead Trend Chart
+                          // ==========================
+                          db.query(
+
+                            `
+                            SELECT
+                              DATE(created_at) AS date,
+                              COUNT(*) AS total
+                            FROM leads
+                            WHERE ${dateCondition}
+                            GROUP BY DATE(created_at)
+                            ORDER BY DATE(created_at)
+                            `,
+
+                            (err, trendResult) => {
+
+                              if (err) {
+                                return res.status(500).json(err);
+                              }
+
+                              report.trendChart = trendResult;
+
+                              // ==========================
+                              // Employee Performance Chart
+                              // ==========================
+                              db.query(
+
+                                `
+                                SELECT
+                                  e.full_name,
+                                  COUNT(l.id) AS totalLeads
+                                FROM employees e
+                                LEFT JOIN leads l
+                                  ON e.employee_id = l.created_by_id
+                                  AND l.created_by_type = 'employee'
+                                  AND ${dateCondition}
+                                GROUP BY e.employee_id
+                                ORDER BY totalLeads DESC
+                                `,
+
+                                (err, performanceResult) => {
+
+                                  if (err) {
+                                    return res.status(500).json(err);
+                                  }
+
+                                  report.employeePerformance = performanceResult;
+
+                                  res.json(report);
+
+                                }
+
+                              );
+
+                            }
+
+                          );
+
+                        }
+
+                      );
 
                     }
 
@@ -299,7 +382,67 @@ const getEmployeeReport =
                       ) * 100
                     : 0;
 
-                  res.json(report);
+                  // ==========================
+                  // Lead Status Chart
+                  // ==========================
+                  db.query(
+
+                    `
+                    SELECT
+                      lead_status,
+                      COUNT(*) AS total
+                    FROM leads
+                    WHERE created_by_type='employee'
+                      AND created_by_id=?
+                      AND ${dateCondition}
+                    GROUP BY lead_status
+                    ORDER BY total DESC
+                    `,
+
+                    [employeeId],
+
+                    (err, statusResult) => {
+
+                      if (err)
+                        return res.status(500).json(err);
+
+                      report.statusChart = statusResult;
+
+                      // ==========================
+                      // Daily Lead Trend
+                      // ==========================
+                      db.query(
+
+                        `
+                        SELECT
+                          DATE(created_at) AS date,
+                          COUNT(*) AS total
+                        FROM leads
+                        WHERE created_by_type='employee'
+                          AND created_by_id=?
+                          AND ${dateCondition}
+                        GROUP BY DATE(created_at)
+                        ORDER BY DATE(created_at)
+                        `,
+
+                        [employeeId],
+
+                        (err, trendResult) => {
+
+                          if (err)
+                            return res.status(500).json(err);
+
+                          report.trendChart = trendResult;
+
+                          res.json(report);
+
+                        }
+
+                      );
+
+                    }
+
+                  );
 
                 }
 
