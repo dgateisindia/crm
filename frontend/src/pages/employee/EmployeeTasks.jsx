@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/employeetasks.css";
 import "../../styles/employeetaskfollowup.css";
+import useActionMenu from "../../hooks/useActionMenu";
 import {
   //CalendarClock,
   //Clock,
@@ -46,9 +47,14 @@ export default function EmployeeTasks() {
       setRemarks] =
       useState("");
 
-      const [openMenu,
-      setOpenMenu] =
-      useState(null);
+      
+
+      const {
+      openMenu,
+      toggleMenu,
+      menuRef,
+      setOpenMenu
+  } = useActionMenu();
       
 
       const navigate = useNavigate();
@@ -58,9 +64,9 @@ export default function EmployeeTasks() {
           setLeadFollowupData
         ] = useState({
 
-          followup_mode: "call",
+          followup_mode: "",
 
-          lead_status: "new",
+          lead_status: "",
 
           remarks: ""
 
@@ -103,17 +109,19 @@ export default function EmployeeTasks() {
 
         }
 
-        else if (
-            action === "lead_followup"
-          ) {
+      else if (action === "lead_followup") {
 
-            setSelectedTask(task);
+    setSelectedTask(task);
 
-            setShowLeadFollowupModal(
-              true
-            );
+    setLeadFollowupData({
+        followup_mode:  "",
+        lead_status: "",
+        remarks: ""
+    });
 
-          }
+    setShowLeadFollowupModal(true);
+
+}
               }
 
       catch (error) {
@@ -511,15 +519,9 @@ async () => {
                      <div className="action-menu-container">
 
                       <button
-                        className="action-menu-btn"
-                        onClick={() =>
-                          setOpenMenu(
-                            openMenu === task.id
-                              ? null
-                              : task.id
-                          )
-                        }
-                      >
+                            className="action-menu-btn"
+                            onClick={() => toggleMenu(task.id)}
+                        >
 
                         <MoreVertical
                           size={18}
@@ -532,11 +534,16 @@ async () => {
                         openMenu ===
                         task.id && (
 
-                          <div className="action-dropdown">
-                            <div
-                              onClick={() =>
-                                handleTaskAction(task, "view")
-                              }
+                                <div
+                                    ref={menuRef}
+                                    className="action-dropdown"
+                                >                            
+                                <div
+                              onClick={() =>{
+                                handleTaskAction(task, "view");
+                                setOpenMenu(null);
+
+                              }}
                               className="action-item"
                             >
                               <Eye size={16} />
@@ -544,9 +551,11 @@ async () => {
                             </div>
 
                             <div
-                              onClick={() =>
-                                handleTaskAction(task, "edit")
-                              }
+                                            onClick={() =>{
+                                handleTaskAction(task, "edit");
+                                setOpenMenu(null);
+
+                              }}
                               className="action-item"
                             >
                               <SquarePen size={16} />
@@ -554,9 +563,11 @@ async () => {
                             </div>
 
                             <div
-                              onClick={() =>
-                                handleTaskAction(task, "followup")
-                              }
+                                            onClick={() =>{
+                                handleTaskAction(task, "followup");
+                                setOpenMenu(null);
+
+                              }}
                               className="action-item"
                             >
                               <CalendarPlus size={16} />
@@ -564,9 +575,11 @@ async () => {
                             </div>
 
                             <div
-                              onClick={() =>
-                                handleTaskAction(task, "lead_followup")
-                              }
+                                            onClick={() =>{
+                                handleTaskAction(task, "lead_followup");
+                                setOpenMenu(null);
+
+                              }}
                               className="action-item"
                             >
                               <MessageSquarePlus size={16} />
@@ -811,6 +824,10 @@ showFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Followup Mode
+          </option>
+
 
           <option value="call">
             Call
@@ -862,6 +879,9 @@ showFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Lead Status
+          </option>
 
           <option value="new">
             New

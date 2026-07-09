@@ -14,7 +14,7 @@ import {useNavigate} from "react-router-dom";
 
 import { Search, Plus, Eye, Pencil, CalendarClock,PhoneCall, MoreVertical, Briefcase, UserPlus, BadgeCheck, UserX } from "lucide-react";
 import StatCard from "../../components/dashboard/StatCard";
-
+import useActionMenu from "../../hooks/useActionMenu";
 
 
 export default function Leads() {
@@ -44,10 +44,10 @@ export default function Leads() {
     useState({
 
       followup_mode:
-      "call",
+      "",
 
       lead_status:
-      "new",
+      "",
 
       remarks:
       ""
@@ -56,6 +56,18 @@ export default function Leads() {
 
   const navigate =
   useNavigate();
+
+  const {
+
+  openMenu,
+
+  toggleMenu,
+
+  menuRef,
+
+  setOpenMenu
+
+} = useActionMenu();
 
 
   // ==========================
@@ -167,12 +179,19 @@ useEffect(() => {
   };
   */}
 
-  const openFollowupModal =
-  (lead) => { 
-    setSelectedLead(lead);
-    setShowFollowupModal(true);
-  };
+  const openFollowupModal = (lead) => {
 
+  setSelectedLead(lead);
+
+  setFollowupData({
+    followup_mode: "",
+    lead_status: "",
+    remarks: ""
+  });
+
+  setShowFollowupModal(true);
+
+};
   const handleFollowupSubmit =
   async()=>{
     try{
@@ -541,113 +560,70 @@ allLeads.filter((lead) => {
 
                     <td className="p-4 relative">
 
-                        <details
-                          className="dropdownMenu"
-                        >
+                      <button
+                          className="actionBtn"
+                          onClick={() => toggleMenu(lead.id)}
+                      >
+                          <MoreVertical size={20}/>
+                      </button>
 
-                          <summary
-                            className="actionBtn"
-                          >
+                      {
+                          openMenu === lead.id && (
 
-                            <MoreVertical
-                              size={20}
-                            />
+                              <div
+                                  ref={menuRef}
+                                  className="actionMenu"
+                              >
 
-                          </summary>
+                                  <button
+                                      className="menuItem"
+                                      onClick={() => {
 
-                          <div
-                            className="actionMenu"
-                          >
+                                          navigate(`/employee/lead/${lead.id}`);
 
-                            {/* View */}  
-                            <button
+                                          setOpenMenu(null);
 
-                                onClick={() =>
-                                navigate(
+                                      }}
+                                  >
+                                      <Eye size={16}/>
+                                      View Lead
+                                  </button>
 
-                                `/employee/lead/${lead.id}`
+                                  <button
+                                      className="menuItem"
+                                      onClick={() => {
 
-                                )
-                                }
+                                          navigate(`/employee/edit-lead/${lead.id}`);
 
-                                className="menuItem"
+                                          setOpenMenu(null);
 
-                                >
+                                      }}
+                                  >
+                                      <Pencil size={16}/>
+                                      Edit Lead
+                                  </button>
 
-                                <Eye size={16} />
+                                  <button
+                                      className="menuItem"
+                                      onClick={() => {
 
-                                View Lead
+                                          openFollowupModal(lead);
 
-                            </button>
+                                          setOpenMenu(null);
 
-                            {/* Edit */}
-                            <button
+                                      }}
+                                  >
+                                      <PhoneCall size={16}/>
+                                      Add Lead Followup
+                                  </button>
 
-                            onClick={() =>
-                              navigate(
-                                `/employee/edit-lead/${lead.id}`
-                              )
-                            }
-                              className="menuItem"
-                            >
+                              </div>
 
-                              <Pencil
-                                size={16}
-                              />
+                          )
 
-                              Edit Lead
+                      }
 
-                            </button>
-
-
-                            {/* Followup */}
-                            <button
-                              className="menuItem"
-
-                              onClick={() =>
-                                openFollowupModal(
-                                  lead
-                                )
-                              }
-                            >
-
-                              <PhoneCall
-                                size={16}
-                              />
-
-                              Add  Lead Followup
-
-                            </button>
-
-                            
-
-
-                            {/* Delete 
-                            <button
-
-                              onClick={() =>
-                                handleDelete(
-                                  lead.id
-                                )
-                              }
-
-                              className="menuItem deleteBtn"
-
-                            >
-
-                              <Trash2
-                                size={16}
-                              />
-
-                              Delete Lead
-
-                            </button>*/}
-
-                          </div>
-
-                        </details>
-
-                      </td>
+                  </td>
 
                   </tr>
 
@@ -760,6 +736,9 @@ setShowFollowupModal(false)
           }
 
         >
+           <option value="">
+            Select Followup Mode
+          </option>
 
           <option value="call">
             Call
@@ -808,6 +787,9 @@ setShowFollowupModal(false)
             }
 
           >
+            <option value="">
+              Select Lead Status
+            </option>
 
             <option value="new">
               New
@@ -825,7 +807,7 @@ setShowFollowupModal(false)
               Offered
             </option>
 
-            <option value="meeting_scheduled">
+            <option value="meeting scheduled">
               Meeting Scheduled
             </option>
 

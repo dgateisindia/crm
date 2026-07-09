@@ -25,10 +25,10 @@ export const STATUS_THEME = {
   },
 
   "meeting scheduled": {
-    color: "#DB2777",
-    bg: "#FCE7F3",
-    icon: "#DB2777",
-  },
+  color: "#EA580C",
+  bg: "#FFEDD5",
+  icon: "#EA580C",
+},
 
   converted: {
     color: "#059669",

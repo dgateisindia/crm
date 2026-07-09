@@ -5,7 +5,7 @@ import {
   useEffect,
 } from "react";
 import "../../styles/status.css";
-
+import useActionMenu from "../../hooks/useActionMenu";
 import ManagerLayout from "../../layouts/ManagerLayout";
 
 import "../../styles/totallead.css";
@@ -44,12 +44,18 @@ export default function Leads() {
 
   const [showFollowupModal,
     setShowFollowupModal] =
-    useState(false);  
+    useState(false); 
+    
+  const {
+  openMenu,
+  toggleMenu,
+  menuRef,
+  setOpenMenu
+} = useActionMenu();
 
   const [selectedLead,
     setSelectedLead] =
     useState(null);
-    const [openMenu, setOpenMenu] = useState(null);
 
   const [
 
@@ -61,10 +67,10 @@ setFollowupData
 useState({
 
   followup_mode:
-  "call",
+  "",
 
   lead_status:
-  "new",
+  "",
 
   remarks:
   ""
@@ -192,10 +198,10 @@ useEffect(() => {
       setFollowupData({
 
           followup_mode:
-          "call",
+          "",
 
           lead_status:
-          "new",
+          "",
 
           remarks:
           ""
@@ -210,9 +216,9 @@ useEffect(() => {
       setFollowupData({
 
           followup_mode:
-          "call",
+          "",
           lead_status:
-          "new",
+          "",
           remarks: ""
       });
     }
@@ -449,7 +455,7 @@ useEffect(() => {
 
               </option>
 
-              <option value="meeting_scheduled">
+              <option value="meeting scheduled">
 
                 Meeting Scheduled
 
@@ -629,131 +635,81 @@ useEffect(() => {
 
                 </td>
 
-
                 <td
-                      className="p-4"
-                      style={{
-                          position: "relative",
-                          overflow: "visible"
-                      }}
-                  >
+                  className="p-4"
+                  style={{
+                    position: "relative",
+                    overflow: "visible",
+                  }}
+                >
 
                   <div className="dropdownMenu">
 
                     <button
-                        className="actionBtn"
-                        onClick={() =>
-                            setOpenMenu(
-                                openMenu === lead.id
-                                    ? null
-                                    : lead.id
-                            )
-                        }
+                      className="actionBtn"
+                      onClick={() => toggleMenu(lead.id)}
                     >
-
-                        <MoreVertical size={20} />
-
+                      <MoreVertical size={20} />
                     </button>
 
-                    {
+                    {openMenu === lead.id && (
 
-                    openMenu === lead.id && (
-
-                        <div className="actionMenu">
-
-                      <button
-
-                        onClick={() =>
-                        navigate(
-
-                        `/manager/lead/${lead.id}`
-
-                        )
-                        }
-
-                        className="menuItem"
-
+                      <div
+                        ref={menuRef}
+                        className="action-dropdown"
                       >
 
-                        <Eye size={16} />
+                        <div
+                          className="action-item"
+                          onClick={() => {
+                            navigate(`/manager/lead/${lead.id}`);
+                            setOpenMenu(null);
+                          }}
+                        >
+                          <Eye size={16} />
+                          View Lead
+                        </div>
 
-                        View Lead
+                        <div
+                          className="action-item"
+                          onClick={() => {
+                            navigate(`/manager/edit-lead/${lead.id}`);
+                            setOpenMenu(null);
+                          }}
+                        >
+                          <Pencil size={16} />
+                          Edit Lead
+                        </div>
 
-                      </button>
+                        <div
+                          className="action-item"
+                          onClick={() => {
+                            openFollowupModal(lead);
+                            setOpenMenu(null);
+                          }}
+                        >
+                          <PhoneCall size={16} />
+                          Add Followup
+                        </div>
 
+                        <div
+                          className="action-item deleteBtn"
+                          onClick={() => {
+                            handleDelete(lead.id);
+                            setOpenMenu(null);
+                          }}
+                        >
+                          <Trash2 size={16} />
+                          Delete Lead
+                        </div>
 
-                      <button
+                      </div>
 
-                        onClick={() =>
-                          navigate(
-                            `/manager/edit-lead/${lead.id}`
-                          )
-                        }
-
-                        className="menuItem"
-
-                      >
-
-                        <Pencil
-                          size={16}
-                        />
-
-                        Edit Lead
-
-                      </button>
-
-
-                      <button
-
-                        className="menuItem"
-
-                        onClick={() =>
-                          openFollowupModal(
-                            lead
-                          )
-                        }
-
-                      >
-
-                        <PhoneCall
-                          size={16}
-                        />
-
-                        Add Followup
-
-                      </button>
-
-
-                      <button
-
-                        onClick={() =>
-                          handleDelete(
-                            lead.id
-                          )
-                        }
-
-                        className="menuItem deleteBtn"
-
-                      >
-
-                        <Trash2
-                          size={16}
-                        />
-
-                        Delete Lead
-
-                      </button>
-
-                    </div>
-
-                      )
-
-                      }
+                    )}
 
                   </div>
 
                 </td>
-
               </tr>
 
               ))
@@ -867,6 +823,9 @@ e.target.value
           }
 
         >
+          <option value="">
+            Select Followup Mode
+          </option>
 
           <option value="call">
             Call
@@ -917,6 +876,9 @@ e.target.value
     }
 
   >
+    <option value="">
+      Select Lead Status
+    </option>
 
     <option value="new">
 
@@ -944,7 +906,7 @@ e.target.value
 
     </option>
 
-    <option value="meeting_scheduled">
+    <option value="meeting scheduled">
 
       Meeting Scheduled
 

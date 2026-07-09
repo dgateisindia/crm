@@ -1,5 +1,5 @@
 import api from "../../utils/api";
-
+import useActionMenu from "../../hooks/useActionMenu";
 import {
   useEffect,
   useState
@@ -17,7 +17,7 @@ import {
   //UserX
 } from "lucide-react";
 import "../../styles/status.css";
-
+import { useRef } from "react";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import React from "react";
 import "../../styles/leads.css";
@@ -28,6 +28,16 @@ export default function FollowUps() {
     followups,
     setFollowups
   ] = useState([]);
+
+  const {
+  openMenu,
+  toggleMenu,
+  menuRef,
+  setOpenMenu
+} = useActionMenu();
+const historyRef = useRef(null);
+
+  
 
   const [expandedLead, setExpandedLead] = useState(null);
   const [history, setHistory] = useState({});
@@ -44,20 +54,32 @@ const [
 ] = useState(false);
 
 const [followupData, setFollowupData] = useState({
-  followup_mode: "call",
-  lead_status: "new",
+  followup_mode: "",
+  lead_status: "",
   remarks: ""
 });
 
-const openFollowupModal =
-(item) => {
+const openFollowupModal = (lead) => {
 
-  setSelectedLead(item);
+  setSelectedLead(lead);
+
+  setFollowupData({
+    followup_mode: "",
+    lead_status: "",
+    remarks: ""
+  });
 
   setShowFollowupModal(true);
 
 };
 const handleFollowupSubmit = async () => {
+  if (!followupData.followup_mode || !followupData.lead_status) {
+
+  alert("Please select Followup Mode and Lead Status.");
+
+  return;
+
+}
 
   try {
 
@@ -194,6 +216,34 @@ const handleFollowupSubmit = async () => {
     loadFollowups();
 
   }, []);
+  useEffect(() => {
+
+  const handleClickOutside = (event) => {
+
+    if (
+      historyRef.current &&
+      !historyRef.current.contains(event.target)
+    ) {
+      setExpandedLead(null);
+    }
+
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+  };
+
+}, []);
   const filteredFollowups = followups.filter((item) => {
 
   const searchText = search.toLowerCase();
@@ -394,71 +444,53 @@ const handleFollowupSubmit = async () => {
   </td>
  <td className="table-data">
 
- <details
-  className="dropdownMenu"
-  ref={(el) => {
-    if (el && expandedLead !== null) {
-      el.removeAttribute("open");
-    }
-  }}
->
-  <summary
-    className="actionBtn"
+ <div className="action-menu-container">
+
+  <button
+    className="action-menu-btn"
+    onClick={() => toggleMenu(item.lead_id)}
   >
+    <MoreVertical size={18} />
+  </button>
 
-    <MoreVertical
-      size={18}
-    />
+  {openMenu === item.lead_id && (
 
-  </summary>
+    <div
+      ref={menuRef}
+      className="action-dropdown"
+    >
 
-  <div
-    className="actionMenu"
-  >
-<button
-  className="menuItem"
-  onClick={(e) => {
+      <div
+        className="action-item"
+        onClick={() => {
 
-    e.currentTarget
-      .closest("details")
-      ?.removeAttribute("open");
+          toggleHistory(item.lead_id);
+          setOpenMenu(null);
 
-    toggleHistory(
-      item.lead_id
-    );
+        }}
+      >
+        <Eye size={16} />
+        View History
+      </div>
 
-  }}
->
+      <div
+        className="action-item"
+        onClick={() => {
 
-  <Eye size={16} />
+          openFollowupModal(item);
+          setOpenMenu(null);
 
-  View History
+        }}
+      >
+        <PhoneCall size={16} />
+        Add Followup
+      </div>
 
-</button>
-<button
-  className="menuItem"
-  onClick={(e) => {
-    
-    e.currentTarget
-      .closest("details")
-      ?.removeAttribute("open");
+    </div>
 
-    openFollowupModal(item)
-  }}
->
+  )}
 
-  <PhoneCall size={16} />
-
-  Add Followup
-
-</button>
-
-   
-
-    
-  </div>
-
-</details>
+</div>
 
 </td>
 
@@ -471,8 +503,7 @@ expandedLead === item.lead_id && (
 
 <td colSpan="5">
 
-  <div className="history-box">
-
+<div className="history-box" ref={historyRef}>
     <h3>
       Followup History
     </h3>
@@ -633,6 +664,9 @@ showFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Followup Mode
+          </option>
 
           <option value="call">
             Call
@@ -681,7 +715,9 @@ showFollowupModal && (
 
         >
 
-          
+          <option value="">
+            Select Lead Status
+          </option>
 
           <option value="interested">
             Interested
@@ -695,7 +731,7 @@ showFollowupModal && (
             Offered
           </option>
 
-          <option value="meeting_scheduled">
+          <option value="meeting scheduled">
             Meeting Scheduled
           </option>
 

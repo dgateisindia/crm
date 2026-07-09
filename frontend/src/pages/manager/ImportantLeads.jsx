@@ -11,11 +11,11 @@ import "../../styles/leads.css";
 import {
   useNavigate
 } from "react-router-dom";
-
+import useActionMenu from "../../hooks/useActionMenu";
 import {
   //Star,
  // BadgeCheck,
-  PhoneCall,
+  //PhoneCall,
  // UserX,
   Eye,
   Pencil,
@@ -29,6 +29,11 @@ export default function ImportantLeads() {
     leads,
     setLeads
   ] = useState([]);
+  const {
+  openMenu,
+  toggleMenu,
+  menuRef
+} = useActionMenu();
 
   const [
     search,
@@ -315,104 +320,63 @@ export default function ImportantLeads() {
 
 
                 {/* Action Menu */}
-                <td className="p-4 relative">
+                <td
+                  className="p-4 actionCell"
+                  style={{ position: "relative" }}
+                >
 
-                  <details
-                    className="dropdownMenu"
-                  >
+                  <div className="action-menu-container">
 
-                    <summary
-                      className="actionBtn"
+                    <button
+                      className="action-menu-btn"
+                      onClick={() => toggleMenu(lead.id)}
                     >
+                      <MoreVertical size={20} />
+                    </button>
 
-                      <MoreVertical
-                        size={20}
-                      />
+                    {openMenu === lead.id && (
 
-                    </summary>
-
-                    <div
-                      className="actionMenu"
-                    >
-
-                      <button
-
-                        onClick={() =>
-                        navigate(
-
-                        `/manager/lead/${lead.id}`
-
-                        )
-                        }
-
-                        className="menuItem"
-
+                      <div
+                        ref={menuRef}
+                        className="action-dropdown"
                       >
 
-                        <Eye size={16} />
+                        <button
+                          className="action-item"
+                          onClick={() =>
+                            navigate(`/manager/lead/${lead.id}`)
+                          }
+                        >
+                          <Eye size={16} />
+                          View Lead
+                        </button>
 
-                        View Lead
-
-                      </button>
-
-
-                      <button
-
-                        onClick={() =>
-                        navigate(
-
-                        `/manager/edit-lead/${lead.id}`
-
-                        )
-                        }
-
-                        className="menuItem"
-
-                      >
-
-                        <Pencil size={16} />
-
-                        Edit Lead
-
-                      </button>
+                        <button
+                          className="action-item"
+                          onClick={() =>
+                            navigate(`/manager/edit-lead/${lead.id}`)
+                          }
+                        >
+                          <Pencil size={16} />
+                          Edit Lead
+                        </button>
 
 
-                      <button
-                        className="menuItem"
-                      >
+                        <button
+                          className="action-item deleteBtn"
+                          onClick={() =>
+                            handleDelete(lead.id)
+                          }
+                        >
+                          <Trash2 size={16} />
+                          Delete Lead
+                        </button>
 
-                        <PhoneCall
-                          size={16}
-                        />
+                      </div>
 
-                        Add Followup
+                    )}
 
-                      </button>
-
-
-                      <button
-
-                        onClick={() =>
-                        handleDelete(
-                        lead.id
-                        )
-                        }
-
-                        className="menuItem deleteBtn"
-
-                      >
-
-                        <Trash2
-                          size={16}
-                        />
-
-                        Delete Lead
-
-                      </button>
-
-                    </div>
-
-                  </details>
+                  </div>
 
                 </td>
 

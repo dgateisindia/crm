@@ -325,7 +325,6 @@ db.query(
   "offered",
   "meeting scheduled"
 ];
-
 if (followupStatuses.includes(lead_status)) {
 
   db.query(

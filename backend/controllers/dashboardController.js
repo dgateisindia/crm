@@ -233,42 +233,64 @@ const getEmployeeLeadStatusChart = (req, res) => {
   );
 
 };
-const getEmployeeLeadTrend = (req, res) => {
+const getEmployeeLeadTrend = async (req, res) => {
 
   const employeeId = req.params.id;
 
-  db.query(
+  try {
 
-    `
-    SELECT
+    const [result] = await db.promise().query(
 
-      DATE(created_at) AS date,
+      `
+      SELECT
+        DATE(created_at) AS date,
+        COUNT(*) AS total
+      FROM leads
+      WHERE
+        created_by_type='employee'
+        AND created_by_id=?
+        AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at)
+      `,
 
-      COUNT(*) AS total
+      [employeeId]
 
-    FROM leads
+    );
 
-    WHERE created_by_type='employee'
+    const chart = [];
 
-    AND created_by_id=?
+    for (let i = 6; i >= 0; i--) {
 
-    GROUP BY DATE(created_at)
+      const d = new Date();
 
-    ORDER BY DATE(created_at)
-    `,
+      d.setDate(d.getDate() - i);
 
-    [employeeId],
+      const date = d.toISOString().split("T")[0];
 
-    (err, result) => {
+      const found = result.find(
+        r => r.date.toISOString().split("T")[0] === date
+      );
 
-      if (err)
-        return res.status(500).json(err);
+      chart.push({
 
-      res.json(result);
+        date,
+
+        total: found ? found.total : 0
+
+      });
 
     }
 
-  );
+    res.json(chart);
+
+  }
+
+  catch (err) {
+
+    res.status(500).json(err);
+
+  }
 
 };
 const getEmployeeFollowupChart = (req, res) => {
@@ -305,37 +327,50 @@ const getEmployeeFollowupChart = (req, res) => {
   );
 
 };
-const getLeadTrend = (req, res) => {
+const getLeadTrend = async (req, res) => {
 
-  db.query(
+  try {
 
-    `
-    SELECT
+    const [result] = await db.promise().query(`
+      SELECT
+        DATE(created_at) AS date,
+        COUNT(*) AS total
+      FROM leads
+      WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at)
+    `);
 
-      DATE(created_at) AS date,
+    const chart = [];
 
-      COUNT(*) AS total
+    for (let i = 6; i >= 0; i--) {
 
-    FROM leads
+      const d = new Date();
 
-    GROUP BY DATE(created_at)
+      d.setDate(d.getDate() - i);
 
-    ORDER BY DATE(created_at)
-    `,
+      const date = d.toISOString().split("T")[0];
 
-    (err, result) => {
+      const found = result.find(
+        r => r.date.toISOString().split("T")[0] === date
+      );
 
-      if (err)
-        return res.status(500).json(err);
-
-      res.json(result);
+      chart.push({
+        date,
+        total: found ? found.total : 0
+      });
 
     }
 
-  );
+    res.json(chart);
+
+  } catch (err) {
+
+    res.status(500).json(err);
+
+  }
 
 };
-
 // ==========================
 // EMPLOYEE DASHBOARD
 // ==========================

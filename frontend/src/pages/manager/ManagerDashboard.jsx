@@ -151,7 +151,7 @@ export default function ManagerDashboard() {
     value={stats.closed}
     color="orange"
     icon={<Users size={18} />}
-    onClick={() => navigate("/manager/leads")}
+    //onClick={() => navigate("/manager/leads")}
   />
 
   <StatCard
@@ -163,22 +163,23 @@ export default function ManagerDashboard() {
   />
 
 </div>
-      <div className="dashboard-charts">
+     <div className="manager-dashboard-charts">
 
-          <LeadStatusChart
-            data={leadStatus}
-          />
+            <LeadStatusChart
+                data={leadStatus}
+            />
 
-          <EmployeePerformanceChart
-              data={employeePerformance}
-          />
-          
+            <LeadTrendChart
+                data={leadTrend}
+            />
 
-              <LeadTrendChart
-              data={leadTrend}
-              />
+        </div>
 
-              
+        <div className="employee-chart-full">
+
+            <EmployeePerformanceChart
+                data={employeePerformance}
+            />
 
         </div>
       {/* Recent Leads */}
@@ -277,15 +278,6 @@ export default function ManagerDashboard() {
                       
                     </td>
 
-                    <td>
-                      {
-                        lead.lead_mode
-                        ?.replace(
-                          "_",
-                          " "
-                        ) || "N/A"
-                      }
-                    </td>
 
                   </tr>
 

@@ -17,7 +17,8 @@ import {
   useState,
   useEffect
 } from "react";
-
+import { MoreVertical } from "lucide-react";
+import useActionMenu from "../../hooks/useActionMenu";
 import ManagerLayout
 from "../../layouts/ManagerLayout";
 
@@ -30,20 +31,15 @@ export default function Employees() {
     setEmployees
   ] = useState([]);
 
-  const [openMenu,
-    setOpenMenu] =
-    useState(null);
+  const {
+  openMenu,
+  toggleMenu,
+  menuRef,
+  setOpenMenu
+} = useActionMenu();
 
-    const toggleMenu =
-    (id) => {
-
-      setOpenMenu(
-        openMenu === id
-          ? null
-          : id
-      );
-
-    };
+  
+    
 
   const navigate = useNavigate();
 
@@ -484,60 +480,72 @@ export default function Employees() {
 
                       </td>
 
-                        <td className="actionCell">
+                        <td
+                          className="actionCell"
+                          style={{
+                            position: "relative",
+                            overflow: "visible",
+                            
+                          }}
+                        >
 
-                          <button
-                            className="actionMenuBtn"
-                            onClick={() =>
-                              toggleMenu(
-                                employee.employee_id
-                              )
-                            }
-                          >
-                            ⋮
-                          </button>
+                          <div className="action-menu-container">
 
-                          {
-                            openMenu === employee.employee_id && (
+                            <button
+                                className="action-menu-btn"
+                                onClick={() => toggleMenu(employee.employee_id)}
+                              >
+                                <MoreVertical size={20} />
+                              </button>
 
-                              <div className="actionDropdown">
+                            {openMenu === employee.employee_id && (
 
-                                <button
-                                  onClick={() =>
+                              <div
+                                ref={menuRef}
+                                className="action-dropdown"
+                              >
+
+                                <div
+                                  className="action-item"
+                                  onClick={() => {
                                     navigate(
                                       `/manager/employees/${employee.employee_id}`
-                                    )
-                                  }
+                                    );
+                                    setOpenMenu(null);
+                                  }}
                                 >
                                   View Details
-                                </button>
+                                </div>
 
-                                <button
-                                  onClick={() =>
-                                    handleDelete(
-                                      employee.employee_id
-                                    )
-                                  }
+                                <div
+                                  className="action-item"
+                                  onClick={() => {
+                                    navigate(
+                                      `/manager/edit-employee/${employee.employee_id}`
+                                    );
+                                    setOpenMenu(null);
+                                  }}
+                                >
+                                  Edit
+                                </div>
+
+                                <div
+                                  className="action-item deleteBtn"
+                                  onClick={() => {
+                                    handleDelete(employee.employee_id);
+                                    setOpenMenu(null);
+                                  }}
                                 >
                                   Delete
-                                </button>
-                                <button
-                                    onClick={() =>
-                                      navigate(
-                                        `/manager/edit-employee/${employee.employee_id}`
-                                      )
-                                    }
-                                  >
-                                    Edit
-                                  </button>
+                                </div>
 
                               </div>
 
-                            )
-                          }
+                            )}
+
+                          </div>
 
                         </td>
-
                       </tr>
 
                     ))

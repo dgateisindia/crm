@@ -12,13 +12,14 @@ import {
   PhoneCall
  
 } from "lucide-react";
+import useActionMenu from "../../hooks/useActionMenu";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import React from "react";
 import "../../styles/leads.css";
 import "../../styles/totallead.css";
 import "../../styles/status.css";
-
+import { useRef } from "react";
 export default function FollowUps() {
 
   const [
@@ -26,12 +27,20 @@ export default function FollowUps() {
     setFollowups
   ] = useState([]);
 
+  const historyRef = useRef(null);
+
   const [expandedLead, setExpandedLead] = useState(null);
   const [history, setHistory] = useState({});
   const [
   selectedLead,
   setSelectedLead
 ] = useState(null);
+const {
+  openMenu,
+  toggleMenu,
+  menuRef,
+  setOpenMenu
+} = useActionMenu();
 
 const [
   showFollowupModal,
@@ -39,8 +48,8 @@ const [
 ] = useState(false);
 
 const [followupData, setFollowupData] = useState({
-  followup_mode: "call",
-  lead_status: "new",
+  followup_mode: "",
+  lead_status: "",
   remarks: ""
 });
 
@@ -183,6 +192,34 @@ const handleFollowupSubmit = async () => {
     loadFollowups();
 
   }, []);
+  useEffect(() => {
+
+  const handleClickOutside = (event) => {
+
+    if (
+      historyRef.current &&
+      !historyRef.current.contains(event.target)
+    ) {
+      setExpandedLead(null);
+    }
+
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+  };
+
+}, []);
 
 
   return (
@@ -351,72 +388,63 @@ const handleFollowupSubmit = async () => {
     </span>
 
   </td>
- <td className="table-data">
-
- <details
-  className="dropdownMenu"
-  ref={(el) => {
-    if (el && expandedLead !== null) {
-      el.removeAttribute("open");
-    }
-  }}
->
-  <summary
-    className="actionBtn"
-  >
-
-    <MoreVertical
-      size={18}
-    />
-
-  </summary>
-
-  <div
-    className="actionMenu"
-  >
-<button
-  className="menuItem"
-  onClick={(e) => {
-
-    e.currentTarget
-      .closest("details")
-      ?.removeAttribute("open");
-
-    toggleHistory(
-      item.lead_id
-    );
-
+ <td
+  className="table-data"
+  style={{
+    position: "relative",
+    overflow: "visible",
   }}
 >
 
-  <Eye size={16} />
+  <div className="action-menu-container">
 
-  View History
+    <button
+      className="action-menu-btn"
+      onClick={() => toggleMenu(item.lead_id)}
+    >
+      <MoreVertical size={18} />
+    </button>
 
-</button>
-<button
-  className="menuItem"
-  onClick={(e) => {
-    
-    e.currentTarget
-      .closest("details")
-      ?.removeAttribute("open");
+    {openMenu === item.lead_id && (
 
-    openFollowupModal(item)
-  }}
->
+      <div
+        ref={menuRef}
+        className="action-dropdown"
+      >
 
-  <PhoneCall size={16} />
+        <div
+          className="action-item"
+          onClick={() => {
 
-  Add Followup
+            toggleHistory(item.lead_id);
 
-</button>
+            setOpenMenu(null);
 
-   
+          }}
+        >
+          <Eye size={16} />
+          View History
+        </div>
+
+        <div
+          className="action-item"
+          onClick={() => {
+
+            openFollowupModal(item);
+
+            setOpenMenu(null);
+
+          }}
+        >
+          <PhoneCall size={16} />
+          Add Followup
+        </div>
+
+      </div>
+
+    )}
 
   </div>
-
-</details>
 
 </td>
 
@@ -429,7 +457,7 @@ expandedLead === item.lead_id && (
 
 <td colSpan="6">
 
-  <div className="history-box">
+  <div className="history-box" ref={historyRef}>
 
     <h3>
       Followup History
@@ -591,6 +619,9 @@ showFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Followup Mode
+          </option>
 
           <option value="call">
             Call
@@ -639,7 +670,9 @@ showFollowupModal && (
 
         >
 
-          
+          <option value="">
+            Select Lead Status
+          </option>
 
           <option value="interested">
             Interested
@@ -653,7 +686,7 @@ showFollowupModal && (
             Offered
           </option>
 
-          <option value="meeting_scheduled">
+          <option value="meeting scheduled">
             Meeting Scheduled
           </option>
 

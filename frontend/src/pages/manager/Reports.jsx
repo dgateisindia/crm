@@ -373,18 +373,22 @@ const today = new Date().toISOString().split("T")[0];
           <div className="report-charts">
 
               <LeadStatusChart
-                data={report.statusChart}
-              />
-
-              <EmployeePerformanceChart
-                data={report.employeePerformance}
+                  data={report.statusChart}
               />
 
               <LeadTrendChart
-                data={report.trendChart}
+                  data={report.trendChart}
               />
 
-            </div>
+          </div>
+
+          <div className="report-performance">
+
+              <EmployeePerformanceChart
+                  data={report.employeePerformance}
+              />
+
+          </div>
              {/*<div className="reportSection">
 
                <h3>Company Performance Summary</h3>

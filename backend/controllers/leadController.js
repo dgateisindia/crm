@@ -24,6 +24,7 @@ async (req, res) => {
       city,
       category,
       source,
+      important_lead,
       lead_mode,
       lead_status,
       created_by_id,
@@ -84,13 +85,14 @@ async (req, res) => {
         city,
         category,
         source,
+        important_lead,
         lead_mode,
         lead_status,
         created_by_id,
         created_by_type,
         created_by_name
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? , ?)`,
 
       [
 
@@ -104,6 +106,7 @@ async (req, res) => {
         city,
         category,
         source,
+        important_lead ? 1 : 0,
         lead_mode,
         lead_status,
         created_by_id,

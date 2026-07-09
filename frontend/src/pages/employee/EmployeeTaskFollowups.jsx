@@ -101,9 +101,9 @@ const [
 
 ] = useState({
 
-  followup_mode: "call",
+  followup_mode: "",
 
-  lead_status: "new",
+  lead_status: "",
 
   remarks: ""
 
@@ -1074,6 +1074,9 @@ showTaskFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Followup Mode
+          </option>
 
           <option value="call">
             Call
@@ -1125,6 +1128,9 @@ showTaskFollowupModal && (
           }
 
         >
+          <option value="">
+            Select Lead Status
+          </option>
 
           <option value="new">
             New
@@ -1142,7 +1148,7 @@ showTaskFollowupModal && (
             Offered
           </option>
 
-          <option value="meeting_scheduled">
+          <option value="meeting scheduled">
             Meeting Scheduled
           </option>
 

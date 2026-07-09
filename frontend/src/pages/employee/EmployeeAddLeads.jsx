@@ -603,12 +603,73 @@ searchParams.get("from");
                       Category
                     </label>
 
-                    <input
-                      type="text"
+                    <select
                       name="category"
                       value={leadData.category}
                       onChange={handleChange}
-                    />
+                    >
+
+                      <option value="">
+                        Select Category
+                      </option>
+
+                      <option value="Real Estate">
+                        Real Estate
+                      </option>
+
+                      <option value="Colleges">
+                        Colleges
+                      </option>
+
+                      <option value="Nursing College">
+                        Nursing College
+                      </option>
+
+                      <option value="IT Company">
+                        IT Company
+                      </option>
+
+                      <option value="Gym">
+                        Gym
+                      </option>
+
+                      <option value="Manufacturing">
+                        Manufacturing
+                      </option>
+
+                      <option value="Government Sector / NGO">
+                        Government Sector / NGO
+                      </option>
+
+                      <option value="Media & Advertising">
+                        Media & Advertising
+                      </option>
+
+                      <option value="Healthcare / Hospital">
+                        Healthcare / Hospital
+                      </option>
+
+                      <option value="HiYath">
+                        HiYath
+                      </option>
+
+                      <option value="Logistics & Transport">
+                        Logistics & Transport
+                      </option>
+
+                      <option value="Banks">
+                        Banks
+                      </option>
+
+                      <option value="E-Commerce">
+                        E-Commerce
+                      </option>
+
+                      <option value="Professional Services">
+                        Professional Services
+                      </option>
+
+                    </select>
 
                   </div>
 
@@ -739,7 +800,7 @@ searchParams.get("from");
                         Offered
                       </option>
 
-                      <option value="meeting_scheduled">
+                      <option value="meeting scheduled">
                         Meeting Scheduled
                       </option>
 

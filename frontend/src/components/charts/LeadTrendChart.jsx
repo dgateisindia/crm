@@ -1,5 +1,4 @@
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
@@ -7,8 +6,10 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+
 import { TrendingUp } from "lucide-react";
-export default function LeadTrendChart({ data }) {
+
+export default function LeadTrendChart({ data = [] }) {
 
   const formattedData = data.map((item) => ({
     ...item,
@@ -17,6 +18,12 @@ export default function LeadTrendChart({ data }) {
       month: "short",
     }),
   }));
+
+  // Fixed width for every data point
+  const chartWidth = Math.max(
+    formattedData.length * 80,
+    100
+  );
 
   return (
     <div
@@ -32,7 +39,7 @@ export default function LeadTrendChart({ data }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "10px",
+          gap: "8px",
           marginBottom: "20px",
         }}
       >
@@ -43,42 +50,55 @@ export default function LeadTrendChart({ data }) {
 
         <h3
           style={{
+            margin: 0,
             fontWeight: 600,
             fontSize: "18px",
             color: "#071739",
-            margin: 0,
           }}
         >
           Daily Lead Trend
         </h3>
       </div>
 
-      <ResponsiveContainer
-        width="100%"
-        height="80%"
+      {/* Horizontal Scroll */}
+      <div
+        style={{
+          width: "100%",
+          overflowX: "auto",
+          overflowY: "hidden",
+        }}
       >
-        <LineChart data={formattedData}>
-
+        <LineChart
+          width={chartWidth}
+          height={280}
+          data={formattedData}
+          margin={{
+            top: 10,
+            right: 20,
+            left: 10,
+            bottom: 10,
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis
             dataKey="displayDate"
+            interval={0}
           />
 
           <YAxis allowDecimals={false} />
 
           <Tooltip
             labelFormatter={(label, payload) => {
-              if (payload && payload.length) {
-                return new Date(payload[0].payload.date).toLocaleDateString(
-                  "en-IN",
-                  {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  }
-                );
+              if (payload?.length) {
+                return new Date(
+                  payload[0].payload.date
+                ).toLocaleDateString("en-IN", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
               }
               return label;
             }}
@@ -92,9 +112,8 @@ export default function LeadTrendChart({ data }) {
             dot={{ r: 5 }}
             activeDot={{ r: 7 }}
           />
-
         </LineChart>
-      </ResponsiveContainer>
+      </div>
     </div>
   );
 }

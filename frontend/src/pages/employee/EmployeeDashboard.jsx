@@ -151,6 +151,7 @@ const [welcomeData, setWelcomeData] = useState(null);
     color="blue"
 
     icon={<Briefcase size={40}/>}
+    onClick={() => navigate("/employee/my-leads")}
 
 />
 
@@ -162,7 +163,7 @@ const [welcomeData, setWelcomeData] = useState(null);
               subtitle="New Leads"
               color="green"
               icon={<UserPlus size={22}/>}
-              onClick={() => navigate("/employee/new-leads")}
+              onClick={() => navigate("/employee/tasks")}
           />
 
           <StatCard
@@ -189,7 +190,7 @@ const [welcomeData, setWelcomeData] = useState(null);
               subtitle="Closed Leads"
               color="purple"
               icon={<Briefcase size={22}/>}
-              onClick={() => navigate("/employee/closed-leads")}
+              //onClick={() => navigate("/employee/closed-leads")}
           />
 
           <StatCard
@@ -315,14 +316,14 @@ const [welcomeData, setWelcomeData] = useState(null);
 
                               style={{
 
-                              background:
+                             background:
                               STATUS_THEME[
-                              lead.lead_status.replace(/\s+/g,"_")
+                              lead.lead_status?.toLowerCase()
                               ]?.bg,
 
                               color:
                               STATUS_THEME[
-                              lead.lead_status.replace(/\s+/g,"_")
+                              lead.lead_status?.toLowerCase()
                               ]?.color,
 
                               }}
