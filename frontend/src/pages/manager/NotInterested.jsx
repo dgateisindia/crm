@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {
+  normalizeStatus,
+  formatStatus,
+} from "../../utils/statusUtils";
 export default function NotInterestedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
@@ -153,10 +157,23 @@ export default function NotInterestedLeads() {
 
                     <td className="table-data">
                       <span
-                        className={`status-badge ${lead.lead_status}`}
-                      >
-                        {lead.lead_status}
-                      </span>
+                                          className="status-badge"
+                                          style={{
+                                            background:
+                                              STATUS_THEME[
+                                                normalizeStatus(lead.lead_status)
+                                              ]?.bg || "#E5E7EB",
+                      
+                                            color:
+                                              STATUS_THEME[
+                                                normalizeStatus(lead.lead_status)
+                                              ]?.color || "#374151",
+                                          }}
+                                        >
+                      
+                                          {formatStatus(lead.lead_status)}
+                      
+                                        </span>
                     </td>
 
                   </tr>

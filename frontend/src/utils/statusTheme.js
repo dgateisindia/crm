@@ -1,51 +1,43 @@
 export const STATUS_THEME = {
 
   new: {
-    color: "#2563EB",
+    color: "#2563EB",      // Blue
     bg: "#DBEAFE",
-    icon: "#2563EB",
   },
 
   interested: {
-    color: "#D97706",
+    color: "#D97706",      // Orange
     bg: "#FEF3C7",
-    icon: "#D97706",
   },
 
   proposed: {
-    color: "#16A34A",
-    bg: "#DCFCE7",
-    icon: "#16A34A",
+    color: "#7C3AED",      // Purple
+    bg: "#EDE9FE",
   },
 
   offered: {
-    color: "#4F46E5",
+    color: "#4F46E5",      // Indigo
     bg: "#EEF2FF",
-    icon: "#4F46E5",
   },
 
-  "meeting scheduled": {
-  color: "#EA580C",
-  bg: "#FFEDD5",
-  icon: "#EA580C",
-},
+  meeting_scheduled: {
+    color: "#DB2777",      // Pink
+    bg: "#FCE7F3",
+  },
 
   converted: {
-    color: "#059669",
-    bg: "#D1FAE5",
-    icon: "#059669",
+    color: "#16A34A",      // Green
+    bg: "#DCFCE7",
   },
 
   closed: {
-    color: "#4B5563",
+    color: "#4B5563",      // Gray
     bg: "#F3F4F6",
-    icon: "#4B5563",
   },
 
   not_interested: {
-    color: "#DC2626",
+    color: "#DC2626",      // Red
     bg: "#FEE2E2",
-    icon: "#DC2626",
-  }
+  },
 
 };

@@ -7,7 +7,8 @@ import {
 import "../../styles/status.css";
 import useActionMenu from "../../hooks/useActionMenu";
 import ManagerLayout from "../../layouts/ManagerLayout";
-
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
+import { STATUS_THEME } from "../../utils/statusTheme";
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 import StatCard from "../../components/dashboard/StatCard";
@@ -281,9 +282,9 @@ useEffect(() => {
 
     ||
 
-    lead.lead_status
-    ?.toLowerCase()
-    .includes(searchText)
+    formatStatus(lead.lead_status)
+  .toLowerCase()
+  .includes(searchText)
 
     ||
 
@@ -295,6 +296,18 @@ useEffect(() => {
 
     lead.full_name
     ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.category
+    ?.toLowerCase()
+    .includes(searchText)
+
+    ||
+
+    lead.created_by_name
+    ?.toLowerCase()
     .includes(searchText);
 
 
@@ -304,7 +317,7 @@ useEffect(() => {
 
     ||
 
-    lead.lead_status === statusFilter;
+    normalizeStatus(lead.lead_status) === normalizeStatus(statusFilter);
 
     return (
     matchesSearch &&
@@ -445,7 +458,7 @@ useEffect(() => {
 
               <option value="proposed">
 
-                proposed
+                Proposed
 
               </option>
 
@@ -455,7 +468,7 @@ useEffect(() => {
 
               </option>
 
-              <option value="meeting scheduled">
+              <option value="meeting_scheduled">
 
                 Meeting Scheduled
 
@@ -621,8 +634,21 @@ useEffect(() => {
 
 
                 <td className="table-data">
-                  <span className={`status-badge ${lead.lead_status}`}>
-                    {lead.lead_status.replaceAll("_", " ")}
+                  <span
+                    className="status-badge"
+                    style={{
+                      background:
+                        STATUS_THEME[
+                          normalizeStatus(lead.lead_status)
+                        ]?.bg,
+
+                      color:
+                        STATUS_THEME[
+                          normalizeStatus(lead.lead_status)
+                        ]?.color,
+                    }}
+                  >
+                    {formatStatus(lead.lead_status)}
                   </span>
                 </td>
 
@@ -906,7 +932,7 @@ e.target.value
 
     </option>
 
-    <option value="meeting scheduled">
+    <option value="meeting_scheduled">
 
       Meeting Scheduled
 

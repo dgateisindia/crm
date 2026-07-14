@@ -17,7 +17,7 @@ import NotesCard from "../../components/dashboard/NotesCard";
 import LeadTrendChart
 from "../../components/charts/LeadTrendChart";
 import { STATUS_THEME } from "../../utils/statusTheme";
-
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
 import StatCard from "../../components/dashboard/StatCard";
 import {
 
@@ -318,19 +318,19 @@ const [welcomeData, setWelcomeData] = useState(null);
 
                              background:
                               STATUS_THEME[
-                              lead.lead_status?.toLowerCase()
+                              normalizeStatus(lead.lead_status)
                               ]?.bg,
 
                               color:
                               STATUS_THEME[
-                              lead.lead_status?.toLowerCase()
+                              normalizeStatus(lead.lead_status)
                               ]?.color,
 
                               }}
 
                               >
 
-                              {lead.lead_status}
+                              {formatStatus(lead.lead_status)}
 
                               </span>
 

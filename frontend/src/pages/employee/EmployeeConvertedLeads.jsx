@@ -1,6 +1,9 @@
 import api from "../../utils/api";
 import { useEffect, useState } from "react";
-
+import {
+  normalizeStatus,
+  formatStatus,
+} from "../../utils/statusUtils";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
@@ -175,19 +178,19 @@ export default function ConvertedLeads() {
 
                           background:
                           STATUS_THEME[
-                          lead.lead_status.replace(/\s+/g,"_")
+                          normalizeStatus(lead.lead_status)
                           ]?.bg,
 
                           color:
                           STATUS_THEME[
-                          lead.lead_status.replace(/\s+/g,"_")
+                          normalizeStatus(lead.lead_status)
                           ]?.color,
 
                           }}
 
                           >
 
-                          {lead.lead_status}
+                          {formatStatus(lead.lead_status)}
 
                           </span>
 

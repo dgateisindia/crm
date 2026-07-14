@@ -95,7 +95,7 @@ export default function NotesCard({ employeeId }) {
 
         <h3>
 
-          My Notes
+           Notes
 
         </h3>
 

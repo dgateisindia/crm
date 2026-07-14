@@ -14,7 +14,11 @@ import api from "../../utils/api";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 
-
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {
+  normalizeStatus,
+  formatStatus
+} from "../../utils/statusUtils";
 import {
   ArrowLeft,
   Building2,
@@ -246,13 +250,17 @@ export default function EmployeeLeadDetails() {
           <InfoCard
             icon={<FileText />}
             label="Lead Status"
-            value={lead.lead_status}
+            value={formatStatus(lead.lead_status)}
           />
 
           <InfoCard
             icon={<Phone />}
             label="Lead Mode"
-            value={lead.lead_mode}
+            value={
+              lead.lead_mode
+                ?.replaceAll("_", " ")
+                .replace(/\b\w/g, c => c.toUpperCase())
+            }
           />
 
         </div>
@@ -351,29 +359,29 @@ className="border-b"
 
 <td className="p-4">
 
-{
-item.followup_mode
-}
+  {item.followup_mode
+    ?.replaceAll("_", " ")
+    .replace(/\b\w/g, c => c.toUpperCase())}
 
 </td>
-
 <td className="p-4">
 
-<span
-className={`followupStatus ${item.lead_status}`}
->
+  <span
+    className="status-badge"
+    style={{
+      background:
+        STATUS_THEME[
+          normalizeStatus(item.lead_status)
+        ]?.bg || "#E5E7EB",
 
-{
-
-item.lead_status
-?.replace(
-"_",
-" "
-)
-
-}
-
-</span>
+      color:
+        STATUS_THEME[
+          normalizeStatus(item.lead_status)
+        ]?.color || "#374151",
+    }}
+  >
+    {formatStatus(item.lead_status)}
+  </span>
 
 </td>
 

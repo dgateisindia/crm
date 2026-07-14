@@ -11,6 +11,8 @@ import useActionMenu from "../../hooks/useActionMenu";
 import {
   useNavigate
 } from "react-router-dom";
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
 
 import {
   //Star,
@@ -162,7 +164,7 @@ const fetchAllLeads = async () => {
     lead.phone?.includes(search) ||
     lead.city?.toLowerCase().includes(searchText) ||
     lead.designation?.toLowerCase().includes(searchText) ||
-    lead.lead_status?.toLowerCase().includes(searchText) ||
+    formatStatus(lead.lead_status).toLocaleLowerCase().includes(searchText) ||   
     lead.email?.toLowerCase().includes(searchText)
   );
 });
@@ -298,14 +300,21 @@ const fetchAllLeads = async () => {
                 <td className="table-data">
 
                   <span
-                    className={`status-badge ${lead.lead_status}`}
-                  >
+                  className="status-badge"
+                  style={{
+                    background:
+                      STATUS_THEME[
+                        normalizeStatus(lead.lead_status)
+                      ]?.bg || "#E5E7EB",
 
-                    {
-                    lead.lead_status
-                    }
-
-                  </span>
+                    color:
+                      STATUS_THEME[
+                        normalizeStatus(lead.lead_status)
+                      ]?.color || "#374151",
+                  }}
+                >
+                  {formatStatus(lead.lead_status)}
+                </span>
 
                 </td>
 
@@ -335,7 +344,7 @@ const fetchAllLeads = async () => {
                         <button
                           className="action-item"
                           onClick={() =>
-                            navigate(`/manager/lead/${lead.id}`)
+                            navigate(`/employee/lead/${lead.id}`)
                           }
                         >
                           <Eye size={16} />
@@ -345,7 +354,7 @@ const fetchAllLeads = async () => {
                         <button
                           className="action-item"
                           onClick={() =>
-                            navigate(`/manager/edit-lead/${lead.id}`)
+                            navigate(`/employee/edit-lead/${lead.id}`)
                           }
                         >
                           <Pencil size={16} />

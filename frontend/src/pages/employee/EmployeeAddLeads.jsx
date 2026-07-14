@@ -180,13 +180,7 @@ searchParams.get("from");
 
         }
 
-        if (!leadData.contact_person_name.trim()) {
-
-          return alert(
-            "Contact Person Name is required"
-          );
-
-        }
+       
 
     // Either Phone or Email is required
       if (!leadData.phone.trim() && !leadData.email.trim()) {
@@ -497,15 +491,23 @@ searchParams.get("from");
                   <div className="formGroup">
 
                     <label>
-                      Contact 
+                      Contact Person Name
                     </label>
 
                     <input
                       type="text"
                       name="contact_person_name"
                       value={leadData.contact_person_name}
-                      onChange={handleChange}
-                      
+                      onChange={(e) => {
+
+                        const value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+
+                        setLeadData({
+                          ...leadData,
+                          contact_person_name: value
+                        });
+
+                      }}
                     />
 
                   </div>
@@ -600,13 +602,14 @@ searchParams.get("from");
                    <div className="formGroup">
 
                     <label>
-                      Category
+                      Category *
                     </label>
 
                     <select
                       name="category"
                       value={leadData.category}
                       onChange={handleChange}
+                      required
                     >
 
                       <option value="">
@@ -801,7 +804,7 @@ searchParams.get("from");
                       </option>
 
                       <option value="meeting scheduled">
-                        Meeting Scheduled
+                        meeting scheduled
                       </option>
 
                       <option value="not_interested">

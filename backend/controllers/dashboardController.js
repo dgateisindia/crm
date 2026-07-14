@@ -145,27 +145,87 @@ const getDashboardStats = (req, res) => {
 };
 const getLeadStatusChart = (req, res) => {
 
-  db.query(
-
-    `
+  const sql = `
     SELECT
-      lead_status,
+
+      CASE
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'new'
+          THEN 'New'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'interested'
+          THEN 'Interested'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'proposed'
+          THEN 'Proposed'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'offered'
+          THEN 'Offered'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'meeting scheduled'
+          THEN 'meeting scheduled'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'converted'
+          THEN 'Converted'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'closed'
+          THEN 'Closed'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'not interested'
+          THEN 'Not Interested'
+
+        ELSE lead_status
+
+      END AS lead_status,
+
       COUNT(*) AS total
+
     FROM leads
-    GROUP BY lead_status
-    `,
 
-    (err, result) => {
+    GROUP BY
 
-      if (err) {
-        return res.status(500).json(err);
-      }
+      CASE
 
-      res.json(result);
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'new'
+          THEN 'New'
 
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'interested'
+          THEN 'Interested'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'proposed'
+          THEN 'Proposed'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'offered'
+          THEN 'Offered'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'meeting scheduled'
+          THEN 'meeting scheduled'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'converted'
+          THEN 'Converted'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'closed'
+          THEN 'Closed'
+
+        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'not interested'
+          THEN 'Not Interested'
+
+        ELSE lead_status
+
+      END
+
+    ORDER BY total DESC
+  `;
+
+  db.query(sql, (err, result) => {
+
+    if (err) {
+      return res.status(500).json(err);
     }
 
-  );
+    res.json(result);
+
+  });
 
 };
 const getEmployeePerformance = (req, res) => {
@@ -239,6 +299,8 @@ const getEmployeeLeadTrend = async (req, res) => {
 
   try {
 
+    const days = Number(req.query.days) || 7;
+
     const [result] = await db.promise().query(
 
       `
@@ -249,34 +311,46 @@ const getEmployeeLeadTrend = async (req, res) => {
       WHERE
         created_by_type='employee'
         AND created_by_id=?
-        AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+        AND DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
       GROUP BY DATE(created_at)
       ORDER BY DATE(created_at)
       `,
 
-      [employeeId]
+      [employeeId, days - 1]
 
     );
 
     const chart = [];
 
-    for (let i = 6; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
 
       const d = new Date();
 
       d.setDate(d.getDate() - i);
 
-      const date = d.toISOString().split("T")[0];
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
 
-      const found = result.find(
-        r => r.date.toISOString().split("T")[0] === date
-      );
+      const date = `${year}-${month}-${day}`;
+
+      const found = result.find((item) => {
+
+        const dbDate = new Date(item.date);
+
+        const dbYear = dbDate.getFullYear();
+        const dbMonth = String(dbDate.getMonth() + 1).padStart(2, "0");
+        const dbDay = String(dbDate.getDate()).padStart(2, "0");
+
+        return `${dbYear}-${dbMonth}-${dbDay}` === date;
+
+      });
 
       chart.push({
 
         date,
 
-        total: found ? found.total : 0
+        total: found ? Number(found.total) : 0
 
       });
 
@@ -288,7 +362,13 @@ const getEmployeeLeadTrend = async (req, res) => {
 
   catch (err) {
 
-    res.status(500).json(err);
+    console.log(err);
+
+    res.status(500).json({
+
+      message: "Failed to fetch Employee Lead Trend"
+
+    });
 
   }
 
@@ -331,42 +411,73 @@ const getLeadTrend = async (req, res) => {
 
   try {
 
-    const [result] = await db.promise().query(`
+    const days = Number(req.query.days) || 7;
+
+    const [result] = await db.promise().query(
+
+      `
       SELECT
         DATE(created_at) AS date,
         COUNT(*) AS total
       FROM leads
-      WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+      WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
       GROUP BY DATE(created_at)
       ORDER BY DATE(created_at)
-    `);
+      `,
+
+      [days - 1]
+
+    );
 
     const chart = [];
 
-    for (let i = 6; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
 
       const d = new Date();
 
       d.setDate(d.getDate() - i);
 
-      const date = d.toISOString().split("T")[0];
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
 
-      const found = result.find(
-        r => r.date.toISOString().split("T")[0] === date
-      );
+      const date = `${year}-${month}-${day}`;
+
+      const found = result.find((item) => {
+
+        const dbDate = new Date(item.date);
+
+        const dbYear = dbDate.getFullYear();
+        const dbMonth = String(dbDate.getMonth() + 1).padStart(2, "0");
+        const dbDay = String(dbDate.getDate()).padStart(2, "0");
+
+        return `${dbYear}-${dbMonth}-${dbDay}` === date;
+
+      });
 
       chart.push({
+
         date,
-        total: found ? found.total : 0
+
+        total: found ? Number(found.total) : 0
+
       });
 
     }
 
     res.json(chart);
 
-  } catch (err) {
+  }
 
-    res.status(500).json(err);
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message: "Failed to fetch Lead Trend"
+
+    });
 
   }
 

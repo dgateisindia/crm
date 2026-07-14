@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {
+  normalizeStatus,
+  formatStatus,
+} from "../../utils/statusUtils";
 export default function ConvertedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
@@ -153,9 +157,20 @@ export default function ConvertedLeads() {
 
                     <td className="table-data">
                       <span
-                        className={`status-badge ${lead.lead_status}`}
+                        className="status-badge"
+                        style={{
+                          background:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.bg || "#E5E7EB",
+
+                          color:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.color || "#374151",
+                        }}
                       >
-                        {lead.lead_status}
+                        {formatStatus(lead.lead_status)}
                       </span>
                     </td>
 

@@ -7,7 +7,11 @@ import "../../styles/status.css";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {
+  normalizeStatus,
+  formatStatus,
+} from "../../utils/statusUtils";
 import {
   useNavigate
 } from "react-router-dom";
@@ -170,7 +174,7 @@ export default function ImportantLeads() {
     lead.phone?.includes(search) ||
     lead.city?.toLowerCase().includes(searchText) ||
     lead.designation?.toLowerCase().includes(searchText) ||
-    lead.lead_status?.toLowerCase().includes(searchText) ||
+    formatStatus(lead.lead_status).toLowerCase().includes(searchText) ||
     lead.email?.toLowerCase().includes(searchText)
   );
 });
@@ -307,12 +311,21 @@ export default function ImportantLeads() {
                 <td className="table-data">
 
                   <span
-                    className={`status-badge ${lead.lead_status}`}
+                    className="status-badge"
+                    style={{
+                      background:
+                        STATUS_THEME[
+                          normalizeStatus(lead.lead_status)
+                        ]?.bg || "#E5E7EB",
+
+                      color:
+                        STATUS_THEME[
+                          normalizeStatus(lead.lead_status)
+                        ]?.color || "#374151",
+                    }}
                   >
 
-                    {
-                    lead.lead_status
-                    }
+                    {formatStatus(lead.lead_status)}
 
                   </span>
 

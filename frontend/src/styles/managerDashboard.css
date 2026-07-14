@@ -133,51 +133,21 @@ tbody td {
 
 /* Status */
 .status-badge{
-    padding:5px 12px;
-    border-radius:999px;
-    font-size:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:120px;
+    padding:8px 14px;
+
+    border-radius:10px;
+
+    font-size:13px;
     font-weight:600;
+
+    white-space:nowrap;
 }
 
-.new{
-    background:#DCFCE7;
-    color:#15803D;
-}
-
-.interested{
-    background:#DBEAFE;
-    color:#2563EB;
-}
-
-.proposed{
-    background:#EDE9FE;
-    color:#7C3AED;
-}
-
-.offered{
-    background:#FEF3C7;
-    color:#B45309;
-}
-
-.meeting{
-    background:#FFEDD5;
-    color:#EA580C;
-}
-
-.converted{
-    background:#D1FAE5;
-    color:#059669;
-}
-
-.closed{
-    background:#E2E8F0;
-    color:#475569;
-}
-
-.not_interested{
-    background:#FEE2E2;
-    color:#DC2626;
-}
 .manager-dashboard-charts{
 
     display:grid;
@@ -188,7 +158,6 @@ tbody td {
 
     margin-top:25px;
 
-    align-items:stretch;
 
 }
 .dashboard-trend{
@@ -266,14 +235,8 @@ margin-top:25px;
 .red-card{
     border-left:6px solid #ef4444;
 }
-.manager-dashboard-charts{
 
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:20px;
 
-}
 
 .employee-chart-full{
 

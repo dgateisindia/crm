@@ -269,17 +269,8 @@ table{
    Status Badge
 ========================== */
 
-.status-badge{
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:500;
-}
 
-.status-badge.new{
-  background:#dbeafe;
-  color:#2563eb;
-}
+
 
 .status-badge.contacted{
   background:#fef3c7;
@@ -1052,56 +1043,11 @@ td{
 
   border-radius:8px;
 
-  font-size:13px;
+  font-size:11px;
   font-weight:600;
   text-transform:capitalize;
 }
 
-/* New */
-.status-badge.new{
-   background:#DBEAFE;
-  color:#2563EB;
-}
-
-/* Connected */
-.status-badge.connected{
-  background:#DCFCE7;
-  color:#15803D;
-}
-
-/* Interested */
-.status-badge.interested{
-    background:#FEF3C7;
-    color:#D97706;
-}
-
-/* proposed */
-.status-badge.proposed{
-  background:#EDE9FE;
-  color:#7C3AED;
-}
-
-/* Converted */
-.status-badge.converted{
-  background:#D1FAE5;
-  color:#059669;
-}
-
-/* Not Interested */
-.status-badge.not_interested{
-  background:#FEE2E2;
-  color:#DC2626;
-}
-
-/* Closed */
-.status-badge.closed{
-  background:#E5E7EB;
-  color:#4B5563;
-}
-.status-badge.meeting scheduled{
-  background:#dcfce7;
-  color:#4B5563;
-}
 /* Search Input */
 .manager-search-input {
   width: 100%;

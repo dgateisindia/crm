@@ -13,7 +13,8 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import "../../styles/managerDashboard.css";
-
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
+import { STATUS_THEME } from "../../utils/statusTheme";
 import StatCard from "../../components/dashboard/StatCard";
 
 export default function ManagerDashboard() {
@@ -254,14 +255,21 @@ export default function ManagerDashboard() {
                     <td>
 
                        <span
-                      className={`status-badge ${lead.lead_status}`}
-                        >
+                        className="status-badge"
+                        style={{
+                          background:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.bg || "#E5E7EB",
 
-                          {
-                            lead.lead_status
-                          }
-
-                        </span>
+                          color:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.color || "#374151",
+                        }}
+                      >
+                        {formatStatus(lead.lead_status)}
+                      </span>
 
                       </td>
 

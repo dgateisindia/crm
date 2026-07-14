@@ -433,21 +433,29 @@ else {
 
                   </div>
 
-                  <div className="formGroup">
+                <div className="formGroup">
 
-                    <label>
-                      Contact Person 
-                    </label>
+                  <label>
+                    Contact Person Name
+                  </label>
 
-                    <input
-                      type="text"
-                      name="contact_person_name"
-                      value={leadData.contact_person_name}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    name="contact_person_name"
+                    value={leadData.contact_person_name}
+                    onChange={(e) => {
 
-                  </div>
+                      const value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+
+                      setLeadData({
+                        ...leadData,
+                        contact_person_name: value
+                      });
+
+                    }}
+                  />
+
+                </div>
                   
                   <div className="formGroup">
                     <label>
@@ -553,7 +561,7 @@ else {
                   <div className="formGroup">
 
                     <label>
-                      Category
+                      Category *
                     </label>
 
                     <select
@@ -755,7 +763,7 @@ else {
                       </option>
 
                       <option value="meeting scheduled">
-                        Meeting Scheduled
+                        meeting scheduled
                       </option>
 
                       <option value="not_interested">

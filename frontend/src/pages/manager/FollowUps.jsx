@@ -13,7 +13,8 @@ import {
  
 } from "lucide-react";
 import useActionMenu from "../../hooks/useActionMenu";
-
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
+import { STATUS_THEME } from "../../utils/statusTheme";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import React from "react";
 import "../../styles/leads.css";
@@ -372,20 +373,21 @@ const handleFollowupSubmit = async () => {
   <td className="table-data">
 
     <span
-      className={`followupStatus ${item.lead_status}`}
-    >
+  className="status-badge"
+  style={{
+    background:
+      STATUS_THEME[
+        normalizeStatus(item.lead_status)
+      ]?.bg,
 
-      {
-
-      item.lead_status
-      ?.replace(
-      "_",
-      " "
-      )
-
-      }
-
-    </span>
+    color:
+      STATUS_THEME[
+        normalizeStatus(item.lead_status)
+      ]?.color,
+  }}
+>
+  {formatStatus(item.lead_status)}
+</span>
 
   </td>
  <td
@@ -506,9 +508,24 @@ expandedLead === item.lead_id && (
               </td>
 
               <td>
-                {
-                  record.lead_status
-                }
+
+                <span
+                  className="status-badge"
+                  style={{
+                    background:
+                      STATUS_THEME[
+                        normalizeStatus(record.lead_status)
+                      ]?.bg,
+
+                    color:
+                      STATUS_THEME[
+                        normalizeStatus(record.lead_status)
+                      ]?.color,
+                  }}
+                >
+                  {formatStatus(record.lead_status)}
+                </span>
+
               </td>
 
               <td>
@@ -679,14 +696,14 @@ showFollowupModal && (
           </option>
 
           <option value="proposed">
-            proposed
+            Proposed
           </option>
 
           <option value="offered">
             Offered
           </option>
 
-          <option value="meeting scheduled">
+          <option value="meeting_scheduled">
             Meeting Scheduled
           </option>
 

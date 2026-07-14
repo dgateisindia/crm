@@ -899,8 +899,8 @@ showFollowupModal && (
             Offered
           </option>
 
-          <option value="meeting_scheduled">
-            Meeting Scheduled
+          <option value="meeting scheduled">
+            meeting scheduled
           </option>
 
           <option value="not_interested">

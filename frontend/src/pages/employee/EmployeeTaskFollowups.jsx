@@ -1149,7 +1149,7 @@ showTaskFollowupModal && (
           </option>
 
           <option value="meeting scheduled">
-            Meeting Scheduled
+            meeting scheduled
           </option>
 
           <option value="not_interested">

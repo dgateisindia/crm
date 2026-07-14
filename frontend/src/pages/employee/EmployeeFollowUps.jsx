@@ -4,7 +4,8 @@ import {
   useEffect,
   useState
 } from "react";
-
+import { STATUS_THEME } from "../../utils/statusTheme";
+import {normalizeStatus,formatStatus,} from "../../utils/statusUtils";
 import {
   MoreVertical,
   Eye,
@@ -262,9 +263,9 @@ const handleFollowupSubmit = async () => {
 
     ||
 
-    (item.lead_status || "")
-      .toLowerCase()
-      .includes(searchText)
+    formatStatus(item.lead_status)
+  .toLowerCase()
+  .includes(searchText)
 
     ||
 
@@ -426,20 +427,21 @@ const handleFollowupSubmit = async () => {
   <td className="table-data">
 
     <span
-      className={`followupStatus ${item.lead_status}`}
-    >
+      className="status-badge"
+      style={{
+        background:
+          STATUS_THEME[
+            normalizeStatus(item.lead_status)
+          ]?.bg,
 
-      {
-
-      item.lead_status
-      ?.replace(
-      "_",
-      " "
-      )
-
-      }
-
-    </span>
+        color:
+          STATUS_THEME[
+            normalizeStatus(item.lead_status)
+          ]?.color,
+      }}
+      >
+        {formatStatus(item.lead_status)}
+      </span>
 
   </td>
  <td className="table-data">
@@ -551,9 +553,26 @@ expandedLead === item.lead_id && (
               </td>
 
               <td>
-                {
-                  record.lead_status
-                }
+
+                <span
+                  className="status-badge"
+                  style={{
+                    background:
+                      STATUS_THEME[
+                        normalizeStatus(record.lead_status)
+                      ]?.bg || "#E5E7EB",
+
+                    color:
+                      STATUS_THEME[
+                        normalizeStatus(record.lead_status)
+                      ]?.color || "#374151",
+                  }}
+                >
+
+                  {formatStatus(record.lead_status)}
+
+                </span>
+
               </td>
 
               <td>

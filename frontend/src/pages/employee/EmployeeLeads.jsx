@@ -8,6 +8,8 @@ import "../../styles/managerDashboard.css";
 
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/status.css";
+import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
+import { STATUS_THEME } from "../../utils/statusTheme";
 
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
@@ -286,7 +288,7 @@ allLeads.filter((lead) => {
 
     ||
 
-    (lead.lead_status || "")
+    formatStatus(lead.lead_status)
       .toLowerCase()
       .includes(searchText)
 
@@ -308,8 +310,7 @@ allLeads.filter((lead) => {
 
     ||
 
-    lead.lead_status.toLowerCase() ===
-    statusFilter;
+    normalizeStatus(lead.lead_status) === statusFilter;
 
   return (
     matchesSearch &&
@@ -338,7 +339,7 @@ allLeads.filter((lead) => {
         title="New"
         value={
             allLeads.filter(
-                lead => lead.lead_status === "new"
+                lead => normalizeStatus(lead.lead_status) === "new"
             ).length
         }
         subtitle="New Leads"
@@ -355,7 +356,7 @@ allLeads.filter((lead) => {
                     "converted",
                     "closed",
                     "not_interested"
-                ].includes(lead.lead_status)
+                ].includes(normalizeStatus(lead.lead_status))
             ).length
         }
         subtitle="Pending Follow-ups"
@@ -367,7 +368,7 @@ allLeads.filter((lead) => {
         title="Converted"
         value={
             allLeads.filter(
-                lead => lead.lead_status === "converted"
+                lead => normalizeStatus(lead.lead_status) === "converted"
             ).length
         }
         subtitle="Successfully Converted"
@@ -379,7 +380,7 @@ allLeads.filter((lead) => {
         title="Not Interested"
         value={
             allLeads.filter(
-                lead => lead.lead_status === "not_interested"
+                lead => normalizeStatus(lead.lead_status) === "not_interested"
             ).length
         }
         subtitle="Rejected Leads"
@@ -553,8 +554,21 @@ allLeads.filter((lead) => {
 
 
                     <td className="table-data">
-                      <span className={`status-badge ${lead.lead_status}`}>
-                        {lead.lead_status.replace("_", " ")}
+                      <span
+                        className="status-badge"
+                        style={{
+                          background:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.bg || "#E5E7EB",
+
+                          color:
+                            STATUS_THEME[
+                              normalizeStatus(lead.lead_status)
+                            ]?.color || "#374151",
+                        }}
+                      >
+                        {formatStatus(lead.lead_status)}
                       </span>
                     </td>
 

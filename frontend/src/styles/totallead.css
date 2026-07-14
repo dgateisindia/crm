@@ -322,11 +322,19 @@
 /* Status Badge */
 
 .status-badge{
-  padding:6px 12px;
-  border: radius 8px;
-  font-size:12px;
-  font-weight:600;
-  text-transform:capitalize;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:120px;
+    padding:8px 14px;
+
+    border-radius:10px;
+
+    font-size:13px;
+    font-weight:600;
+
+    white-space:nowrap;
 }
 
 .new{

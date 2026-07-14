@@ -1,7 +1,8 @@
 const db =
 require("../db");
 
-
+const logLeadChanges =
+require("../utils/logLeadChanges");
 // ==========================
 // Add Lead
 // ==========================
@@ -70,6 +71,7 @@ async (req, res) => {
 
     const finalPhone = phone?.trim() || null;
     const finalEmail = email?.trim() || null;
+    
     const [result] =
     await db.promise().query(
 
@@ -486,15 +488,19 @@ async (req, res) => {
 // ==========================
 // Update Lead
 // ==========================
-const updateLead =
-async (req, res) => {
+const updateLead = async (req, res) => {
 
   try {
 
-    const { id } =
-    req.params;
+    // ==========================
+    // Get Lead ID
+    // ==========================
+    const { id } = req.params;
 
-   const {
+    // ==========================
+    // Get Request Body
+    // ==========================
+    const {
 
       company_name,
       contact_person_name,
@@ -511,70 +517,207 @@ async (req, res) => {
       remarks,
       important_lead
 
-} = req.body;
+    } = req.body;
 
+    // ==========================
+    // Clean Values
+    // ==========================
+    const cleanPhone = phone?.trim() || null;
+    const cleanEmail = email?.trim() || null;
 
+    // ==========================
+    // Either Phone or Email Required
+    // ==========================
+    if (!cleanPhone && !cleanEmail) {
+
+      return res.status(400).json({
+
+        message:
+          "Either Phone Number or Email is required."
+
+      });
+
+    }
+
+    // ==========================
+    // Phone Validation
+    // ==========================
+    if (cleanPhone && !/^\d{10}$/.test(cleanPhone)) {
+
+      return res.status(400).json({
+
+        message:
+          "Phone Number must contain exactly 10 digits."
+
+      });
+
+    }
+
+    // ==========================
+    // Email Validation
+    // ==========================
+    if (cleanEmail) {
+
+      const emailRegex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(cleanEmail)) {
+
+        return res.status(400).json({
+
+          message:
+            "Please enter a valid Email Address."
+
+        });
+
+      }
+
+    }
+
+    // ==========================
+    // Duplicate Check
+    // ==========================
+    const conditions = [];
+    const values = [id];
+
+    if (cleanPhone) {
+
+      conditions.push("phone = ?");
+      values.push(cleanPhone);
+
+    }
+
+    if (cleanEmail) {
+
+      conditions.push("email = ?");
+      values.push(cleanEmail);
+
+    }
+
+    if (conditions.length > 0) {
+
+      const [duplicate] =
+      await db.promise().query(
+
+        `
+        SELECT id
+        FROM leads
+        WHERE id <> ?
+        AND (${conditions.join(" OR ")})
+        `,
+
+        values
+
+      );
+
+      if (duplicate.length > 0) {
+
+        return res.status(400).json({
+
+          message:
+            "Phone Number or Email already exists."
+
+        });
+
+      }
+
+    }
+
+    // ==========================
+    // Get Previous Lead
+    // ==========================
+    const [oldLead] =
     await db.promise().query(
 
-      `UPDATE leads
-        SET
+      `
+      SELECT *
+      FROM leads
+      WHERE id=?
+      `,
 
-        company_name=?,
+      [id]
 
-        contact_person_name=?,
+    );
 
-        designation=?,
+    const previous =
+    oldLead[0];
 
-        phone=?,
+    // ==========================
+    // Update Lead
+    // ==========================
+    await db.promise().query(
 
-        email=?,
+      `
+      UPDATE leads
+      SET
 
-        address=?,
+      company_name=?,
+      contact_person_name=?,
+      designation=?,
+      phone=?,
+      email=?,
+      address=?,
+      website=?,
+      city=?,
+      category=?,
+      source=?,
+      lead_mode=?,
+      lead_status=?,
+      remarks=?,
+      important_lead=?
 
-        website=?,
-
-        city=?,
-
-        category=?,
-
-        source=?,
-
-        lead_mode=?,
-
-        lead_status=?,
-
-        remarks=?,
-
-        important_lead=?
-
-        WHERE id=?`,
+      WHERE id=?
+      `,
 
       [
 
-        company_name,
-        contact_person_name,
-        designation,
-        phone,
-        email,
-        address,
-        website,
-        city,
-        category,
-        source,
-        lead_mode,
-        lead_status,
-        remarks,
-        important_lead, 
+        company_name?.trim() || null,
+        contact_person_name?.trim() || null,
+        designation?.trim() || null,
+
+        cleanPhone,
+        cleanEmail,
+
+        address?.trim() || null,
+        website?.trim() || null,
+        city?.trim() || null,
+        category?.trim() || null,
+        source?.trim() || null,
+        lead_mode?.trim() || null,
+        lead_status?.trim() || null,
+        remarks?.trim() || null,
+
+        important_lead,
         id
 
       ]
 
     );
 
-    res.json({
+    // ==========================
+    // Save History
+    // ==========================
+    const employeeId =
+      req.body.employee_id ||
+      req.body.created_by_id ||
+      previous.created_by_id;
+
+    await logLeadChanges(
+
+      previous,
+      req.body,
+      id,
+      employeeId
+
+    );
+
+    // ==========================
+    // Success
+    // ==========================
+    return res.json({
 
       message:
-      "Lead Updated Successfully"
+        "Lead Updated Successfully"
 
     });
 
@@ -582,13 +725,12 @@ async (req, res) => {
 
   catch (error) {
 
-    //console.log(error);
+    console.error(error);
 
-    res.status(500)
-    .json({
+    return res.status(500).json({
 
       message:
-      "Failed to Update Lead"
+        error.sqlMessage || error.message || "Failed to Update Lead"
 
     });
 

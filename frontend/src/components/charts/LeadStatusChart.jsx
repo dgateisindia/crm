@@ -8,25 +8,37 @@ import {
 
 import { PieChart as PieChartIcon } from "lucide-react";
 
-const STATUS_COLORS = {
-  new: "#2563EB",
-  interested: "#D97706",
-  proposed: "#16A34A",
-  offered: "#4F46E5",
-  "meeting scheduled": "#DB2777",
-  converted: "#059669",
-  closed: "#4B5563",
-  not_interested: "#DC2626",
-};
+import { STATUS_THEME } from "../../utils/statusTheme";
 
 export default function LeadStatusChart({ data }) {
 
-  const chartData = data.map((item) => ({
-    name: item.lead_status.replaceAll("_", " "),
-    value: item.total,
+  const chartData = data.map((item) => {
+
+  const status = item.lead_status
+    ?.trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+
+  return {
+
+    status,
+
+    name: status
+      .split("_")
+      .map(word =>
+        word.charAt(0).toUpperCase() +
+        word.slice(1)
+      )
+      .join(" "),
+
+    value: Number(item.total),
+
     color:
-      STATUS_COLORS[item.lead_status] || "#94A3B8",
-  }));
+      STATUS_THEME[status]?.color || "#94A3B8",
+
+  };
+
+});
 
   return (
 
