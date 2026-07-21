@@ -36,7 +36,7 @@ import Error403 from "./pages/errors/403";
 import Error404 from "./pages/errors/404";
 import Error500 from "./pages/errors/500";
 import Error503 from "./pages/errors/503";
-
+import ManagerProfile from "./pages/manager/Profile";
 
 function App() {
   return (
@@ -280,6 +280,10 @@ function App() {
         />
         <Route 
         path="/503" element={<Error503 />} 
+        />
+        <Route
+            path="/manager/profile"
+            element={<ManagerProfile />}
         />
         
 

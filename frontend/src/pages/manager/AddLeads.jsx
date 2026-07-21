@@ -312,15 +312,21 @@ else {
 
           );
 
-          alert(
+         let message = `${response.data.inserted} Records Inserted\n\n`;
 
-            `${response.data.inserted}
-            Leads Inserted
+          if (response.data.errors && response.data.errors.length > 0) {
 
-            ${response.data.duplicates}
-            Duplicates Skipped`
+              message += `${response.data.duplicates} Rows Skipped\n\n`;
 
-          );
+              response.data.errors.forEach((error) => {
+
+                  message += `Row ${error.row} : ${error.reason}\n`;
+
+              });
+
+          }
+
+          alert(message);
           navigate("/manager/leads");
 
         }
@@ -702,7 +708,7 @@ else {
                         Select Mode
                       </option>
 
-                      <option value="phone_call">
+                      <option value="phone call">
                         Phone Call
                       </option>
 
@@ -766,7 +772,7 @@ else {
                         meeting scheduled
                       </option>
 
-                      <option value="not_interested">
+                      <option value="not interested">
                         Not Interested
                       </option>
 

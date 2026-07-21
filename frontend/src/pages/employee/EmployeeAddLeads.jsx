@@ -365,15 +365,21 @@ searchParams.get("from");
 
           );
 
-          alert(
+          let message = `${response.data.inserted} Records Inserted\n\n`;
 
-              `${response.data.inserted}
-              Records Inserted
+              if (response.data.errors && response.data.errors.length > 0) {
 
-              ${response.data.duplicates}
-              Duplicates Skipped`
+                  message += `${response.data.duplicates} Rows Skipped\n\n`;
 
-            );
+                  response.data.errors.forEach((error) => {
+
+                      message += `Row ${error.row} : ${error.reason}\n`;
+
+                  });
+
+              }
+
+              alert(message);
           navigate("/employee/my-leads");
 
         }
@@ -743,7 +749,7 @@ searchParams.get("from");
                         Select Mode
                       </option>
 
-                      <option value="phone_call">
+                      <option value="phone call">
                         Phone Call
                       </option>
 
@@ -807,7 +813,7 @@ searchParams.get("from");
                         meeting scheduled
                       </option>
 
-                      <option value="not_interested">
+                      <option value="not interested">
                         Not Interested
                       </option>
 

@@ -11,7 +11,8 @@ import {
   UserCheck,
   PhoneCall,
   FileText,
-  Settings,
+  //Settings,
+  UserRound,
   AlertCircle,
   Clock,
   BadgeCheck
@@ -130,13 +131,24 @@ export default function Sidebar() {
                 Reports
               </li>
             </Link>
+            <Link
+            to="/manager/profile"
+          >
+            <div className={`sidebar-menu ${location.pathname === "/manager/profile" ? "active-menu " : ""}`} >
 
-            <Link to="/manager/settings">
-              <li className={`sidebar-menu ${location.pathname === "/manager/settings" ? "active-menu " : ""}`}>
-                <Settings size={12} />
-                Settings
-              </li>
-            </Link>
+              <UserRound size={20} strokeWidth={2.2} />
+
+              Profile
+
+            </div>
+          </Link>
+
+              {/*<Link to="/manager/settings">
+                <li className={`sidebar-menu ${location.pathname === "/manager/settings" ? "active-menu " : ""}`}>
+                  <Settings size={12} />
+                  Settings
+                </li>
+              </Link>*/}
 
           </ul>
         </div>

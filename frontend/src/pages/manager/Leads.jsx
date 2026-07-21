@@ -392,7 +392,7 @@ useEffect(() => {
     title="Not Interested"
     value={
       allLeads.filter(
-        lead => lead.lead_status === "not_interested"
+        lead => lead.lead_status === "not interested"
       ).length
     }
     subtitle="Rejected Leads"
@@ -474,7 +474,7 @@ useEffect(() => {
 
               </option>
 
-              <option value="not_interested">
+              <option value="not interested">
 
                 Not Interested
 
@@ -938,7 +938,7 @@ e.target.value
 
     </option>
 
-    <option value="not_interested">
+    <option value="not interested">
 
       Not Interested
 

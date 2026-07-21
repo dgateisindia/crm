@@ -7,7 +7,10 @@ express.Router();
 const {
 
   createManager,
-  getManagers
+  getManagers,
+  getManagerProfile,
+  updateManagerProfile,
+  changeManagerPassword
 
 } = require(
   "../controllers/managerController"
@@ -21,7 +24,11 @@ router.post(
   "/create",
   createManager
 );
+router.get("/profile/:id", getManagerProfile);
 
+router.put("/update-profile/:id", updateManagerProfile);
+
+router.put("/change-password/:id", changeManagerPassword);
 
 // ==========================
 // Get All Managers

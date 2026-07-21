@@ -68,3 +68,11 @@ input[type="password"]::-ms-clear {
 ::-ms-reveal {
   display: none;
 }
+.login-logo {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 28px;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.2));
+}

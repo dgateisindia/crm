@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
-import EmployeeLayout from "../../layouts/EmployeeLayout";
+import ManagerLayout from "../../layouts/ManagerLayout";
 
 import {
   User,
@@ -18,7 +18,7 @@ import {
 
 import "../../styles/employeeprofile.css";
 
-export default function EmployeeProfile() {
+export default function ManagerProfile() {
 
   const [profile, setProfile] = useState(null);
 
@@ -52,7 +52,7 @@ export default function EmployeeProfile() {
       );
 
       const { data } = await api.get(
-        `/employee/profile/${user.id}`
+        `/managers/profile/${user.id}`
       );
 
     setProfile(data);
@@ -87,7 +87,7 @@ useEffect(() => {
             );
 
             const { data } = await api.get(
-                `/employee/profile/${user.id}`
+                `/managers/profile/${user.id}`
             );
 
             if (mounted) {
@@ -127,7 +127,7 @@ useEffect(() => {
 
     return (
 
-      <EmployeeLayout>
+      <ManagerLayout>
 
         <div className="profileLoading">
 
@@ -135,7 +135,7 @@ useEffect(() => {
 
         </div>
 
-      </EmployeeLayout>
+      </ManagerLayout>
 
     );
 
@@ -245,7 +245,7 @@ useEffect(() => {
 
       await api.put(
 
-        `/employee/update-profile/${profile.employee_id}`,
+        `/managers/update-profile/${profile.manager_id}`,
 
         editData
 
@@ -299,7 +299,7 @@ useEffect(() => {
 
         await api.put(
 
-            `/employee/change-password/${profile.employee_id}`,
+            `/managers/change-password/${profile.manager_id}`,
 
             {
                 newPassword: passwords.newPassword
@@ -329,7 +329,7 @@ useEffect(() => {
 };
     return (
 
-    <EmployeeLayout>
+    <ManagerLayout>
 
       <div className="profilePage">
 
@@ -385,7 +385,7 @@ useEffect(() => {
 
                   <Briefcase size={15}/>
 
-                  {profile.employee_code}
+                  {profile.manager_code}
 
                 </span>
 
@@ -395,17 +395,12 @@ useEffect(() => {
 
           </div>
 
-          <div
-            className={`statusBadge ${
-              profile.status?.toLowerCase() === "active"
-                ? "status-active"
-                : profile.status?.toLowerCase() === "on leave"
-                ? "status-onleave"
-                : "status-inactive"
-            }`}
-          >
+          <div className="statusBadge">
+
             <span className="statusDot"></span>
+
             {profile.status}
+
           </div>
 
         </div>
@@ -741,7 +736,7 @@ useEffect(() => {
 
       </div>
 
-    </EmployeeLayout>
+    </ManagerLayout>
 
   );
 

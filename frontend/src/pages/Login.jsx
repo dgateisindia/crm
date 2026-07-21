@@ -147,6 +147,11 @@ useState(false);
 
       {/* Left Side */}
       <div className="login-left">
+        <img
+          src="/image.png"
+          alt="DGATE CRM Logo"
+          className="login-logo"
+        />
 
         <h1 className="text-5xl font-bold mb-6">
           DGATE CRM
@@ -234,9 +239,9 @@ useState(false);
                     }}
                   >
                     {showPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
                       <Eye size={18} />
+                    ) : (
+                      <EyeOff size={18} />
                     )}
                   </button>
 

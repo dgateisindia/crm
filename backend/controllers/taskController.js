@@ -231,7 +231,7 @@ const moveTaskToNotInterested =
 
     UPDATE leads
 
-    SET lead_status = 'not_interested'
+    SET lead_status = 'not interested'
 
     WHERE id = ?
 

@@ -401,7 +401,7 @@ async (req, res) => {
 
       `SELECT *
        FROM leads
-       WHERE lead_status = 'not_interested'
+       WHERE lead_status = 'not interested'
        AND created_by_type = 'employee'
        AND created_by_id = ?
        ORDER BY id DESC`,
@@ -832,7 +832,7 @@ await db.promise().query(
 
 FROM leads
 
-WHERE lead_status = 'not_interested'
+WHERE lead_status = 'not interested'
 
 ORDER BY id DESC`
 

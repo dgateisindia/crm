@@ -55,10 +55,7 @@ export default function EmployeePerformanceChart({ data = [] }) {
       </div>
 
       <div
-        style={{
-          maxHeight: "420px",
-          overflowY: "auto",
-        }}
+        
       >
 
         <ResponsiveContainer

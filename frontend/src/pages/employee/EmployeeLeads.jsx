@@ -33,6 +33,8 @@ export default function Leads() {
     setStatusFilter] =
     useState("all");
 
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
   const [showFollowupModal,
     setShowFollowupModal] =
     useState(false);  
@@ -311,10 +313,14 @@ allLeads.filter((lead) => {
     ||
 
     normalizeStatus(lead.lead_status) === statusFilter;
+  const matchesCategory =
+  categoryFilter === "all" ||
+  (lead.category || "") === categoryFilter;
 
   return (
     matchesSearch &&
-    matchesStatus
+    matchesStatus &&
+    matchesCategory
   );
 
 });
@@ -355,7 +361,7 @@ allLeads.filter((lead) => {
                     "new",
                     "converted",
                     "closed",
-                    "not_interested"
+                    "not interested"
                 ].includes(normalizeStatus(lead.lead_status))
             ).length
         }
@@ -380,7 +386,7 @@ allLeads.filter((lead) => {
         title="Not Interested"
         value={
             allLeads.filter(
-                lead => normalizeStatus(lead.lead_status) === "not_interested"
+                lead => normalizeStatus(lead.lead_status) === "not interested"
             ).length
         }
         subtitle="Rejected Leads"
@@ -418,8 +424,29 @@ allLeads.filter((lead) => {
     <option value="interested">Interested</option>
     <option value="proposed">proposed</option>
     <option value="converted">Converted</option>
-    <option value="not_interested">Not Interested</option>
+    <option value="not interested">Not Interested</option>
   </select>
+  <select
+  className="leadSelect"
+  value={categoryFilter}
+  onChange={(e) => setCategoryFilter(e.target.value)}
+>
+  <option value="all">All Categories</option>
+  <option value="Real Estate">Real Estate</option>
+  <option value="Colleges">Colleges</option>
+  <option value="Nursing College">Nursing College</option>
+  <option value="IT Company">IT Company</option>
+  <option value="Gym">Gym</option>
+  <option value="Manufacturing">Manufacturing</option>
+  <option value="Government Sector / NGO">Government Sector / NGO</option>
+  <option value="Media & Advertising">Media & Advertising</option>
+  <option value="Healthcare / Hospital">Healthcare / Hospital</option>
+  <option value="HiYath">HiYath</option>
+  <option value="Logistics & Transport">Logistics & Transport</option>
+  <option value="Banks">Banks</option>
+  <option value="E-Commerce">E-Commerce</option>
+  <option value="Professional Services">Professional Services</option>
+</select>
 
   <button
     className="leadAddBtn"
@@ -825,7 +852,7 @@ setShowFollowupModal(false)
               Meeting Scheduled
             </option>
 
-            <option value="not_interested">
+            <option value="not interested">
               Not Interested
             </option>
 

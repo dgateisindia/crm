@@ -42,17 +42,26 @@ const uploadLeads =
       sheetName
     ];
 
-    const rows =
-    XLSX.utils
-    .sheet_to_json(
-      sheet
-    );
+    const rows = XLSX.utils.sheet_to_json(sheet).map((row) => {
+    const normalizedRow = {};
 
-    let inserted =
-    0;
+    Object.keys(row).forEach((key) => {
+        normalizedRow[
+            key
+                .trim()
+                .toLowerCase()
+                .replace(/[\s_-]+/g, "_")
+        ] = row[key];
+    });
 
-    let duplicates =
-    0;
+    return normalizedRow;
+});
+
+    let inserted =0;
+
+    let duplicates =0;
+
+    let uploadErrors =[];
 
     const created_by_id =
     req.body
@@ -66,120 +75,65 @@ const uploadLeads =
     req.body
     .created_by_name;
   ;
+ 
 
-rows.forEach((row) => {
+rows.forEach((row,index) => {
+  if (
+    Object.values(row).every(
+        value =>
+            value === null ||
+            value === undefined ||
+            value.toString().trim() === ""
+    )
+) {
+    return;
+}
+  
 
   const company_name =
-    row.company_name ||
-    row["Company Name"] ||
-    row["company name"] ||
-    row["COMPANY NAME"] ||
-    row["Company"] ||
-    row["Client Name"] ||
-    "";
+    row.company_name ||"";
 
-  const contact_person_name =
-    row.contact_person_name ||
-    row["Contact Person"] ||
-    row["contact person"] ||
-    row["CONTACT PERSON"] ||
-    row["Contact"] ||
-    row["Contact Name"] ||
-    "";
+  const contact_person_name = row.contact_person_name || "";
+const designation = row.designation || "";
+let phone = row.phone || "";
 
-  const designation =
-    row.designation ||
-    row["Designation"] ||
-    row["designation"] ||
-    row["Job Title"] ||
-    row["Position"] ||
-    "";
+phone = phone
+    .toString()
+    .trim()
+    .replace(/\D/g, "");
 
-  const phone =
-    row.phone ||
-    row["Phone"] ||
-    row["phone"] ||
-    row["PHONE"] ||
-    row["Phone Number"] ||
-    row["Mobile"] ||
-    row["Contact Number"] ||
-    "";
+// Remove +91 or 91 prefix
+if (phone.startsWith("91") && phone.length === 12) {
+    phone = phone.slice(2);
+}
+const email = row.email || "";
+const address = row.address || "";
+const website = row.website || "";
+const city = row.city || "";
+const source = row.source || "";
+const category = row.category || "";
+const remarks = row.remarks || "";
+const lead_status = (row.lead_status || "new").toString().trim().toLowerCase();
+const lead_mode = row.lead_mode || "";
+const important_lead = row.important_lead ?? false;
+// Category is mandatory
+if (!category || category.toString().trim() === "") {
+    
+    uploadErrors.push({
+        row: index + 2,
+        reason: "Category is required"
+    });
 
-  const email =
-    row.email ||
-    row["Email"] ||
-    row["email"] ||
-    row["EMAIL"] ||
-    row["Email Address"] ||
-    "";
+    duplicates++;
+    return;
+}
 
-  const address =
-    row.address ||
-    row["Address"] ||
-    row["address"] ||
-    "";
+    if (!phone && !email) {
 
-  const website =
-    row.website ||
-    row["Website"] ||
-    row["website"] ||
-    row["URL"] ||
-    "";
-
-  const city =
-    row.city ||
-    row["City"] ||
-    row["city"] ||
-    row["Location"] ||
-    "";
-
-  const source =
-    row.source ||
-    row["Source"] ||
-    row["source"] ||
-    row["Lead Source"] ||
-    "";
-
-  const category =
-    row.category ||
-    row["Category"] ||
-    row["category"] ||
-    row["Industry"] ||
-    "";
-
-  const remarks =
-    row.remarks ||
-    row["Remarks"] ||
-    row["remarks"] ||
-    row["Notes"] ||
-    row["Comments"] ||
-    "";
-
-  const lead_status =
-    (
-      row.lead_status ||
-      row["Lead Status"] ||
-      row["Lead status"] ||
-      row["Status"] ||
-      "new"
-    )
-      .toString()
-      .trim()
-      .toLowerCase();
-
-  const lead_mode =
-    row.lead_mode ||
-    row["Lead Mode"] ||
-    row["Lead mode"] ||
-    row["Mode"] ||
-    "phone_call";
-
-  const important_lead =
-    row.important_lead ||
-    row["Important Lead"] ||
-    row["Important"] ||
-    false;
-        if (!phone && !email) {
+    uploadErrors.push({
+        row: index + 2,
+        reason: "Phone or Email is required"
+    });
 
     duplicates++;
 
@@ -187,6 +141,11 @@ rows.forEach((row) => {
 
 }
 if (phone && !/^\d{10}$/.test(phone)) {
+
+    uploadErrors.push({
+        row: index + 2,
+        reason: "Phone number must contain exactly 10 digits"
+    });
 
     duplicates++;
 
@@ -234,6 +193,11 @@ duplicateValues,
 
 if (duplicateResult.length > 0) {
 
+    uploadErrors.push({
+        row: index + 2,
+        reason: "Lead already exists (Phone/Email duplicate)"
+    });
+
     duplicates++;
 
     return;
@@ -272,13 +236,7 @@ if (duplicateResult.length > 0) {
                 ?,?
               )
             `;
-            console.log({
-              company_name,
-              source,
-              lead_status,
-              lead_mode,
-              designation
-            });
+            
 
 db.query(
 
@@ -310,13 +268,18 @@ db.query(
 
     if (err) {
 
-        console.log(err);
+    console.log(err);
 
-        duplicates++;
+    uploadErrors.push({
+        row: index + 2,
+        reason: err.sqlMessage || "Database Error"
+    });
 
-        return;
+    duplicates++;
 
-    }
+    return;
+
+}
 
     inserted++;
     const followupStatuses = [
@@ -325,32 +288,32 @@ db.query(
   "offered",
   "meeting scheduled"
 ];
-if (followupStatuses.includes(lead_status)) {
+if (
+    created_by_type === "employee" &&
+    followupStatuses.includes(lead_status)
+) {
 
-  db.query(
-
-   `INSERT INTO follow_ups
-  (
-    lead_id,
-    employee_id,
-    followup_mode,
-    remarks,
-    lead_status,
-    status,
-    contact_date,
-    next_followup_date
-  )
-  VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-  [
-    result.insertId,
-    created_by_id,
-    lead_mode,
-    "Lead created with status " + lead_status,
-    lead_status,
-    "pending"
-  ]
-
-  );
+    db.query(
+        `INSERT INTO follow_ups (
+            lead_id,
+            employee_id,
+            followup_mode,
+            remarks,
+            lead_status,
+            status,
+            contact_date,
+            next_followup_date
+        )
+        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+        [
+            result.insertId,
+            created_by_id,
+            lead_mode,
+            "Lead created with status " + lead_status,
+            lead_status,
+            "pending"
+        ]
+    );
 
 }
 
@@ -369,16 +332,17 @@ if (followupStatuses.includes(lead_status)) {
 
     setTimeout(() => {
 
-      res.status(200)
-      .json({
+      res.status(200).json({
 
-        message:
-        "Upload Completed",
+    message: "Upload Completed",
 
-        inserted,
-        duplicates
+    inserted,
 
-      });
+    duplicates,
+
+    errors: uploadErrors
+
+});
 
     }, 3000);
 

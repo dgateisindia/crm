@@ -47,7 +47,7 @@ const getDashboardStats = (req, res) => {
               'new',
               'converted',
               'closed',
-              'not_interested'
+              'not interested'
             )
             `,
             (err, followupResult) => {
@@ -93,7 +93,7 @@ const getDashboardStats = (req, res) => {
                         `
                         SELECT COUNT(*) AS notInterested
                         FROM leads
-                        WHERE lead_status='not_interested'
+                        WHERE lead_status='not interested'
                         `,
                         (err, notInterestedResult) => {
 
@@ -590,7 +590,7 @@ const getEmployeeStats = (req, res) => {
                         `
                         SELECT COUNT(*) AS notInterested
                         FROM leads
-                        WHERE lead_status='not_interested'
+                        WHERE lead_status='not interested'
                         AND created_by_id=?
                         AND created_by_type='employee'
                         `,

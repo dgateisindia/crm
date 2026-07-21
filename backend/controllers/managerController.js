@@ -174,11 +174,129 @@ const getManagers =
   );
 
 };
+//get manager profile
+const getManagerProfile = (req, res) => {
+
+    const id = req.params.id;
+
+    const sql = `
+        SELECT
+            manager_id,
+            manager_code,
+            full_name,
+            email,
+            phone,
+            department,
+            designation,
+            status
+        FROM managers
+        WHERE manager_id = ?
+    `;
+
+    db.query(sql, [id], (err, result) => {
+
+        if (err) {
+            return res.status(500).json(err);
+        }
+
+        res.json(result[0]);
+    });
+
+};
+//update manager profile
+const updateManagerProfile = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const {
+            full_name,
+            phone,
+            designation
+        } = req.body;
+
+        const [duplicate] = await db.promise().query(
+            `SELECT manager_id
+             FROM managers
+             WHERE phone = ?
+             AND manager_id != ?`,
+            [phone, id]
+        );
+
+        if (duplicate.length > 0) {
+            return res.status(400).json({
+                message: "Phone number already exists"
+            });
+        }
+
+        await db.promise().query(
+            `UPDATE managers
+             SET
+                full_name = ?,
+                phone = ?,
+                designation = ?
+             WHERE manager_id = ?`,
+            [
+                full_name,
+                phone,
+                designation,
+                id
+            ]
+        );
+
+        res.json({
+            message: "Profile Updated Successfully"
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: "Failed to update profile"
+        });
+
+    }
+
+};
+//change manager password
+const changeManagerPassword = (req, res) => {
+
+    const id = req.params.id;
+
+    const { newPassword } = req.body;
+
+    db.query(
+        `
+        UPDATE managers
+        SET password = ?
+        WHERE manager_id = ?
+        `,
+        [
+            newPassword,
+            id
+        ],
+        (err) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                message: "Password Updated"
+            });
+
+        }
+    );
+
+};
 
 
 module.exports = {
 
   createManager,
-  getManagers
+  getManagers,
+  getManagerProfile,
+  updateManagerProfile,
+  changeManagerPassword
 
 };

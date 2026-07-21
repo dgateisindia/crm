@@ -754,7 +754,7 @@ showFollowupModal && (
             Meeting Scheduled
           </option>
 
-          <option value="not_interested">
+          <option value="not interested">
             Not Interested
           </option>
 
