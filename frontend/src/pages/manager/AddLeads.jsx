@@ -68,6 +68,7 @@ initialState
           const response = await  api.get(
             `/leads/${id}`
           );
+          console.log(response.data);
 
           setLeadData({
             company_name: response.data.company_name || "",

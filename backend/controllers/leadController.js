@@ -1,6 +1,5 @@
 const db =
 require("../db");
-
 const logLeadChanges =
 require("../utils/logLeadChanges");
 // ==========================
@@ -8,13 +7,8 @@ require("../utils/logLeadChanges");
 // ==========================
 const addLead =
 async (req, res) => {
-
-  
-
   try {
-
     const {
-
       company_name,
       contact_person_name,
       designation,
@@ -31,28 +25,19 @@ async (req, res) => {
       created_by_id,
       created_by_type,
       created_by_name
-
     } = req.body;
-
-
           // Either Phone or Email is required
         if (!phone && !email) {
-
           return res.status(400).json({
             message: "Either Phone Number or Email is required."
           });
-
         }
-
         // Validate phone only if entered
         if (phone && !/^\d{10}$/.test(phone)) {
-
           return res.status(400).json({
             message: "Phone Number must contain exactly 10 digits."
           });
-
         }
-
         // Validate email only if entered
         if (email) {
 

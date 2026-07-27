@@ -1,50 +1,32 @@
 const db =
 require("../db");
-
-
-
 const XLSX =
 require("xlsx");
-
-
-
 // ==========================
 // Upload Leads
 // ==========================
 const uploadLeads =
 (req, res) => {
-   
-
   try {
-
     if (!req.file) {
-
       return res.status(400)
-      .json({
-
+    .json({
         message:
         "No file uploaded"
-
       });
-
     }
-
     const workbook =
     XLSX.readFile(
       req.file.path
     );
-
     const sheetName =
     workbook.SheetNames[0];
-
     const sheet =
     workbook.Sheets[
       sheetName
     ];
-
     const rows = XLSX.utils.sheet_to_json(sheet).map((row) => {
     const normalizedRow = {};
-
     Object.keys(row).forEach((key) => {
         normalizedRow[
             key
@@ -53,7 +35,6 @@ const uploadLeads =
                 .replace(/[\s_-]+/g, "_")
         ] = row[key];
     });
-
     return normalizedRow;
 });
 
@@ -113,7 +94,10 @@ const city = row.city || "";
 const source = row.source || "";
 const category = row.category || "";
 const remarks = row.remarks || "";
-const lead_status = (row.lead_status || "new").toString().trim().toLowerCase();
+const lead_status = (row.lead_status || "new")
+  .toString()
+  .trim()
+  .toLowerCase();
 const lead_mode = row.lead_mode || "";
 const important_lead = row.important_lead ?? false;
 // Category is mandatory

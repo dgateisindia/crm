@@ -134,14 +134,6 @@ const getEmployeeTasks =
 
     AND created_by_id = ?
 
-    AND id NOT IN (
-
-      SELECT lead_id
-
-      FROM task_followups
-
-    )
-
     ORDER BY id DESC
 
   `;

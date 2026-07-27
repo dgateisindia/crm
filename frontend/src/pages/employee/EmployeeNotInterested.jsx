@@ -15,8 +15,9 @@ export default function NotInterestedLeads() {
     localStorage.getItem("user")
   );
 
-  const employeeId = user?.id;
-
+const employeeId =
+  user?.employee_id ||
+  user?.id;
   // ==========================
   // Fetch Not Interested Leads
   // ==========================

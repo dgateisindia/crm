@@ -1,22 +1,17 @@
 const db =
 require("../db");
-
 const jwt =
 require("jsonwebtoken");
-
 const crypto = require("crypto");
 // ==========================
 // LOGIN
 // ==========================
 const login =
 (req, res) => {
-
   const {
     email,
     password,
   } = req.body;
-
-
   // ==========================
   // CHECK MANAGER
   // ==========================
@@ -28,7 +23,6 @@ const login =
 
     WHERE email = ?
   `;
-
 
   db.query(
     managerSql,
@@ -47,8 +41,6 @@ const login =
         });
 
       }
-
-
       // ==========================
       // MANAGER FOUND
       // ==========================

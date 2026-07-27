@@ -1,15 +1,11 @@
 const db =
 require("../db");
-
-
 // ==========================
 // Add Followup
 // ==========================
 const addFollowup =
 (req, res) => {
-
   const {
-
     lead_id,
     employee_id,
     followup_mode,
@@ -17,8 +13,6 @@ const addFollowup =
     lead_status
 
   } = req.body;
-
-
   const sql = `
 
     INSERT INTO follow_ups (
@@ -30,12 +24,8 @@ const addFollowup =
       lead_status
 
     )
-
     VALUES (?, ?, ?, ?, ?)
-
   `;
-
-
   db.query(
 
     sql,
@@ -65,8 +55,6 @@ const addFollowup =
         });
 
       }
-
-
       // ==========================
       // Update Lead Status
       // ==========================

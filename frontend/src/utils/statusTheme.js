@@ -20,7 +20,7 @@ export const STATUS_THEME = {
     bg: "#EEF2FF",
   },
 
-  meeting_scheduled: {
+  "meeting scheduled": {
     color: "#DB2777",      // Pink
     bg: "#FCE7F3",
   },
@@ -35,7 +35,7 @@ export const STATUS_THEME = {
     bg: "#F3F4F6",
   },
 
-  not_interested: {
+  "not interested" :{
     color: "#DC2626",      // Red
     bg: "#FEE2E2",
   },

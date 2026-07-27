@@ -9,33 +9,21 @@ import {
 import { PieChart as PieChartIcon } from "lucide-react";
 
 import { STATUS_THEME } from "../../utils/statusTheme";
-
+import {
+  normalizeStatus,
+  formatStatus
+} from "../../utils/statusUtils";
 export default function LeadStatusChart({ data }) {
 
   const chartData = data.map((item) => {
 
-  const status = item.lead_status
-    ?.trim()
-    .toLowerCase()
-    .replace(/\s+/g, "_");
+  const status = normalizeStatus(item.lead_status);
 
   return {
-
     status,
-
-    name: status
-      .split("_")
-      .map(word =>
-        word.charAt(0).toUpperCase() +
-        word.slice(1)
-      )
-      .join(" "),
-
+    name: formatStatus(item.lead_status),
     value: Number(item.total),
-
-    color:
-      STATUS_THEME[status]?.color || "#94A3B8",
-
+    color: STATUS_THEME[status]?.color || "#94A3B8",
   };
 
 });
@@ -49,6 +37,7 @@ export default function LeadStatusChart({ data }) {
         padding: "22px",
         boxShadow: "0 6px 18px rgba(0,0,0,.08)",
         height: "360px",
+        
       }}
     >
 
@@ -70,17 +59,18 @@ export default function LeadStatusChart({ data }) {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          gap: "20px",
           height: "280px",
         }}
       >
 
         <div
-          style={{
-            width: "55%",
-            height: "100%",
-          }}
-        >
+        style={{
+          flex: 1,
+          minWidth: 0,
+          height: "100%",
+        }}
+      >
 
           <ResponsiveContainer>
 
@@ -118,7 +108,7 @@ export default function LeadStatusChart({ data }) {
             width: "40%",
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
+            gap: "2px",
           }}
         >
 
@@ -139,7 +129,7 @@ export default function LeadStatusChart({ data }) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "10px",
+                  gap: "2px",
                 }}
               >
 
