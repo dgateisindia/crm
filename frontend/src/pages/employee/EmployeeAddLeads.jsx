@@ -678,6 +678,10 @@ searchParams.get("from");
                         Professional Services
                       </option>
 
+                      <option value="Freelance">
+                        Freelance
+                      </option>
+
                     </select>
 
                   </div>

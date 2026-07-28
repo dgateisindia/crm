@@ -351,6 +351,7 @@ allLeads.filter((lead) => {
         subtitle="New Leads"
         color="green"
         icon={<UserPlus size={24} />}
+        onClick={() => navigate("/employee/tasks")}
     />
 
     <StatCard
@@ -368,6 +369,8 @@ allLeads.filter((lead) => {
         subtitle="Pending Follow-ups"
         color="orange"
         icon={<CalendarClock size={24} />}
+        onClick={() => navigate("/employee/followups")}
+
     />
 
     <StatCard
@@ -380,6 +383,8 @@ allLeads.filter((lead) => {
         subtitle="Successfully Converted"
         color="blue"
         icon={<BadgeCheck size={24} />}
+        onClick={() => navigate("/employee/converted-leads")}
+
     />
 
     <StatCard
@@ -392,6 +397,8 @@ allLeads.filter((lead) => {
         subtitle="Rejected Leads"
         color="red"
         icon={<UserX size={24} />}
+        onClick={() => navigate("/employee/not-interested")}
+
     />
 
 </div>
@@ -446,6 +453,8 @@ allLeads.filter((lead) => {
   <option value="Banks">Banks</option>
   <option value="E-Commerce">E-Commerce</option>
   <option value="Professional Services">Professional Services</option>
+  <option value="Freelance">Freelance</option>
+
 </select>
 
   <button
