@@ -32,7 +32,7 @@ const login =
 
       if (err) {
 
-        //console.log(err);
+        console.log(err);
 
         return res.status(500)
         .json({
