@@ -1,3 +1,4 @@
+import { useSubscription } from "../../context/SubscriptionContext";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
@@ -19,6 +20,8 @@ import {
 import "../../styles/employeeprofile.css";
 
 export default function EmployeeProfile() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [profile, setProfile] = useState(null);
 
@@ -44,76 +47,19 @@ export default function EmployeeProfile() {
   // ===============================
 
   const fetchProfile = async () => {
-
     try {
+        const { data } = await api.get("/employee/me");
 
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
-
-      const { data } = await api.get(
-        `/employee/profile/${user.id}`
-      );
-
-    setProfile(data);
-
+        setProfile(data.data);
+    } catch (err) {
+        console.log("PROFILE ERROR:", err);
+        alert("Failed to load profile.");
+    } finally {
+        setLoading(false);
     }
-
-    catch (err) {
-
-      console.log(err);
-
-      alert("Failed to load profile.");
-
-    }
-
-    finally {
-
-      setLoading(false);
-
-    }
-
-  };
+};
 useEffect(() => {
-
-    let mounted = true;
-
-    const loadProfile = async () => {
-
-        try {
-
-            const user = JSON.parse(
-                localStorage.getItem("user")
-            );
-
-            const { data } = await api.get(
-                `/employee/profile/${user.id}`
-            );
-
-            if (mounted) {
-
-                setProfile(data);
-
-                setLoading(false);
-
-            }
-
-        } catch (err) {
-
-            console.log(err);
-
-        }
-
-    };
-
-    loadProfile();
-
-    return () => {
-
-        mounted = false;
-
-    };
-
+    fetchProfile();
 }, []);
 
   
@@ -186,6 +132,8 @@ useEffect(() => {
   // ===============================
 
   const startEditing = () => {
+    if (!canWrite) return;
+
 
     setEditData({
 
@@ -226,6 +174,8 @@ useEffect(() => {
   // ===============================
 
   const updateProfile = async () => {
+    if (!canWrite) return;
+
 
     if (!editData.full_name.trim()) {
 
@@ -276,6 +226,8 @@ useEffect(() => {
   // ===============================
 
   const updatePassword = async () => {
+    if (!canWrite) return;
+
 
     if (!passwords.newPassword.trim()) {
 
@@ -439,7 +391,7 @@ useEffect(() => {
 
                     className="saveBtn"
 
-                    onClick={updateProfile}
+                    onClick={updateProfile} disabled={!canWrite}
 
                   >
 
@@ -471,7 +423,7 @@ useEffect(() => {
 
                   className="editBtn"
 
-                  onClick={startEditing}
+                  onClick={startEditing} disabled={!canWrite}
 
                 >
 
@@ -664,6 +616,7 @@ useEffect(() => {
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="New Password"
+                        disabled={!canWrite}
                         value={passwords.newPassword}
                         onChange={(e)=>
                             setPasswords({
@@ -699,6 +652,7 @@ useEffect(() => {
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm Password"
+                        disabled={!canWrite}
                         value={passwords.confirmPassword}
                         onChange={(e)=>
                             setPasswords({
@@ -728,7 +682,7 @@ useEffect(() => {
 
                 <button
                     className="passwordBtn"
-                    onClick={updatePassword}
+                    onClick={updatePassword} disabled={!canWrite}
                 >
                     Update Password
                 </button>

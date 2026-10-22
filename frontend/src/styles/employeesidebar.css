@@ -139,3 +139,12 @@
   background:#DBEAFE;
   color:#2563EB;
 }
+.sidebar {
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #34466a transparent;
+}

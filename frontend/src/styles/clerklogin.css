@@ -1,0 +1,200 @@
+/* Main page */
+.clerk-login-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* Left branding panel */
+.clerk-login-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  overflow: hidden;
+  color: #ffffff;
+  background: linear-gradient(145deg, #071739 0%, #102b5c 65%, #17478b 100%);
+}
+
+.clerk-login-brand::before {
+  content: "";
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  right: -180px;
+  bottom: -170px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 50px rgba(255, 255, 255, 0.025),
+    0 0 0 100px rgba(255, 255, 255, 0.02);
+}
+
+.clerk-brand-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+}
+
+.clerk-brand-logo {
+  margin-bottom: 48px;
+}
+
+.clerk-brand-logo img {
+  display: block;
+  width: 140px;
+  max-height: 75px;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.clerk-brand-tag {
+  margin-bottom: 22px;
+  color: #ffad32;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.clerk-brand-content h1 {
+  margin: 0 0 24px;
+  color: #ffffff;
+  font-size: clamp(34px, 3.4vw, 50px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+}
+
+.clerk-brand-description {
+  max-width: 440px;
+  color: #cbd5e8;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.clerk-brand-footer {
+  margin-top: 80px;
+  color: #a9b9d7;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Right login panel */
+.clerk-login-form-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: #ffffff;
+}
+
+.clerk-login-form-wrapper {
+  width: 100%;
+  max-width: 390px;
+}
+
+.clerk-login-heading {
+  margin-bottom: 28px;
+}
+
+.clerk-login-heading h2 {
+  margin: 0 0 10px;
+  color: #10213e;
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -0.7px;
+}
+
+.clerk-login-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+
+
+.clerk-login-security {
+  margin-top: 28px;
+  color: #94a3b8;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Mobile-only branding */
+.clerk-mobile-brand {
+  display: none;
+}
+
+/* Tablet and mobile */
+@media (max-width: 900px) {
+  .clerk-login-page {
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+
+  .clerk-login-brand {
+    padding: 36px;
+  }
+
+  .clerk-login-form-section {
+    padding: 32px;
+  }
+
+  .clerk-brand-content h1 {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 640px) {
+  .clerk-login-page {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 18px;
+    background: #f4f7fc;
+  }
+
+  .clerk-login-brand {
+    display: none;
+  }
+
+  .clerk-login-form-section {
+    width: 100%;
+    padding: 28px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 12px 36px rgba(15, 35, 70, 0.08);
+  }
+
+  .clerk-login-form-wrapper {
+    max-width: 390px;
+  }
+
+  .clerk-mobile-brand {
+    display: block;
+    margin-bottom: 28px;
+    color: #10213e;
+    font-size: 19px;
+    font-weight: 750;
+  }
+
+  .clerk-mobile-brand span {
+    color: #2459d3;
+  }
+
+  .clerk-login-heading h2 {
+    font-size: 26px;
+  }
+
+  .clerk-login-security {
+    margin-top: 22px;
+  }
+}

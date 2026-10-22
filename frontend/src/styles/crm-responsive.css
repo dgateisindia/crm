@@ -1,0 +1,528 @@
+
+.crm-app-shell {
+  width: 100%;
+  min-width: 0;
+}
+.crm-sidebar-holder {
+  flex: 0 0 auto;
+}
+.crm-main, .crm-page-content {
+  min-width: 0;
+  max-width: 100%;
+}
+.crm-mobile-nav, .crm-nav-backdrop {
+  display: none;
+}
+.crm-app-shell :is(.actionBtn, .action-menu-btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+}
+.crm-app-shell :is(.leadAddBtn, .add-lead-btn, .topbar-action-btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+}
+@media (max-width: 900px) {
+  .crm-app-shell {
+    flex-direction: column;
+  }
+  .crm-mobile-nav {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    min-height: 52px;
+    background: #071739;
+  }
+  .crm-menu-toggle {
+    color: white;
+    border: 1px solid #52617e;
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px 14px;
+    min-height: 38px;
+  }
+  .crm-sidebar-holder {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1101;
+    width: min(260px, 85vw);
+    height: 100dvh;
+    visibility: hidden;
+    transform: translateX(-105%);
+    transition: transform .2s ease;
+  }
+  .crm-sidebar-holder.is-open {
+    visibility: visible;
+    transform: translateX(0);
+  }
+  .crm-sidebar-holder > .sidebar {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    position: relative;
+    top: auto;
+  }
+  .crm-nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: rgba(15,23,42,.55);
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .crm-main {
+    width: 100%;
+    height: auto;
+    min-height: calc(100dvh - 52px);
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+  .crm-page-content {
+    padding: 16px;
+    overflow-x: auto;
+  }
+  .crm-app-shell .topbar,
+  .crm-app-shell .topbar-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .crm-app-shell .manager-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .crm-app-shell .manager-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .crm-app-shell .topbar-title {
+    font-size: 20px;
+  }
+  .crm-app-shell .profile-menu {
+    width: min(245px, calc(100vw - 32px));
+  }
+  .crm-app-shell .export-modal {
+    max-width: 100%;
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crm-sidebar-holder {
+    transition: none;
+  }
+}
+
+
+/* CRM DASHBOARD AND LEADS MOBILE FIX */
+
+.crm-app-shell .reportsPage,
+.crm-app-shell .leads-container {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Prevent dashboard grids from retaining desktop widths */
+.crm-app-shell .dashboard-charts,
+.crm-app-shell .dashboard-charts > *,
+.crm-app-shell .manager-dashboard-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.crm-app-shell .dashboard-charts > * {
+  width: 100%;
+}
+
+/* Notes form */
+.crm-app-shell .dashboard-charts .notes-card {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.crm-app-shell .notes-textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.crm-app-shell .notes-footer {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.crm-app-shell .notes-footer > div {
+  flex-wrap: wrap;
+}
+
+/* Keep all existing table columns and actions */
+.crm-app-shell .leads-card.tableWrapper {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crm-app-shell .leads-card.tableWrapper > table {
+  min-width: 850px;
+  width: 100%;
+}
+
+.crm-app-shell .leads-container,
+.crm-app-shell .recent-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.crm-app-shell .recent-card .overflow-x-auto {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crm-app-shell .recent-card table {
+  min-width: 650px;
+}
+
+/* Mobile dashboard */
+@media (max-width: 900px) {
+  .crm-app-shell .dashboard-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .crm-app-shell .manager-dashboard-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .crm-app-shell .leads-container {
+    padding: 12px;
+  }
+
+  .crm-app-shell .leadToolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .crm-app-shell .searchContainer {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .crm-app-shell .notes-card {
+    height: auto;
+    min-height: 320px;
+  }
+
+  .crm-app-shell .notes-textarea {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .crm-app-shell .dashboard-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .crm-app-shell .manager-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .crm-app-shell .dashboard-charts > * {
+    min-width: 0;
+  }
+
+  .crm-app-shell .leads-card.tableWrapper > table {
+    min-width: 850px;
+  }
+}
+
+/* CRM TODO TABLE RESPONSIVE FIX */
+.crm-app-shell .crm-todo-card {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.crm-app-shell .crm-todo-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crm-app-shell .crm-todo-table-scroll > table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.crm-app-shell .crm-todo-table-scroll th,
+.crm-app-shell .crm-todo-table-scroll td {
+  white-space: normal;
+  vertical-align: middle;
+}
+
+@media (max-width: 900px) {
+  .crm-app-shell .crm-todo-card {
+    padding: 12px;
+  }
+
+  .crm-app-shell .crm-todo-card .leadToolbar {
+    flex-wrap: wrap;
+  }
+
+  .crm-app-shell .crm-todo-card .searchContainer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* MANAGER DASHBOARD AND REPORT RESPONSIVE V1 */
+
+.crm-app-shell .manager-dashboard-grid,
+.crm-app-shell .manager-dashboard-charts,
+.crm-app-shell .report-grid,
+.crm-app-shell .report-charts,
+.crm-app-shell .report-performance,
+.crm-app-shell .employee-chart-full {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.crm-app-shell .manager-dashboard-grid > *,
+.crm-app-shell .manager-dashboard-charts > *,
+.crm-app-shell .report-grid > *,
+.crm-app-shell .report-charts > *,
+.crm-app-shell .report-performance > *,
+.crm-app-shell .employee-chart-full > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.crm-app-shell .reportsPage {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 1199px) {
+  .crm-app-shell .manager-dashboard-grid,
+  .crm-app-shell .report-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .crm-app-shell .reportCards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .crm-app-shell .manager-dashboard-grid,
+  .crm-app-shell .report-grid,
+  .crm-app-shell .reportCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .crm-app-shell .manager-dashboard-charts,
+  .crm-app-shell .report-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px;
+  }
+
+  .crm-app-shell .reportFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .crm-app-shell .customDateFilter {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .crm-app-shell .recent-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .crm-app-shell .recent-card .overflow-x-auto {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crm-app-shell .recent-card table {
+    min-width: 650px;
+  }
+}
+
+@media (max-width: 600px) {
+  .crm-app-shell .manager-dashboard-grid,
+  .crm-app-shell .report-grid,
+  .crm-app-shell .reportCards {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px;
+  }
+
+  .crm-app-shell .manager-dashboard-charts,
+  .crm-app-shell .report-charts {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .crm-app-shell .dashboard-card,
+  .crm-app-shell .reportCard,
+  .crm-app-shell .reportSection {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .crm-app-shell .reportSection,
+  .crm-app-shell .reportCard {
+    padding: 16px;
+  }
+
+  .crm-app-shell .summary-card {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .crm-app-shell .reportFilters .reportBtn {
+    min-height: 40px;
+  }
+
+  .crm-app-shell .customDateFilter .dateField,
+  .crm-app-shell .customDateFilter input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .crm-app-shell .reportInfoLeft {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* Keep pie chart and legend readable on mobile */
+  .crm-app-shell .manager-dashboard-charts > div:first-child,
+  .crm-app-shell .report-charts > div:first-child {
+    height: auto !important;
+    min-height: 360px;
+  }
+
+  .crm-app-shell .manager-dashboard-charts > div:first-child > div:nth-child(2),
+  .crm-app-shell .report-charts > div:first-child > div:nth-child(2) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    height: auto !important;
+    gap: 12px !important;
+  }
+
+  .crm-app-shell .manager-dashboard-charts > div:first-child > div:nth-child(2) > div:first-child,
+  .crm-app-shell .report-charts > div:first-child > div:nth-child(2) > div:first-child {
+    flex: none !important;
+    width: 100%;
+    height: 210px !important;
+  }
+
+  .crm-app-shell .manager-dashboard-charts > div:first-child > div:nth-child(2) > div:last-child,
+  .crm-app-shell .report-charts > div:first-child > div:nth-child(2) > div:last-child {
+    width: 100% !important;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .crm-app-shell .manager-dashboard-charts h3,
+  .crm-app-shell .report-charts h3 {
+    font-size: 18px !important;
+    line-height: 1.4;
+  }
+}
+
+/* DGATE_MOBILE_FINAL_FIX */
+@media (max-width: 780px) {
+
+  .crm-app-shell {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .crm-app-shell .crm-main {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .crm-app-shell .crm-page-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 12px !important;
+    overflow-x: hidden;
+  }
+
+  .crm-app-shell .topbar {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .crm-app-shell .topbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .crm-app-shell .recent-card,
+  .crm-app-shell .tableWrapper,
+  .crm-app-shell .crm-todo-table-scroll {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crm-app-shell .recent-card > table,
+  .crm-app-shell .tableWrapper > table,
+  .crm-app-shell .crm-todo-table-scroll > table {
+    min-width: 700px;
+    width: max-content;
+  }
+
+  .crm-app-shell input[type="search"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+}

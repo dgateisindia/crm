@@ -9,15 +9,17 @@ import "../../styles/managerDashboard.css";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/status.css";
 import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
-import { STATUS_THEME } from "../../utils/statusTheme";
-
+import { getStatusTheme } from "../../utils/statusTheme";
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 
 import { Search, Plus, Eye, Pencil, CalendarClock,PhoneCall, MoreVertical, Briefcase, UserPlus, BadgeCheck, UserX } from "lucide-react";
 import StatCard from "../../components/dashboard/StatCard";
 import useActionMenu from "../../hooks/useActionMenu";
-
+import FloatingActionMenu from "../../components/common/FloatingActionMenu";
+import {
+  useSubscription
+} from "../../context/SubscriptionContext";
 
 export default function Leads() {
 
@@ -32,6 +34,11 @@ export default function Leads() {
   const [statusFilter,
     setStatusFilter] =
     useState("all");
+
+  const subscription = useSubscription();
+
+  const canWrite =
+  subscription?.canWrite === true;
 
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -61,65 +68,45 @@ export default function Leads() {
   const navigate =
   useNavigate();
 
-  const {
-
-  openMenu,
-
-  toggleMenu,
-
-  menuRef,
-
-  setOpenMenu
-
-} = useActionMenu();
+  const { openMenu, toggleMenu, menuRef, menuAnchor, setOpenMenu } = useActionMenu();
 
 
   // ==========================
   // Fetch Leads
   // ==========================
-  const fetchLeads =
-async () => {
-
+  const fetchLeads = async () => {
   try {
-
-    const user =
-    JSON.parse(
-
-      localStorage.getItem(
-        "user"
-      )
-
-    );
+    const employeeResponse = await api.get("/employee/me");
 
     const employeeId =
+      employeeResponse.data.data.employee_id;
 
-      user?.employee_id ||
+    console.log("CRM EMPLOYEE ID:", employeeId);
 
-      user?.id;
-
-    const response =
-    await  api.get(
-
-`/leads/employee/${employeeId}`
-
+    const response = await api.get(
+      `/leads/employee/${employeeId}/all`
     );
 
-    setAllLeads(
+    console.log(
+      "ALL EMPLOYEE LEADS:",
       response.data
     );
 
-  }
+    setAllLeads(response.data);
 
-  catch (error) {
-
-    console.log(error);
-
-    alert(
-      "Failed to fetch leads"
+  } catch (error) {
+    console.error(
+      "GET ALL EMPLOYEE LEADS ERROR:",
+      error
     );
 
-  }
+    console.error(
+      "ERROR RESPONSE:",
+      error.response?.data
+    );
 
+    alert("Failed to fetch leads");
+  }
 };
 
 useEffect(() => {
@@ -182,8 +169,11 @@ useEffect(() => {
 
   };
   */}
+const openFollowupModal = (lead) => {
 
-  const openFollowupModal = (lead) => {
+  if (!canWrite) {
+    return;
+  }
 
   setSelectedLead(lead);
 
@@ -196,9 +186,13 @@ useEffect(() => {
   setShowFollowupModal(true);
 
 };
-  const handleFollowupSubmit =
-  async()=>{
-    try{
+  const handleFollowupSubmit = async () => {
+
+  if (!canWrite) {
+    return;
+  }
+
+  try {
       const user = JSON.parse(localStorage.getItem("user"));
       await  api.post(
         "/followups/add",
@@ -369,7 +363,7 @@ allLeads.filter((lead) => {
         subtitle="Pending Follow-ups"
         color="orange"
         icon={<CalendarClock size={24} />}
-        onClick={() => navigate("/employee/followups")}
+        onClick={() => navigate("/employee/task-followups")}
 
     />
 
@@ -432,6 +426,7 @@ allLeads.filter((lead) => {
     <option value="proposed">proposed</option>
     <option value="converted">Converted</option>
     <option value="not interested">Not Interested</option>
+    <option value="not responded">  Not Responded </option>
   </select>
   <select
   className="leadSelect"
@@ -457,6 +452,7 @@ allLeads.filter((lead) => {
 
 </select>
 
+  {canWrite && (
   <button
     className="leadAddBtn"
     onClick={() => navigate("/employee/add-leads")}
@@ -464,12 +460,9 @@ allLeads.filter((lead) => {
     <Plus size={20} strokeWidth={3} />
     <span>Add Lead</span>
   </button>
+)}
 
 </div>       
-
-
-        
-
 
         {/* Table */}
         <div className="leads-card tableWrapper overflow-hidden">
@@ -593,15 +586,8 @@ allLeads.filter((lead) => {
                       <span
                         className="status-badge"
                         style={{
-                          background:
-                            STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                            ]?.bg || "#E5E7EB",
-
-                          color:
-                            STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                            ]?.color || "#374151",
+                          backgroundColor: getStatusTheme(lead.lead_status).bg,
+                          color: getStatusTheme(lead.lead_status).color,
                         }}
                       >
                         {formatStatus(lead.lead_status)}
@@ -609,71 +595,46 @@ allLeads.filter((lead) => {
                     </td>
 
                     <td className="p-4 relative">
+  <button
+    type="button"
+    className="actionBtn"
+    aria-label="Lead actions"
+    aria-expanded={openMenu === lead.id}
+    onClick={(event) => toggleMenu(lead.id, event)}
+  >
+    <MoreVertical size={20} />
+  </button>
 
-                      <button
-                          className="actionBtn"
-                          onClick={() => toggleMenu(lead.id)}
-                      >
-                          <MoreVertical size={20}/>
-                      </button>
+  {openMenu === lead.id && (
+    <FloatingActionMenu anchor={menuAnchor} menuRef={menuRef}>
+      <button
+        type="button"
+        className="action-item"
+        onClick={() => {
+          navigate(`/employee/lead/${lead.id}`);
+          setOpenMenu(null);
+        }}
+      >
+        <Eye size={16} />
+        View Lead
+      </button>
 
-                      {
-                          openMenu === lead.id && (
-
-                              <div
-                                  ref={menuRef}
-                                  className="actionMenu"
-                              >
-
-                                  <button
-                                      className="menuItem"
-                                      onClick={() => {
-
-                                          navigate(`/employee/lead/${lead.id}`);
-
-                                          setOpenMenu(null);
-
-                                      }}
-                                  >
-                                      <Eye size={16}/>
-                                      View Lead
-                                  </button>
-
-                                  <button
-                                      className="menuItem"
-                                      onClick={() => {
-
-                                          navigate(`/employee/edit-lead/${lead.id}`);
-
-                                          setOpenMenu(null);
-
-                                      }}
-                                  >
-                                      <Pencil size={16}/>
-                                      Edit Lead
-                                  </button>
-
-                                  <button
-                                      className="menuItem"
-                                      onClick={() => {
-
-                                          openFollowupModal(lead);
-
-                                          setOpenMenu(null);
-
-                                      }}
-                                  >
-                                      <PhoneCall size={16}/>
-                                      Add Lead Followup
-                                  </button>
-
-                              </div>
-
-                          )
-
-                      }
-
-                  </td>
+      {canWrite && (
+        <button
+          type="button"
+          className="action-item"
+          onClick={() => {
+            navigate(`/employee/edit-lead/${lead.id}`);
+            setOpenMenu(null);
+          }}
+        >
+          <Pencil size={16} />
+          Edit Lead
+        </button>
+      )}
+    </FloatingActionMenu>
+  )}
+</td>
 
                   </tr>
 
@@ -710,8 +671,7 @@ allLeads.filter((lead) => {
       {
 
 
-showFollowupModal && (
-
+showFollowupModal && canWrite && (
 <div className="crmModalOverlay">
 
   <div className="crmModalCard">
@@ -869,8 +829,8 @@ setShowFollowupModal(false)
               Converted
             </option>
 
-            <option value="lost">
-              Lost
+            <option value="not responded">
+                Not Responded 
             </option>
 
           </select>

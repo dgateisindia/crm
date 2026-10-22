@@ -1,42 +1,34 @@
 import api from "../../utils/api";
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
-import { useNavigate,useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+} from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
-import "../../styles/addlead.css";
+import "../../styles/addLead.css";
+import ExcelImportGuide from "../../components/ExcelImportGuide.jsx";
+
 
 function AddLeads() {
 
   const initialState = {
-
   company_name: "",
-
   contact_person_name: "",
-
   designation: "",
-
   email: "",
-
   phone: "",
-
   address: "",
-
   website: "",
-
   city: "",
-
   category: "",
-
   source: "",
-
   lead_mode: "",
-
   lead_status: "",
-
   remarks: "",
-
-  important_lead: false
-
+  important_lead: false,
+  assigned_employee_id: ""
 };
 
 const [
@@ -49,12 +41,90 @@ setLeadData
 useState(
 initialState
 );
+  
+  const navigate = useNavigate();
+  
+
+  const{id} = useParams();
+
   const [selectedFile, setSelectedFile] =
   useState(null);
 
-  const navigate = useNavigate();
+  const [employees, setEmployees] = useState([]);
 
-  const{id} = useParams();
+  const [previewData, setPreviewData] = useState(null);
+
+  const [allocation, setAllocation] = useState({});
+
+  const [uploading, setUploading] = useState(false);
+
+  const [showAllocationModal, setShowAllocationModal] =
+  useState(false);
+
+  const location = useLocation();
+
+  const fileInputRef = useRef(null);
+  const autoPickerOpened = useRef(false);
+
+  const [employeeSearch, setEmployeeSearch] = useState("");
+
+ useEffect(() => {
+  if (!location.state?.openFilePicker) {
+    autoPickerOpened.current = false;
+    return;
+  }
+
+  if (autoPickerOpened.current || !fileInputRef.current) {
+    return;
+  }
+
+  autoPickerOpened.current = true;
+
+  fileInputRef.current.click();
+
+  navigate(
+    {
+      pathname: location.pathname,
+      search: location.search,
+    },
+    {
+      replace: true,
+      state: null,
+    }
+  );
+}, [
+  location.state,
+  location.pathname,
+  location.search,
+  navigate,
+]);
+  useEffect(() => {
+  const fetchEmployees = async () => {
+    try {
+      const response = await api.get(
+        "/leads/assignment-employees"
+      );
+
+      setEmployees(
+        response.data.employees || []
+      );
+
+    } catch (error) {
+      console.error(
+        "Failed to fetch employees:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to load employees."
+      );
+    }
+  };
+
+  fetchEmployees();
+
+}, []);
 
     useEffect(() => {
 
@@ -76,7 +146,7 @@ initialState
             email: response.data.email || "",
             phone: response.data.phone || "",
             address: response.data.address || "",
-            website: response.data.website || "", 
+            website: response.data.website || "",
             city: response.data.city || "",
             category: response.data.category || "",
             source: response.data.source || "",
@@ -85,6 +155,8 @@ initialState
             lead_status: response.data.lead_status || "",
             remarks: response.data.remarks || "",
             important_lead: response.data.important_lead || false,
+            assigned_employee_id:
+              response.data.assigned_employee_id || "",
           });
         }
         catch (error) {
@@ -251,104 +323,350 @@ else {
     }
 
   };
-  const handleUpload =
-      async () => {
+  const handleUpload = async () => {
 
-        if (!selectedFile) {
+  if (!selectedFile) {
+    return alert("Please select file");
+  }
 
-          return alert(
-            "Please select file"
-          );
 
-        }
+  // ======================================
+  // STEP 1 — PREVIEW
+  // ======================================
 
-        try {
+  if (!previewData) {
 
-         const user = JSON.parse(
-            localStorage.getItem("user")
-          );
+    try {
 
-          const formData = new FormData();
+      setUploading(true);
 
-          formData.append(
-            "file",
-            selectedFile
-          );
 
-          formData.append(
-            "created_by_id",
-            user?.manager_id ||
-            user?.id ||
-            1
-          );
+      const formData = new FormData();
 
-          formData.append(
-            "created_by_type",
-            "manager"
-          );
+      formData.append(
+        "file",
+        selectedFile
+      );
 
-          formData.append(
-              "created_by_name",
-              user?.full_name ||
-              "Manager Name"
-            );
 
-          const response =
-          await  api.post(
-
-            "/leads/upload",
-
-            formData,
-
-            {
-
-              headers: {
-
-                "Content-Type":
-                "multipart/form-data"
-
-              }
-
-            }
-
-          );
-
-         let message = `${response.data.inserted} Records Inserted\n\n`;
-
-          if (response.data.errors && response.data.errors.length > 0) {
-
-              message += `${response.data.duplicates} Rows Skipped\n\n`;
-
-              response.data.errors.forEach((error) => {
-
-                  message += `Row ${error.row} : ${error.reason}\n`;
-
-              });
-
+      const response = await api.post(
+        "/leads/upload-preview",
+        formData,
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data"
           }
+        }
+      );
 
-          alert(message);
-          navigate("/manager/leads");
+// ======================================
+// Check if there are any new leads
+// ======================================
+
+if (Number(response.data.validRows || 0) === 0) {
+
+  alert(
+    "No new leads found. All records in this file already exist."
+  );
+
+  setPreviewData(null);
+  setAllocation({});
+  setShowAllocationModal(false);
+
+  return;
+}
+
+
+// ======================================
+// Store preview data
+// ======================================
+
+setPreviewData(response.data);
+
+
+// ======================================
+// Auto-allocate if only one employee
+// ======================================
+
+if (
+  employees.length === 1 &&
+  response.data.validRows > 0
+) {
+
+  setAllocation({
+    [employees[0].employee_id]:
+      response.data.validRows
+  });
+
+} else {
+
+  setAllocation({});
+
+}
+
+
+setShowAllocationModal(true);
+
+    setShowAllocationModal(true);
+
+      // ----------------------------------
+      // If only one employee exists,
+      // automatically suggest all leads
+      // to that employee.
+      // ----------------------------------
+
+      if (
+        employees.length === 1 &&
+        response.data.validRows > 0
+      ) {
+
+        setAllocation({
+          [employees[0].employee_id]:
+            response.data.validRows
+        });
+
+      } else {
+
+        setAllocation({});
+
+      }
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to preview Excel file."
+      );
+
+    } finally {
+
+      setUploading(false);
+
+    }
+
+    return;
+  }
+
+
+  // ======================================
+  // STEP 2 — FINAL UPLOAD
+  // ======================================
+
+  try {
+
+    setUploading(true);
+
+
+    const allocationArray =
+      Object.entries(allocation)
+        .filter(
+          ([, count]) =>
+            Number(count) > 0
+        )
+        .map(
+          ([employee_id, count]) => ({
+            employee_id:
+              Number(employee_id),
+
+            count:
+              Number(count)
+          })
+        );
+
+
+    // ----------------------------------
+    // Check allocation total
+    // ----------------------------------
+
+    const allocatedTotal =
+      allocationArray.reduce(
+        (total, item) =>
+          total + item.count,
+        0
+      );
+
+
+    if (
+      allocatedTotal !==
+      previewData.validRows
+    ) {
+
+      alert(
+        `Allocated leads (${allocatedTotal}) must equal valid leads (${previewData.validRows}).`
+      );
+
+      return;
+    }
+
+
+    // ----------------------------------
+    // Prepare final upload
+    // ----------------------------------
+
+    const formData = new FormData();
+
+
+    formData.append(
+      "file",
+      selectedFile
+    );
+
+
+    formData.append(
+      "allocation",
+      JSON.stringify(
+        allocationArray
+      )
+    );
+
+
+    const response =
+      await api.post(
+        "/leads/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data"
+          }
+        }
+      );
+
+
+    // ----------------------------------
+    // Result message
+    // ----------------------------------
+
+    let message =
+      `${response.data.inserted} Records Inserted\n\n`;
+
+
+    if (
+      response.data.errors &&
+      response.data.errors.length > 0
+    ) {
+
+      message +=
+        `${response.data.duplicates} Rows Skipped\n\n`;
+
+
+      response.data.errors.forEach(
+        (error) => {
+
+          message +=
+            `Row ${error.row} : ${error.reason}\n`;
 
         }
+      );
 
-        catch (error) {
+    }
 
-          console.log(error);
 
-          alert(
+    alert(message);
 
-            error.response?.data
-            ?.message ||
 
-            "Failed to Upload Leads"
+    navigate(
+      "/manager/leads"
+    );
 
-          );
 
-        }
+  } catch (error) {
 
-      };
-      
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to Upload Leads"
+    );
+
+  } finally {
+
+    setUploading(false);
+
+  }
+
+};
+const handleAllocationChange = (
+  employeeId,
+  value
+) => {
+
+  if (!previewData) return;
+
+  const validLeads =
+    Number(previewData.validRows || 0);
+
+  if (value === "") {
+
+    setAllocation(prev => ({
+      ...prev,
+      [employeeId]: ""
+    }));
+
+    return;
+  }
+
+  let numericValue =
+    Number(value);
+
+  if (
+    Number.isNaN(numericValue)
+  ) {
+    numericValue = 0;
+  }
+
+  numericValue =
+    Math.max(
+      0,
+      Math.floor(numericValue)
+    );
+
+
+  // --------------------------------------
+  // Calculate allocation of other employees
+  // --------------------------------------
+
+  const otherAllocated =
+    Object.entries(allocation)
+      .filter(
+        ([id]) =>
+          Number(id) !==
+          Number(employeeId)
+      )
+      .reduce(
+        (total, [, count]) =>
+          total +
+          Number(count || 0),
+        0
+      );
+
+
+  const maximumAllowed =
+    Math.max(
+      0,
+      validLeads -
+      otherAllocated
+    );
+
+
+  numericValue =
+    Math.min(
+      numericValue,
+      maximumAllowed
+    );
+
+
+  setAllocation(prev => ({
+    ...prev,
+    [employeeId]:
+      numericValue
+  }));
+
+}; 
 
   return (
 
@@ -785,14 +1103,49 @@ else {
                         Converted
                       </option>
 
-                      <option value="closed">
-                        Closed
+
+                      <option value="sponsorship">
+                        Sponsorship
+                      </option>
+
+                      <option value="invalid">
+                        Invalid
+                      </option>
+
+                      <option value="not responded">
+                        Not Responded 
                       </option>
 
                     </select>
 
                   </div>
 
+                </div>
+
+                <div className="formGroup fullWidth">
+                  <label>
+                    Assign To Employee *
+                  </label>
+
+                  <select
+                    name="assigned_employee_id"
+                    value={leadData.assigned_employee_id}
+                    onChange={handleChange}
+                    required={!id}
+                  >
+                    <option value="">
+                      Select Employee
+                    </option>
+
+                    {employees.map((employee) => (
+                      <option
+                        key={employee.employee_id}
+                        value={employee.employee_id}
+                      >
+                        {employee.full_name} - {employee.employee_code}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="formGroup fullWidth">
@@ -846,13 +1199,11 @@ else {
               <div className="importCard">
 
                 <div className="sidebarHeader">
-
                   <Upload size={18} />
 
                   <h3>
                     IMPORT LEADS
                   </h3>
-
                 </div>
 
                 <p>
@@ -861,48 +1212,240 @@ else {
 
                 <div className="uploadBox">
 
-                  <label
-                    className="fileUploadLabel"
-                  >
-
+                  <label className="fileUploadLabel">
                     Choose Excel File
 
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept=".xlsx,.xls,.csv"
-                      onChange={
-                        handleFileChange
-                      }
+                      onChange={handleFileChange}
                       hidden
                     />
-
                   </label>
 
-                  {
-
-                    selectedFile && (
-
-                      <p className="fileName">
-
-                        {
-                          selectedFile.name
-                        }
-
-                      </p>
-
-                    )
-
-                  }
+                  {selectedFile && (
+                    <p className="fileName">
+                      {selectedFile.name}
+                    </p>
+                  )}
 
                   <button
                     className="uploadBtn"
-                    onClick={
-                      handleUpload
+                    onClick={handleUpload}
+                    disabled={uploading}
+                  >
+                    {uploading
+                      ? "Processing..."
+                      : previewData
+                        ? "Preview Again"
+                        : "Preview Leads"}
+                  </button>
+
+                </div>
+                <ExcelImportGuide />
+
+              </div>
+
+            </div>
+
+          </div>
+          {/* End addLeadWrapper */}
+
+
+          {/* Allocation Modal */}
+          {showAllocationModal && previewData && (
+            <div className="allocationModalOverlay">
+
+              <div className="allocationModal">
+
+                {/* Header */}
+                <div className="allocationModalHeader">
+
+                  <div>
+                    <h2>
+                      Assign Leads
+                    </h2>
+
+                    <p>
+                      Distribute the valid leads among employees.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="allocationCloseBtn"
+                    onClick={() =>
+                      setShowAllocationModal(false)
                     }
                   >
+                    ×
+                  </button>
 
-                    Upload Leads
+                </div>
 
+
+                {/* Summary */}
+                <div className="allocationModalSummary">
+
+                  <div className="allocationStat">
+
+                    <span>
+                      Valid Leads
+                    </span>
+
+                    <strong>
+                      {previewData.validRows}
+                    </strong>
+
+                  </div>
+
+
+                  <div className="allocationStat">
+
+                    <span>
+                      Allocated
+                    </span>
+
+                    <strong>
+                      {
+                        Object.values(allocation).reduce(
+                          (total, count) =>
+                            total + Number(count || 0),
+                          0
+                        )
+                      }
+
+                      {" / "}
+
+                      {previewData.validRows}
+                    </strong>
+
+                  </div>
+
+                </div>
+
+                  {/* Employees */}
+                  <div className="allocationEmployeeSection">
+                    <div className="allocationEmployeeToolbar">
+                      <label htmlFor="allocationEmployeeSearch">
+                        Employees
+                      </label>
+
+                      <span>
+                        {employees.filter((employee) =>
+                          `${employee.full_name || ""} ${employee.employee_code || ""} ${employee.email || ""}`
+                            .toLowerCase()
+                            .includes(employeeSearch.trim().toLowerCase())
+                        ).length}{" "}
+                        found
+                      </span>
+                    </div>
+
+                    <div className="allocationSearchBox">
+                      <input
+                        id="allocationEmployeeSearch"
+                        type="text"
+                        placeholder="Search by employee name, code or email..."
+                        value={employeeSearch}
+                        onChange={(e) => setEmployeeSearch(e.target.value)}
+                        autoComplete="off"
+                      />
+
+                      {employeeSearch && (
+                        <button
+                          type="button"
+                          onClick={() => setEmployeeSearch("")}
+                          aria-label="Clear employee search"
+                          className="allocationSearchClear"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="allocationEmployees">
+                      {employees
+                        .filter((employee) =>
+                          `${employee.full_name || ""} ${employee.employee_code || ""} ${employee.email || ""}`
+                            .toLowerCase()
+                            .includes(employeeSearch.trim().toLowerCase())
+                        )
+                        .map((employee) => (
+                          <div
+                            className="allocationEmployeeRow"
+                            key={employee.employee_id}
+                          >
+                            <div className="allocationEmployeeInfo">
+                              <strong>{employee.full_name}</strong>
+
+                              <span>
+                                {employee.employee_code}
+                              </span>
+                            </div>
+
+                            <input
+                              type="number"
+                              aria-label={`Number of leads assigned to ${employee.full_name}`}
+                              min="0"
+                              max={previewData.validRows}
+                              value={allocation[employee.employee_id] ?? ""}
+                              onChange={(e) =>
+                                handleAllocationChange(
+                                  employee.employee_id,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                        ))}
+
+                      {employees.filter((employee) =>
+                        `${employee.full_name || ""} ${employee.employee_code || ""} ${employee.email || ""}`
+                          .toLowerCase()
+                          .includes(employeeSearch.trim().toLowerCase())
+                      ).length === 0 && (
+                        <div className="allocationNoResults">
+                          No employees found.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+
+
+                {/* Footer */}
+                <div className="allocationModalFooter">
+
+                  <button
+                    type="button"
+                    className="allocationCancelBtn"
+                    onClick={() =>
+                      setShowAllocationModal(false)
+                    }
+                    disabled={uploading}
+                  >
+                    Cancel
+                  </button>
+
+
+                  <button
+                    type="button"
+                    className="allocationConfirmBtn"
+                    onClick={handleUpload}
+                    disabled={
+                      uploading ||
+                      Object.values(allocation).reduce(
+                        (total, count) =>
+                          total + Number(count || 0),
+                        0
+                      ) !==
+                        Number(previewData.validRows)
+                    }
+                  >
+                    {uploading
+                      ? "Uploading..."
+                      : "Confirm & Upload"}
                   </button>
 
                 </div>
@@ -910,17 +1453,19 @@ else {
               </div>
 
             </div>
-
-          </div>
+          )}
 
         </div>
+        {/* End addLeadContainer */}
 
       </div>
+      {/* End addLeadPage */}
 
     </ManagerLayout>
 
   );
 
 }
+
 
 export default AddLeads;

@@ -1,60 +1,64 @@
-const express =
-require("express");
 
-const router =
-express.Router();
+const express = require("express");
+
+const router = express.Router();
 
 const {
-
   addFollowup,
-
   getFollowups,
-
   getEmployeeFollowups,
-
   getLeadFollowups,
-
   getLeadHistory
+} = require("../controllers/followupController");
 
-} = require(
+const { requireAuth } = require("../middleware/authMiddleware");
+const { requireRole } = require("../middleware/roleMiddleware");
 
-"../controllers/followupController"
-
-);
-
-
+// ==========================
 // Add Followup
+// ==========================
 router.post(
-"/add",
-addFollowup
+  "/add",
+  requireAuth,
+  addFollowup
 );
 
-
+// ==========================
 // Get All Followups
+// Manager / Owner Only
+// ==========================
 router.get(
-"/all",
-getFollowups
+  "/all",
+  requireAuth,
+  requireRole("owner", "manager"),
+  getFollowups
 );
 
-
+// ==========================
 // Employee Followups
+// ==========================
 router.get(
-"/employee/:employeeId",
-getEmployeeFollowups
+  "/employee/:employeeId",
+  requireAuth,
+  getEmployeeFollowups
 );
 
-
+// ==========================
 // Lead Followups
+// ==========================
 router.get(
-"/lead/:leadId",
-getLeadFollowups
+  "/lead/:leadId",
+  requireAuth,
+  getLeadFollowups
 );
 
+// ==========================
 // Lead History
+// ==========================
 router.get(
-"/lead-history/:leadId",
-getLeadHistory
+  "/lead-history/:leadId",
+  requireAuth,
+  getLeadHistory
 );
 
-module.exports =
-router;
+module.exports = router;

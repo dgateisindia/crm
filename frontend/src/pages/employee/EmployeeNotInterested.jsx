@@ -4,45 +4,66 @@ import { useEffect, useState } from "react";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
-import { STATUS_THEME } from "../../utils/statusTheme";
-import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
-
+import { getStatusTheme } from "../../utils/statusTheme";
+import { formatStatus } from "../../utils/statusUtils";
 export default function NotInterestedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-const employeeId =
-  user?.employee_id ||
-  user?.id;
-  // ==========================
-  // Fetch Not Interested Leads
-  // ==========================
-  const fetchLeads = async () => {
-    try {
-      const response = await  api.get(
-        `/leads/employee/${employeeId}/not-interested`
-      );
-
-      setLeads(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
+  
 
   // ==========================
   // Load Data
   // ==========================
-  useEffect(() => {
-    const loadLeads = async () => {
-      await fetchLeads();
-    };
+  // ==========================
+// Fetch Not Interested Leads
+// ==========================
+useEffect(() => {
 
-    loadLeads();
-  }, []);
+  const loadLeads = async () => {
+
+    try {
+
+      // Get CRM employee profile
+      const employeeResponse =
+        await api.get("/employee/me");
+
+      const employeeId =
+        employeeResponse.data.data.employee_id;
+
+      console.log(
+        "CRM EMPLOYEE ID:",
+        employeeId
+      );
+
+      // Get Not Interested Leads
+      const response =
+        await api.get(
+          `/leads/employee/${employeeId}/not-interested`
+        );
+
+      console.log(
+        "NOT INTERESTED API RESPONSE:",
+        response.data
+      );
+
+      setLeads(response.data);
+
+    } catch (error) {
+
+      console.error(
+        "Failed to fetch not interested leads:",
+        error
+      );
+
+    }
+
+  };
+
+  loadLeads();
+
+}, []);
 
   // ==========================
   // Search Filter
@@ -161,21 +182,14 @@ const employeeId =
 
                     <td className="table-data">
                        <span
-                    className="status-badge"
-                    style={{
-                      background:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.bg || "#E5E7EB",
-
-                      color:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.color || "#374151",
-                    }}
-                  >
-                    {formatStatus(lead.lead_status)}
-                  </span>
+                        className="status-badge"
+                        style={{
+                          backgroundColor: getStatusTheme(lead.lead_status).bg,
+                          color: getStatusTheme(lead.lead_status).color,
+                        }}
+                      >
+                        {formatStatus(lead.lead_status)}
+                      </span>
                     </td>
 
                   </tr>

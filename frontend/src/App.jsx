@@ -1,7 +1,6 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-
-import Login from "./pages/Login";
+//import Login from "./pages/Login";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import Leads from "./pages/manager/Leads";
 import Employees from "./pages/manager/Employees";
@@ -10,42 +9,99 @@ import Reports from "./pages/manager/Reports";
 import Settings from "./pages/manager/Settings";
 import CreateEmployee from "./pages/manager/CreateEmployee";
 import ProtectedRoute from "./routes/ProtectedRoute";
+
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
-import EmployeeFollowUps from "./pages/employee/EmployeeFollowUps"; 
-import EmployeeAddLeads from "./pages/employee/EmployeeAddLeads"; 
-import EmployeeMyLeads from "./pages/employee/EmployeeLeads"; 
+import EmployeeFollowUps from "./pages/employee/EmployeeFollowUps";
+import EmployeeAddLeads from "./pages/employee/EmployeeAddLeads";
+import EmployeeMyLeads from "./pages/employee/EmployeeLeads";
 import EmployeeDetails from "./pages/manager/EmployeeDetails";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
+
 import AddLeads from "./pages/manager/AddLeads";
 import CreateManager from "./pages/manager/CreateManager";
-import LeadDetails from "./pages/manager/LeadDetails";  
-import ImportantLeads from "./pages/manager/ImportantLeads";  
-import NotInterestedLeads from "./pages/manager/NotInterested"; 
+import LeadDetails from "./pages/manager/LeadDetails";
+import ImportantLeads from "./pages/manager/ImportantLeads";
+import NotInterestedLeads from "./pages/manager/NotInterested";
 import ConvertedLeads from "./pages/manager/ConvertedLeads";
+import ManagerNotResponded from "./pages/manager/NotResponded";
+
 import ResetPassword from "./pages/manager/ResetPassword";
 import ForgotPassword from "./pages/manager/ForgotPassword";
+
 import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
 import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
 import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
 import EmployeeTasks from "./pages/employee/EmployeeTasks";
-import EmployeeTaskFollowups  from "./pages/employee/EmployeeTaskFollowups";
+import EmployeeTaskFollowups from "./pages/employee/EmployeeTaskFollowups";
 import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
 import EmployeeReport from "./pages/employee/EmployeeReport";
+import NotResponded from "./pages/employee/EmployeeNotResponded";
+
 import Error401 from "./pages/errors/401";
 import Error403 from "./pages/errors/403";
 import Error404 from "./pages/errors/404";
 import Error500 from "./pages/errors/500";
 import Error503 from "./pages/errors/503";
+
 import ManagerProfile from "./pages/manager/Profile";
+
+import ClerkLogin from "./pages/ClerkLogin";
+import AcceptInvitation from "./pages/AcceptInvitation";
+import ClerkTest from "./pages/ClerkTest";
+import ClerkApiTest from "./ClerkApiTest";
+import AuthRedirect from "./pages/AuthRedirect";
+
+import RootRedirect from "./pages/RootRedirect";
 
 function App() {
   return (
     <Routes>
+      <Route
+        path="/login"
+        element={<Navigate to="/clerk-login" replace />}
+      />
+
+      {/* =========================================
+          LEGACY LOGIN
+          ========================================= */}
+
+ <Route
+  path="/"
+  element={<ClerkLogin />}
+/>
+
+
+      {/* =========================================
+          CLERK TEST ROUTES
+          ========================================= */}
 
       <Route
-        path="/"
-        element={<Login />}
+        path="/clerk-login/*"
+        element={<ClerkLogin />}
       />
+
+      <Route path="/accept-invitation/*" element={<AcceptInvitation />} />
+
+      <Route
+        path="/clerk-test"
+        element={<ClerkTest />}
+      />
+
+      <Route
+        path="/clerk-api-test"
+        element={<ClerkApiTest />}
+      />
+
+      <Route
+        path="/auth-redirect"
+        element={<AuthRedirect />}
+      />
+
+
+      {/* =========================================
+          PASSWORD RESET
+          ========================================= */}
+
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
@@ -55,6 +111,11 @@ function App() {
         path="/reset-password/:token"
         element={<ResetPassword />}
       />
+
+
+      {/* =========================================
+          MANAGER ROUTES
+          ========================================= */}
 
       <Route
         path="/manager/dashboard"
@@ -73,6 +134,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/manager/add-leads"
         element={
@@ -90,6 +152,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/manager/create-employee"
         element={
@@ -118,6 +181,173 @@ function App() {
       />
 
       <Route
+        path="/manager/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/employees/:id"
+        element={
+          <ProtectedRoute>
+            <EmployeeDetails />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/create-manager"
+        element={
+          <ProtectedRoute>
+            <CreateManager />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/lead/:id"
+        element={
+          <ProtectedRoute>
+            <LeadDetails />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/edit-lead/:id"
+        element={
+          <ProtectedRoute>
+            <AddLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/important-leads"
+        element={
+          <ProtectedRoute>
+            <ImportantLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/converted-leads"
+        element={
+          <ProtectedRoute>
+            <ConvertedLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/not-interested"
+        element={
+          <ProtectedRoute>
+            <NotInterestedLeads />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/manager/not-responded"
+        element={
+          <ProtectedRoute>
+            <ManagerNotResponded />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/edit-employee/:id"
+        element={
+          <ProtectedRoute>
+            <CreateEmployee />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/profile"
+        element={
+          <ProtectedRoute>
+            <ManagerProfile />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* =========================================
+          EMPLOYEE ROUTES
+          ========================================= */}
+
+      <Route
+        path="/employee/dashboard"
+        element={
+          <ProtectedRoute>
+            <EmployeeDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/followups"
+        element={
+          <ProtectedRoute>
+            <EmployeeFollowUps />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/add-leads"
+        element={
+          <ProtectedRoute>
+            <EmployeeAddLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/my-leads"
+        element={
+          <ProtectedRoute>
+            <EmployeeMyLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/lead/:id"
+        element={
+          <ProtectedRoute>
+            <EmployeeLeadDetails />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/edit-lead/:id"
+        element={
+          <ProtectedRoute>
+            <EmployeeAddLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/profile"
+        element={
+          <ProtectedRoute>
+            <EmployeeProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/employee/reports"
         element={
           <ProtectedRoute>
@@ -127,169 +357,93 @@ function App() {
       />
 
       <Route
-        path="/manager/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/dashboard"
-        element={
-          <ProtectedRoute>
-            <EmployeeDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/followups"
-        element={
-          <ProtectedRoute>
-            <EmployeeFollowUps />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/add-leads"
-        element={
-          <ProtectedRoute>
-            <EmployeeAddLeads />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/my-leads"
-        element={
-          <ProtectedRoute>
-            <EmployeeMyLeads />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-          path="/employee/lead/:id"
-          element={
-            <ProtectedRoute>
-              <EmployeeLeadDetails />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/employee/edit-lead/:id"
-          element={
-            <ProtectedRoute>
-              <EmployeeAddLeads />
-            </ProtectedRoute>
-          }
-        />
-              <Route
-        path="/manager/employees/:id"
-        element={
-        <ProtectedRoute>
-          <EmployeeDetails />
-        </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/employee/profile"
-        element={
-          <ProtectedRoute>
-            <EmployeeProfile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/manager/create-manager"
-        element={
-          <ProtectedRoute>
-            <CreateManager />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/manager/lead/:id"
-        element={
-          <ProtectedRoute>
-            <LeadDetails />
-          </ProtectedRoute>
-        }
-      />
-      <Route 
-      path="/manager/edit-lead/:id" 
-      element={
-      <ProtectedRoute>
-        <AddLeads />
-        </ProtectedRoute>} />
-
-        <Route
-
-        path="/manager/important-leads"
-
-        element={
-        <ImportantLeads />
-        }
-
-        />
-        <Route
-        path="/manager/converted-leads"
-        element={<ConvertedLeads />}
-        />
-
-        <Route
-        path="/manager/not-interested"
-        element={<NotInterestedLeads />}
-        />
-
-        <Route
         path="/employee/important-leads"
-        element={<EmployeeImportantLeads />}
-        />
+        element={
+          <ProtectedRoute>
+            <EmployeeImportantLeads />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
+      <Route
         path="/employee/converted-leads"
-        element={<EmployeeConvertedLeads />}
-        />
-        <Route
+        element={
+          <ProtectedRoute>
+            <EmployeeConvertedLeads />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/employee/not-interested"
-        element={<EmployeeNotInterested />}
-        />
-        <Route
-          path="/employee/tasks"
-          element={<EmployeeTasks />}
-        />
+        element={
+          <ProtectedRoute>
+            <EmployeeNotInterested />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/employee/task-followups"
-          element={<EmployeeTaskFollowups />}
-        />
-        <Route
-          path="/manager/edit-employee/:id"
-          element={<CreateEmployee />}
-        />
-        {/* Error routes */}
-        <Route
-         path="/401" 
-         element={<Error401 />} 
-         />
-        <Route
-         path="/403" element={<Error403 />} 
-         />
-        <Route 
-        path="/500" element={<Error500 />} 
-        />
-        <Route 
-        path="/503" element={<Error503 />} 
-        />
-        <Route
-            path="/manager/profile"
-            element={<ManagerProfile />}
-        />
-        
+      <Route
+        path="/employee/not-responded"
+        element={
+          <ProtectedRoute>
+            <NotResponded />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* 404 must be last */}
-        <Route 
-        path="*" element={<Error404 />} />
+      <Route
+        path="/employee/tasks"
+        element={
+          <ProtectedRoute>
+            <EmployeeTasks />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/employee/task-followups"
+        element={
+          <ProtectedRoute>
+            <EmployeeTaskFollowups />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* =========================================
+          ERROR ROUTES
+          ========================================= */}
+
+      <Route
+        path="/401"
+        element={<Error401 />}
+      />
+
+      <Route
+        path="/403"
+        element={<Error403 />}
+      />
+
+      <Route
+        path="/500"
+        element={<Error500 />}
+      />
+
+      <Route
+        path="/503"
+        element={<Error503 />}
+      />
+
+
+      {/* =========================================
+          404
+          ========================================= */}
+
+      <Route
+        path="*"
+        element={<Error404 />}
+      />
 
     </Routes>
   );

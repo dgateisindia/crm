@@ -17,8 +17,7 @@ import "../../styles/reports.css";
 
 export default function EmployeeReports() {
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const employeeId = user.id;
+ const [employeeId, setEmployeeId] = useState(null);
   const [showCustomFilter, setShowCustomFilter] = useState(false);
   const [range, setRange] = useState("today");
 
@@ -43,24 +42,51 @@ export default function EmployeeReports() {
     trendChart: [],
   });
 
-  useEffect(() => {
+  // Get CRM Employee ID
+useEffect(() => {
+  const loadEmployee = async () => {
+    try {
+      const response = await api.get("/employee/me");
 
-  let url = `/reports/employee/${employeeId}?range=${range}`;
+      const id = response.data.data.employee_id;
 
-  if (
-    range === "custom" &&
-    appliedStartDate
-  ) {
-    url += `&startDate=${appliedStartDate}&endDate=${appliedEndDate}`;
-  }
+      console.log("CRM EMPLOYEE ID:", id);
 
-  api.get(url)
-    .then((res) => {
-      setReport(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      setEmployeeId(id);
+    } catch (error) {
+      console.error("FAILED TO GET EMPLOYEE:", error);
+    }
+  };
+
+  loadEmployee();
+}, []);
+
+
+// Load Report
+useEffect(() => {
+  if (!employeeId) return;
+
+  const loadReport = async () => {
+    try {
+      let url = `/reports/employee/${employeeId}?range=${range}`;
+
+      if (range === "custom" && appliedStartDate) {
+        url += `&startDate=${appliedStartDate}&endDate=${appliedEndDate}`;
+      }
+
+      console.log("REPORT URL:", url);
+
+      const response = await api.get(url);
+
+      console.log("REPORT DATA:", response.data);
+
+      setReport(response.data);
+    } catch (error) {
+      console.error("REPORT ERROR:", error);
+    }
+  };
+
+  loadReport();
 
 }, [
   employeeId,

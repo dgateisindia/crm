@@ -309,3 +309,13 @@
     }
 
 }
+.welcomeStat.todo {
+  cursor: pointer;
+  background: #e8f1ff;
+  color: #2457a7;
+  transition: transform 0.2s ease;
+}
+
+.welcomeStat.todo:hover {
+  transform: translateY(-3px);
+}

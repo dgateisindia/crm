@@ -1,8 +1,8 @@
-import {Link,useNavigate,useLocation,} from "react-router-dom";
+import { useSubscription } from "../context/SubscriptionContext";
 
-// import logo from "../assets/logo.png";
-
-import "../styles/employeesidebar.css";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useClerk, useUser } from "@clerk/react";
 
 import {
   LayoutGrid,
@@ -16,257 +16,562 @@ import {
   ClipboardCheck,
   CalendarClock,
   FileSpreadsheet,
-  CircleOff
+  CircleOff,
+  RotateCcw,
 } from "lucide-react";
 
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+  arrayMove,
+  useSortable,
+} from "@dnd-kit/sortable";
+
+import { CSS } from "@dnd-kit/utilities";
+
+import "../styles/employeesidebar.css";
+
+// ==========================
+// Employee Main Menu
+// ==========================
+
+const MAIN_MENU = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    path: "/employee/dashboard",
+    icon: LayoutGrid,
+  },
+  {
+    id: "add-lead",
+    label: "Add Lead",
+    path: "/employee/add-leads",
+    icon: CirclePlus,
+  },
+  {
+    id: "total-leads",
+    label: "Total Leads",
+    path: "/employee/my-leads",
+    icon: BriefcaseBusiness,
+  },
+  {
+    id: "new-leads",
+    label: "New Leads",
+    path: "/employee/tasks",
+    icon: ClipboardCheck,
+  },
+  {
+    id: "followups",
+    label: "Followups",
+    path: "/employee/task-followups",
+    icon: CalendarClock,
+  },
+  {
+    id: "lead-history",
+    label: "Lead History",
+    path: "/employee/followups",
+    icon: PhoneForwarded,
+  },
+  {
+    id: "profile",
+    label: "Profile",
+    path: "/employee/profile",
+    icon: UserRound,
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    path: "/employee/reports",
+    icon: FileSpreadsheet,
+  },
+];
+
+// ==========================
+// Employee Important Menu
+// ==========================
+
+const IMPORTANT_MENU = [
+  {
+    id: "important-leads",
+    label: "Important Leads",
+    path: "/employee/important-leads",
+    icon: ShieldAlert,
+  },
+  {
+    id: "converted-leads",
+    label: "Converted Leads",
+    path: "/employee/converted-leads",
+    icon: BadgeCheck,
+  },
+  {
+    id: "not-interested",
+    label: "Not Interested",
+    path: "/employee/not-interested",
+    icon: CircleOff,
+  },
+];
+
+// ==========================
+// Sidebar Order Helpers
+// ==========================
+
+const getDefaultOrder = (items) =>
+  items.map((item) => item.id);
+
+const getSavedOrder = (key, items) => {
+  const defaultOrder = getDefaultOrder(items);
+
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(key) || "null"
+    );
+
+    if (!Array.isArray(saved)) {
+      return defaultOrder;
+    }
+
+    const validIds = saved.filter((id) =>
+      defaultOrder.includes(id)
+    );
+
+    return [
+      ...new Set(validIds),
+      ...defaultOrder.filter(
+        (id) => !validIds.includes(id)
+      ),
+    ];
+  } catch {
+    return defaultOrder;
+  }
+};
+
+// ==========================
+// Sortable Menu Item
+// ==========================
+
+function SortableMenuItem({
+  item,
+  active,
+  important = false,
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: item.id,
+  });
+
+  const Icon = item.icon;
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.55 : 1,
+    position: "relative",
+    zIndex: isDragging ? 2 : "auto",
+    cursor: "grab",
+    touchAction: "none",
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      {important ? (
+        <div
+          className={`sidebar-important-card ${
+            active ? "active-menu" : ""
+          }`}
+        >
+          <Link
+            to={item.path}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              width: "100%",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            <Icon size={20} strokeWidth={2.2} />
+            <span>{item.label}</span>
+          </Link>
+        </div>
+      ) : (
+        <div
+          className={`sidebar-menu ${
+            active ? "active-menu" : ""
+          }`}
+        >
+          <Link
+            to={item.path}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              width: "100%",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            <Icon size={20} strokeWidth={2.2} />
+            <span>{item.label}</span>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==========================
+// Employee Sidebar
+// ==========================
+
 export default function EmployeeSidebar() {
+  const location = useLocation();
+  const { isReadOnly = false } = useSubscription() || {};
+  const { signOut } = useClerk();
+  const { user } = useUser();
 
-  const navigate =
-    useNavigate();
-    
-  const location =
-    useLocation();
+  const userId = user?.id;
 
- const handleLogout = () => {
+  const mainStorageKey =
+    `dgate-employee-sidebar-main-${userId}`;
 
-  const confirmLogout = window.confirm(
-    "Are you sure you want to logout?"
+  const importantStorageKey =
+    `dgate-employee-sidebar-important-${userId}`;
+
+  const [mainPreferences, setMainPreferences] =
+    useState({
+      userId: null,
+      order: getDefaultOrder(MAIN_MENU),
+    });
+
+  const [importantPreferences, setImportantPreferences] =
+    useState({
+      userId: null,
+      order: getDefaultOrder(IMPORTANT_MENU),
+    });
+
+  const mainOrder =
+    mainPreferences.userId === userId
+      ? mainPreferences.order
+      : userId
+        ? getSavedOrder(mainStorageKey, MAIN_MENU)
+        : getDefaultOrder(MAIN_MENU);
+
+  const importantOrder =
+    importantPreferences.userId === userId
+      ? importantPreferences.order
+      : userId
+        ? getSavedOrder(
+            importantStorageKey,
+            IMPORTANT_MENU
+          )
+        : getDefaultOrder(IMPORTANT_MENU);
+
+  const mainItems = mainOrder
+    .map((id) =>
+      MAIN_MENU.find((item) => item.id === id)
+    )
+    .filter(Boolean)
+    .filter((item) =>
+      !isReadOnly || !["add-lead", "create-employee"].includes(item.id)
+    );
+
+  const importantItems = importantOrder
+    .map((id) =>
+      IMPORTANT_MENU.find((item) => item.id === id)
+    )
+    .filter(Boolean);
+
+  // ==========================
+  // Drag Sensors
+  // ==========================
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter:
+        sortableKeyboardCoordinates,
+    })
   );
 
-  if (!confirmLogout) {
-    return;
-  }
+  // ==========================
+  // Reorder Main Menu
+  // ==========================
 
-  // Clear welcome popup session
-  sessionStorage.removeItem("employeeWelcomeShown");
+  const handleMainDragEnd = ({ active, over }) => {
+    if (!userId || !over || active.id === over.id) {
+      return;
+    }
 
-  // Clear login data
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  localStorage.removeItem("user");
-  localStorage.removeItem("userId");
+    const oldIndex = mainOrder.indexOf(active.id);
+    const newIndex = mainOrder.indexOf(over.id);
 
-  navigate("/", {
-    replace: true,
-  });
-};
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    const newOrder = arrayMove(
+      mainOrder,
+      oldIndex,
+      newIndex
+    );
+
+    setMainPreferences({
+      userId,
+      order: newOrder,
+    });
+
+    try {
+      localStorage.setItem(
+        mainStorageKey,
+        JSON.stringify(newOrder)
+      );
+    } catch (error) {
+      console.warn(
+        "Unable to save employee sidebar order:",
+        error
+      );
+    }
+  };
+
+  // ==========================
+  // Reorder Important Menu
+  // ==========================
+
+  const handleImportantDragEnd = ({
+    active,
+    over,
+  }) => {
+    if (!userId || !over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex =
+      importantOrder.indexOf(active.id);
+
+    const newIndex =
+      importantOrder.indexOf(over.id);
+
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    const newOrder = arrayMove(
+      importantOrder,
+      oldIndex,
+      newIndex
+    );
+
+    setImportantPreferences({
+      userId,
+      order: newOrder,
+    });
+
+    try {
+      localStorage.setItem(
+        importantStorageKey,
+        JSON.stringify(newOrder)
+      );
+    } catch (error) {
+      console.warn(
+        "Unable to save important menu order:",
+        error
+      );
+    }
+  };
+
+  // ==========================
+  // Reset Menu Order
+  // ==========================
+
+  const handleResetOrder = () => {
+    if (!userId) {
+      return;
+    }
+
+    setMainPreferences({
+      userId,
+      order: getDefaultOrder(MAIN_MENU),
+    });
+
+    setImportantPreferences({
+      userId,
+      order: getDefaultOrder(IMPORTANT_MENU),
+    });
+
+    try {
+      localStorage.removeItem(mainStorageKey);
+      localStorage.removeItem(
+        importantStorageKey
+      );
+    } catch (error) {
+      console.warn(
+        "Unable to reset employee sidebar order:",
+        error
+      );
+    }
+  };
+
+  // ==========================
+  // Clerk Logout
+  // ==========================
+
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout?"
+    );
+
+    if (!confirmLogout) {
+      return;
+    }
+
+    try {
+      sessionStorage.removeItem(
+        "employeeWelcomeShown"
+      );
+
+      await signOut({
+        redirectUrl: "/",
+      });
+    } catch (error) {
+      console.error(
+        "EMPLOYEE LOGOUT ERROR:",
+        error
+      );
+
+      alert(
+        "Failed to logout. Please try again."
+      );
+    }
+  };
 
   return (
     <div className="sidebar">
-
-      {/* Top */}
+      {/* Logo and Main Menu */}
       <div>
-
-        {/* Logo */}
-        {/* Logo */}
         <div className="sidebar-logo">
           <span className="logo-brand">
-            <span className="logo-d">D</span>GATE
+            <span className="logo-d">D</span>
+            GATE
           </span>
         </div>
 
-        {/* Menu */}
-        <div className="space-y-2">
-
-          <Link
-            to="/employee/dashboard"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleMainDragEnd}
+        >
+          <SortableContext
+            items={mainOrder}
+            strategy={verticalListSortingStrategy}
           >
-            <div className={`sidebar-menu ${location.pathname === "/employee/dashboard" ? "active-menu" : ""}`}>
-
-              <LayoutGrid size={20} strokeWidth={2.2} />
-
-              Dashboard
-
+            <div className="space-y-2">
+              {mainItems.map((item) => (
+                <SortableMenuItem
+                  key={item.id}
+                  item={item}
+                  active={
+                    location.pathname === item.path
+                  }
+                />
+              ))}
             </div>
-          </Link>
-           <Link
-            to="/employee/add-leads"
-          >
-            <div className={`sidebar-menu ${location.pathname === "/employee/add-leads" ? "active-menu " : ""}`}  >
-
-              <CirclePlus size={20} strokeWidth={2.2} />
-
-              Add Lead
-
-            </div>
-          </Link>
-
-          <Link
-            to="/employee/my-leads"
-          >
-            <div className={`sidebar-menu ${location.pathname === "/employee/my-leads" ? "active-menu " : ""}`}>
-
-              <BriefcaseBusiness size={20} strokeWidth={2.2} />
-
-             Total Leads
-
-            </div>
-          </Link>
-
-         
-          <Link
-              to="/employee/tasks"
-            >
-              <div
-                className={`sidebar-menu ${
-                  location.pathname === "/employee/tasks"
-                    ? "active-menu"
-                    : ""
-                }`}
-              >
-                <ClipboardCheck size={20} strokeWidth={2.2} />
-
-                New Leads
-
-              </div>
-            </Link>
-            <Link
-                to="/employee/task-followups"
-              >
-                <div
-                  className={`sidebar-menu ${
-                    location.pathname === "/employee/task-followups"
-                      ? "active-menu"
-                      : ""
-                  }`}
-                >
-                  <CalendarClock size={20} strokeWidth={2.2} />
-
-                   To-Do List
-
-                </div>
-              </Link>
-
-          <Link
-            to="/employee/followups"
-          >
-            <div className={`sidebar-menu ${location.pathname === "/employee/followups" ? "active-menu " : ""}`} >
-
-              <PhoneForwarded size={20} strokeWidth={2.2} />
-
-              Lead Follow Ups
-
-            </div>
-          </Link>
-
-          <Link
-            to="/employee/profile"
-          >
-            <div className={`sidebar-menu ${location.pathname === "/employee/profile" ? "active-menu " : ""}`} >
-
-              <UserRound size={20} strokeWidth={2.2} />
-
-              Profile
-
-            </div>
-          </Link>
-          <Link to="/employee/reports">
-              <li className={`sidebar-menu ${location.pathname === "/employee/reports" ? "active-menu " : ""}`}  >
-                <FileSpreadsheet size={20} strokeWidth={2.2} />
-                Reports
-              </li>
-            </Link>
-
-        </div>
-
+          </SortableContext>
+        </DndContext>
       </div>
-             {/* Important Section */}
+
+      {/* Important Section */}
       <div className="mt-4">
         <h2 className="text-gray-400 uppercase text-sm mb-4">
           Important
         </h2>
 
-        <div className="space-y-2">
-
-          <Link to="/employee/important-leads">
-            <div
-              className={`sidebar-important-card ${
-                location.pathname === "/employee/important-leads"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <ShieldAlert size={20} strokeWidth={2.2} />
-                Important Leads
-              </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleImportantDragEnd}
+        >
+          <SortableContext
+            items={importantOrder}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-2">
+              {importantItems.map((item) => (
+                <SortableMenuItem
+                  key={item.id}
+                  item={item}
+                  active={
+                    location.pathname === item.path
+                  }
+                  important
+                />
+              ))}
             </div>
-          </Link>
-
-          <Link to="/employee/converted-leads">
-            <div
-              className={`sidebar-important-card ${
-                location.pathname === "/employee/converted-leads"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <BadgeCheck size={20} strokeWidth={2.2} />
-                Converted Leads
-              </div>
-            </div>
-          </Link>
-
-          <Link to="/employee/not-interested">
-            <div
-              className={`sidebar-important-card ${
-                location.pathname === "/employee/not-interested"
-                  ? "active-menu"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <CircleOff size={20} strokeWidth={2.2} />
-                Not Interested
-              </div>
-            </div>
-          </Link>
-
-        </div>
+          </SortableContext>
+        </DndContext>
       </div>
-      
 
-      {/* Bottom */}
-      <div>
-
-        {/*<div className="profile-card">
-
-          <img
-            src="https://i.pravatar.cc/100"
-            alt="profile"
-            className="w-10 h-10 rounded-full"
-          />
-
-          <div>
-
-            <h3 className="font-semibold">
-              Employee
-            </h3>
-
-            <p className="text-xs text-gray-400">
-              CRM Employee
-            </p>
-
-          </div>
-
-        </div>*/}
-
+      {/* Reset Order */}
+      <div style={{ marginTop: "12px" }}>
         <button
-          onClick={
-            handleLogout
-          }
+          type="button"
+          onClick={handleResetOrder}
+          disabled={!userId}
+          title="Restore original menu order"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "transparent",
+            color: "#94A3B8",
+            border: "none",
+            cursor: userId
+              ? "pointer"
+              : "not-allowed",
+            fontSize: "12px",
+            padding: "8px",
+          }}
+        >
+          <RotateCcw size={14} />
+          Reset Menu Order
+        </button>
+      </div>
+
+      {/* Logout */}
+      <div>
+        <button
+          onClick={handleLogout}
           className="logout-btn"
         >
-
           <LogOut size={18} />
-
           Logout
-
         </button>
-
       </div>
-
     </div>
   );
 }

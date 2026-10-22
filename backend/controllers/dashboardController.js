@@ -1,323 +1,519 @@
 const db =
 require("../db");
+// =====================================================
+// COMPANY AND EMPLOYEE ACCESS VALIDATION
+// =====================================================
 
-// ==========================
-// MANAGER DASHBOARD
-// ==========================
-const getDashboardStats = (req, res) => {
+const getAuthorizedEmployee = async (req, res) => {
+  const companyId = req.user?.companyId;
+  const employeeId = req.params.id;
 
-  const stats = {};
+  if (!companyId) {
+    res.status(403).json({
+      message: "Company access is missing",
+    });
+    return null;
+  }
 
-  // Total Leads
-  db.query(
+  const [rows] = await db.promise().query(
     `
-    SELECT COUNT(*) AS totalLeads
-    FROM leads
+    SELECT employee_id, user_id, company_id, full_name
+    FROM employees
+    WHERE employee_id = ?
+      AND company_id = ?
+    LIMIT 1
     `,
-    (err, totalResult) => {
-
-      if (err)
-        return res.status(500).json(err);
-
-      stats.totalLeads =
-        totalResult[0].totalLeads;
-
-      // New Leads
-      db.query(
-        `
-        SELECT COUNT(*) AS newLeads
-        FROM leads
-        WHERE lead_status='new'
-        `,
-        (err, newResult) => {
-
-          if (err)
-            return res.status(500).json(err);
-
-          stats.newLeads =
-            newResult[0].newLeads;
-
-          // Followups
-          db.query(
-            `
-            SELECT COUNT(*) AS followups
-            FROM leads
-            WHERE lead_status NOT IN
-            (
-              'new',
-              'converted',
-              'closed',
-              'not interested'
-            )
-            `,
-            (err, followupResult) => {
-
-              if (err)
-                return res.status(500).json(err);
-
-              stats.followups =
-                followupResult[0].followups;
-
-              // Converted
-              db.query(
-                `
-                SELECT COUNT(*) AS converted
-                FROM leads
-                WHERE lead_status='converted'
-                `,
-                (err, convertedResult) => {
-
-                  if (err)
-                    return res.status(500).json(err);
-
-                  stats.converted =
-                    convertedResult[0].converted;
-
-                  // Closed
-                  db.query(
-                    `
-                    SELECT COUNT(*) AS closed
-                    FROM leads
-                    WHERE lead_status='closed'
-                    `,
-                    (err, closedResult) => {
-
-                      if (err)
-                        return res.status(500).json(err);
-
-                      stats.closed =
-                        closedResult[0].closed;
-
-                      // Not Interested
-                      db.query(
-                        `
-                        SELECT COUNT(*) AS notInterested
-                        FROM leads
-                        WHERE lead_status='not interested'
-                        `,
-                        (err, notInterestedResult) => {
-
-                          if (err)
-                            return res.status(500).json(err);
-
-                          stats.notInterested =
-                            notInterestedResult[0].notInterested;
-
-                          // Recent Leads
-                          db.query(
-                            `
-                            SELECT *
-                            FROM leads
-                            ORDER BY id DESC
-                            LIMIT 5
-                            `,
-                            (err, recentResult) => {
-
-                              if (err)
-                                return res.status(500).json(err);
-
-                              stats.recentLeads =
-                                recentResult;
-
-                              res.status(200).json(stats);
-
-                            }
-                          );
-
-                        }
-                      );
-
-                    }
-                  );
-
-                }
-              );
-
-            }
-          );
-
-        }
-      );
-
-    }
+    [employeeId, companyId]
   );
 
-};
-const getLeadStatusChart = (req, res) => {
+  if (!rows.length) {
+    res.status(404).json({
+      message: "Employee not found in your company",
+    });
+    return null;
+  }
 
-  const sql = `
-    SELECT
+  const employee = rows[0];
+  const role = String(req.user?.role || "").toLowerCase();
 
-      CASE
+  // Employees can access only their own employee record.
+  if (role === "employee") {
+    const authenticatedUserId = String(req.user?.id ?? "");
+    const employeeUserId = String(employee.user_id ?? "");
 
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'new'
-          THEN 'New'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'interested'
-          THEN 'Interested'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'proposed'
-          THEN 'Proposed'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'offered'
-          THEN 'Offered'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'meeting scheduled'
-          THEN 'meeting scheduled'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'converted'
-          THEN 'Converted'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'closed'
-          THEN 'Closed'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'not interested'
-          THEN 'Not Interested'
-
-        ELSE lead_status
-
-      END AS lead_status,
-
-      COUNT(*) AS total
-
-    FROM leads
-
-    GROUP BY
-
-      CASE
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'new'
-          THEN 'New'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'interested'
-          THEN 'Interested'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'proposed'
-          THEN 'Proposed'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'offered'
-          THEN 'Offered'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'meeting scheduled'
-          THEN 'meeting scheduled'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'converted'
-          THEN 'Converted'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'closed'
-          THEN 'Closed'
-
-        WHEN LOWER(REPLACE(TRIM(lead_status), '_', ' ')) = 'not interested'
-          THEN 'Not Interested'
-
-        ELSE lead_status
-
-      END
-
-    ORDER BY total DESC
-  `;
-
-  db.query(sql, (err, result) => {
-
-    if (err) {
-      return res.status(500).json(err);
+    if (
+      !authenticatedUserId ||
+      authenticatedUserId !== employeeUserId
+    ) {
+      res.status(403).json({
+        message: "You cannot access another employee's dashboard",
+      });
+      return null;
     }
+  }
+
+  // Manager/owner access is restricted to the same company.
+  if (role !== "employee" && !["manager", "owner"].includes(role)) {
+    res.status(403).json({
+      message: "You are not authorized to access this dashboard",
+    });
+    return null;
+  }
+
+  return employee;
+};
+
+
+//Manager dashboard
+const getDashboardStats = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+
+    if (!companyId) {
+      return res.status(400).json({
+        message: "Company context is missing",
+      });
+    }
+
+    const normalizedStatus = `
+      LOWER(
+        REPLACE(
+          REPLACE(TRIM(lead_status), '_', ' '),
+          '-', ' '
+        )
+      )
+    `;
+
+    // 1. Get lead statistics, excluding the Follow-ups count
+    const [rows] = await db.promise().query(
+      `
+      SELECT
+        COUNT(*) AS totalLeads,
+
+        SUM(
+          CASE WHEN ${normalizedStatus} = 'new'
+          THEN 1 ELSE 0 END
+        ) AS newLeads,
+
+        SUM(
+          CASE WHEN ${normalizedStatus} = 'converted'
+          THEN 1 ELSE 0 END
+        ) AS converted,
+
+        SUM(
+          CASE WHEN ${normalizedStatus} = 'not responded'
+          THEN 1 ELSE 0 END
+        ) AS notResponded,
+
+        SUM(
+          CASE WHEN ${normalizedStatus} = 'not interested'
+          THEN 1 ELSE 0 END
+        ) AS notInterested
+
+      FROM leads
+      WHERE company_id = ?
+      `,
+      [companyId]
+    );
+
+    // 2. Get To-Do List count from task_followups
+    // Exclude New, Converted, Not Interested and Not Responded leads.
+    
+    // 2. Manager To-Do List:
+    // Count all eligible leads in the manager's company.
+    // No follow-up record or date is required.
+    const [todoRows] = await db.promise().query(
+      `
+        SELECT COUNT(DISTINCT l.id) AS todoCount
+        FROM leads l
+        WHERE l.company_id = ?
+          AND LOWER(
+            REPLACE(
+              REPLACE(
+                TRIM(COALESCE(l.lead_status, '')),
+                '_', ' '
+              ),
+              '-', ' '
+            )
+          ) IN (
+            'interested',
+            'proposed',
+            'proposal',
+            'offered',
+            'meeting scheduled',
+            'sponsorship'
+          )
+      `,
+      [companyId]
+    );
+
+
+    // 3. Get recent leads
+    const [recentLeads] = await db.promise().query(
+      `
+      SELECT *
+      FROM leads
+      WHERE company_id = ?
+      ORDER BY id DESC
+      LIMIT 5
+      `,
+      [companyId]
+    );
+
+    const counts = rows[0];
+
+    return res.status(200).json({
+      totalLeads: Number(counts.totalLeads || 0),
+      newLeads: Number(counts.newLeads || 0),
+      todoCount: Number(todoRows[0].todoCount || 0),
+      converted: Number(counts.converted || 0),
+      notResponded: Number(counts.notResponded || 0),
+      notInterested: Number(counts.notInterested || 0),
+      recentLeads,
+    });
+
+  } catch (err) {
+    console.error("Manager Dashboard Stats Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch manager dashboard statistics",
+    });
+  }
+};
+// =====================================================
+// MANAGER LEAD STATUS CHART
+// =====================================================
+
+const getLeadStatusChart = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+
+    if (!companyId) {
+      return res.status(403).json({
+        message: "Company access is missing",
+      });
+    }
+
+    const [result] = await db.promise().query(
+      `
+      SELECT
+        CASE
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'new'
+            THEN 'New'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'interested'
+            THEN 'Interested'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) IN ('proposed', 'proposal')
+            THEN 'Proposed'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'offered'
+            THEN 'Offered'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'meeting scheduled'
+            THEN 'Meeting Scheduled'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'converted'
+            THEN 'Converted'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'closed'
+            THEN 'Closed'
+
+          WHEN LOWER(
+            REPLACE(
+              REPLACE(TRIM(lead_status), '_', ' '),
+              '-',
+              ' '
+            )
+          ) = 'not interested'
+            THEN 'Not Interested'
+
+          ELSE lead_status
+        END AS lead_status,
+
+        COUNT(*) AS total
+
+      FROM leads
+
+      WHERE company_id = ?
+
+      GROUP BY lead_status
+
+      ORDER BY total DESC
+      `,
+      [companyId]
+    );
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Lead Status Chart Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch lead status chart",
+    });
+  }
+};
+// =====================================================
+// MANAGER EMPLOYEE PERFORMANCE
+// =====================================================
+
+const getEmployeePerformance = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+
+    if (!companyId) {
+      return res.status(403).json({
+        message: "Company access is missing",
+      });
+    }
+
+    const [result] = await db.promise().query(
+      `
+      SELECT
+        e.employee_id,
+        e.full_name,
+        COUNT(DISTINCT l.id) AS totalLeads
+
+      FROM employees e
+
+      LEFT JOIN leads l
+        ON l.company_id = e.company_id
+        AND (
+          (
+            l.created_by_type = 'employee'
+            AND l.created_by_id = e.employee_id
+          )
+          OR l.assigned_employee_id = e.employee_id
+        )
+
+      WHERE e.company_id = ?
+
+      GROUP BY
+        e.employee_id,
+        e.full_name
+
+      ORDER BY totalLeads DESC
+      `,
+      [companyId]
+    );
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Employee Performance Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch employee performance",
+    });
+  }
+};
+
+const getEmployeeLeadStatusChart = async (req, res) => {
+
+  try {
+
+    const employee = await getAuthorizedEmployee(req, res);
+
+if (!employee) {
+  return;
+}
+
+    const [result] = await db.promise().query(
+      `
+      SELECT
+
+        CASE
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'new'
+            THEN 'New'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'interested'
+            THEN 'Interested'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'proposed'
+            THEN 'Proposed'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'offered'
+            THEN 'Offered'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'meeting scheduled'
+            THEN 'Meeting Scheduled'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'converted'
+            THEN 'Converted'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'closed'
+            THEN 'Closed'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'not interested'
+            THEN 'Not Interested'
+
+          ELSE l.lead_status
+
+        END AS lead_status,
+
+        COUNT(*) AS total
+
+      FROM leads l
+
+      WHERE
+        l.company_id = ?
+
+        AND (
+          (
+            l.created_by_type = 'employee'
+            AND l.created_by_id = ?
+          )
+          OR
+          l.assigned_employee_id = ?
+        )
+
+      GROUP BY
+        CASE
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'new'
+            THEN 'New'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'interested'
+            THEN 'Interested'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'proposed'
+            THEN 'Proposed'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'offered'
+            THEN 'Offered'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'meeting scheduled'
+            THEN 'Meeting Scheduled'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'converted'
+            THEN 'Converted'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'closed'
+            THEN 'Closed'
+
+          WHEN LOWER(REPLACE(TRIM(l.lead_status), '_', ' ')) = 'not interested'
+            THEN 'Not Interested'
+
+          ELSE l.lead_status
+        END
+
+      ORDER BY total DESC
+      `,
+      [
+        employee.company_id,
+        employee.employee_id,
+        employee.employee_id
+      ]
+    );
 
     res.json(result);
 
-  });
+  } catch (err) {
 
-};
-const getEmployeePerformance = (req, res) => {
+    console.error(
+      "Employee Lead Status Error:",
+      err
+    );
 
-  db.query(
+    res.status(500).json({
+      message: "Failed to fetch employee lead status"
+    });
 
-    `
-    SELECT
-
-      e.full_name,
-
-      COUNT(l.id) AS totalLeads
-
-    FROM employees e
-
-    LEFT JOIN leads l
-
-      ON e.employee_id = l.created_by_id
-      AND l.created_by_type='employee'
-
-    GROUP BY e.employee_id
-
-    ORDER BY totalLeads DESC
-    `,
-
-    (err, result) => {
-
-      if (err)
-        return res.status(500).json(err);
-
-      res.json(result);
-
-    }
-
-  );
-
-};
-const getEmployeeLeadStatusChart = (req, res) => {
-
-  const employeeId = req.params.id;
-
-  db.query(
-
-    `
-    SELECT
-      lead_status,
-      COUNT(*) AS total
-    FROM leads
-    WHERE created_by_type='employee'
-    AND created_by_id=?
-    GROUP BY lead_status
-    `,
-
-    [employeeId],
-
-    (err, result) => {
-
-      if (err)
-        return res.status(500).json(err);
-
-      res.json(result);
-
-    }
-
-  );
+  }
 
 };
 const getEmployeeLeadTrend = async (req, res) => {
 
-  const employeeId = req.params.id;
-
   try {
 
-    const days = Number(req.query.days) || 7;
+    const employee = await getAuthorizedEmployee(req, res);
+
+if (!employee) {
+  return;
+}
+
+const requestedDays = Number.parseInt(req.query.days, 10);
+
+const days = Number.isFinite(requestedDays)
+  ? Math.min(Math.max(requestedDays, 1), 365)
+  : 7;
 
     const [result] = await db.promise().query(
-
       `
       SELECT
-        DATE(created_at) AS date,
+
+        DATE(l.created_at) AS date,
+
         COUNT(*) AS total
-      FROM leads
+
+      FROM leads l
+
       WHERE
-        created_by_type='employee'
-        AND created_by_id=?
-        AND DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-      GROUP BY DATE(created_at)
-      ORDER BY DATE(created_at)
+
+        l.company_id = ?
+
+        AND (
+          (
+            l.created_by_type = 'employee'
+            AND l.created_by_id = ?
+          )
+          OR
+          l.assigned_employee_id = ?
+        )
+
+        AND DATE(l.created_at) >=
+          DATE_SUB(CURDATE(), INTERVAL ? DAY)
+
+      GROUP BY DATE(l.created_at)
+
+      ORDER BY DATE(l.created_at)
       `,
-
-      [employeeId, days - 1]
-
+      [
+        employee.company_id,
+        employee.employee_id,
+        employee.employee_id,
+        days - 1
+      ]
     );
 
     const chart = [];
@@ -326,23 +522,44 @@ const getEmployeeLeadTrend = async (req, res) => {
 
       const d = new Date();
 
+      d.setHours(0, 0, 0, 0);
+
       d.setDate(d.getDate() - i);
 
       const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
 
-      const date = `${year}-${month}-${day}`;
+      const month = String(
+        d.getMonth() + 1
+      ).padStart(2, "0");
+
+      const day = String(
+        d.getDate()
+      ).padStart(2, "0");
+
+      const date =
+        `${year}-${month}-${day}`;
 
       const found = result.find((item) => {
 
         const dbDate = new Date(item.date);
 
-        const dbYear = dbDate.getFullYear();
-        const dbMonth = String(dbDate.getMonth() + 1).padStart(2, "0");
-        const dbDay = String(dbDate.getDate()).padStart(2, "0");
+        const dbYear =
+          dbDate.getFullYear();
 
-        return `${dbYear}-${dbMonth}-${dbDay}` === date;
+        const dbMonth =
+          String(
+            dbDate.getMonth() + 1
+          ).padStart(2, "0");
+
+        const dbDay =
+          String(
+            dbDate.getDate()
+          ).padStart(2, "0");
+
+        return (
+          `${dbYear}-${dbMonth}-${dbDay}` ===
+          date
+        );
 
       });
 
@@ -350,7 +567,10 @@ const getEmployeeLeadTrend = async (req, res) => {
 
         date,
 
-        total: found ? Number(found.total) : 0
+        total:
+          found
+            ? Number(found.total)
+            : 0
 
       });
 
@@ -358,390 +578,488 @@ const getEmployeeLeadTrend = async (req, res) => {
 
     res.json(chart);
 
-  }
+  } catch (err) {
 
-  catch (err) {
-
-    console.log(err);
+    console.error(
+      "Employee Lead Trend Error:",
+      err
+    );
 
     res.status(500).json({
-
       message: "Failed to fetch Employee Lead Trend"
-
     });
 
   }
 
 };
-const getEmployeeFollowupChart = (req, res) => {
+// =====================================================
+// EMPLOYEE FOLLOW-UP CHART
+// =====================================================
 
-  const employeeId = req.params.id;
-
-  db.query(
-
-    `
-    SELECT
-
-      status,
-
-      COUNT(*) AS total
-
-    FROM follow_ups
-
-    WHERE employee_id=?
-
-    GROUP BY status
-    `,
-
-    [employeeId],
-
-    (err, result) => {
-
-      if (err)
-        return res.status(500).json(err);
-
-      res.json(result);
-
-    }
-
-  );
-
-};
-const getLeadTrend = async (req, res) => {
-
+const getEmployeeFollowupChart = async (req, res) => {
   try {
+    const employee = await getAuthorizedEmployee(req, res);
 
-    const days = Number(req.query.days) || 7;
+    if (!employee) {
+      return;
+    }
 
     const [result] = await db.promise().query(
-
       `
       SELECT
-        DATE(created_at) AS date,
+        fu.status,
         COUNT(*) AS total
+
+      FROM follow_ups fu
+
+      INNER JOIN leads l
+        ON l.id = fu.lead_id
+        AND l.company_id = ?
+
+      WHERE fu.employee_id = ?
+
+      GROUP BY fu.status
+      `,
+      [employee.company_id, employee.employee_id]
+    );
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Employee Follow-up Chart Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch employee follow-up chart",
+    });
+  }
+};
+// =====================================================
+// MANAGER LEAD TREND
+// =====================================================
+
+const getLeadTrend = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+
+    if (!companyId) {
+      return res.status(403).json({
+        message: "Company access is missing",
+      });
+    }
+
+    const requestedDays = Number.parseInt(req.query.days, 10);
+
+    const days = Number.isFinite(requestedDays)
+      ? Math.min(Math.max(requestedDays, 1), 365)
+      : 7;
+
+    const [result] = await db.promise().query(
+      `
+      SELECT
+        DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
+        COUNT(*) AS total
+
       FROM leads
-      WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+
+      WHERE company_id = ?
+        AND DATE(created_at) >= DATE_SUB(
+          CURDATE(),
+          INTERVAL ? DAY
+        )
+
       GROUP BY DATE(created_at)
+
       ORDER BY DATE(created_at)
       `,
+      [companyId, days - 1]
+    );
 
-      [days - 1]
-
+    const totalsByDate = new Map(
+      result.map((row) => [
+        row.date,
+        Number(row.total),
+      ])
     );
 
     const chart = [];
 
     for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
 
-      const d = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - i);
 
-      d.setDate(d.getDate() - i);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
 
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-
-      const date = `${year}-${month}-${day}`;
-
-      const found = result.find((item) => {
-
-        const dbDate = new Date(item.date);
-
-        const dbYear = dbDate.getFullYear();
-        const dbMonth = String(dbDate.getMonth() + 1).padStart(2, "0");
-        const dbDay = String(dbDate.getDate()).padStart(2, "0");
-
-        return `${dbYear}-${dbMonth}-${dbDay}` === date;
-
-      });
+      const dateString = `${year}-${month}-${day}`;
 
       chart.push({
-
-        date,
-
-        total: found ? Number(found.total) : 0
-
+        date: dateString,
+        total: totalsByDate.get(dateString) || 0,
       });
-
     }
 
-    res.json(chart);
+    return res.status(200).json(chart);
+  } catch (err) {
+    console.error("Lead Trend Error:", err);
 
-  }
-
-  catch (err) {
-
-    console.log(err);
-
-    res.status(500).json({
-
-      message: "Failed to fetch Lead Trend"
-
+    return res.status(500).json({
+      message: "Failed to fetch lead trend",
     });
-
   }
-
 };
 // ==========================
 // EMPLOYEE DASHBOARD
 // ==========================
-const getEmployeeStats = (req, res) => {
+const getEmployeeStats = async (req, res) => {
+  try {
+    const employee = await getAuthorizedEmployee(req, res);
 
-  const stats = {};
-  const employeeId = req.params.id;
-
-  // Total Leads
-  db.query(
-    `
-    SELECT COUNT(*) AS totalLeads
-    FROM leads
-    WHERE created_by_id = ?
-    AND created_by_type = 'employee'
-    `,
-    [employeeId],
-    (err, totalResult) => {
-
-      if (err)
-        return res.status(500).json(err);
-
-      stats.totalLeads = totalResult[0].totalLeads;
-
-      // New Leads
-      db.query(
-        `
-        SELECT COUNT(*) AS newLeads
-        FROM leads
-        WHERE lead_status='new'
-        AND created_by_id=?
-        AND created_by_type='employee'
-        `,
-        [employeeId],
-        (err, newResult) => {
-
-          if (err)
-            return res.status(500).json(err);
-
-          stats.newLeads = newResult[0].newLeads;
-
-        // Follow-ups
-    db.query(
-      `
-      SELECT COUNT(DISTINCT f.lead_id) AS followups
-      FROM follow_ups f
-      INNER JOIN leads l
-        ON l.id = f.lead_id
-      WHERE
-        f.employee_id = ?
-        AND l.created_by_type = 'employee'
-        AND l.created_by_id = ?
-        AND l.lead_status IN
-        (
-          'interested',
-          'proposed',
-          'offered',
-          'meeting scheduled'
-        )
-      `,
-      [employeeId, employeeId],
-      (err, followupResult) => {
-
-        if (err)
-          return res.status(500).json(err);
-
-        stats.followups = followupResult[0].followups;
-
-
-              // Converted
-              db.query(
-                `
-                SELECT COUNT(*) AS converted
-                FROM leads
-                WHERE lead_status='converted'
-                AND created_by_id=?
-                AND created_by_type='employee'
-                `,
-                [employeeId],
-                (err, convertedResult) => {
-
-                  if (err)
-                    return res.status(500).json(err);
-
-                  stats.converted = convertedResult[0].converted;
-
-                  // Closed
-                  db.query(
-                    `
-                    SELECT COUNT(*) AS closed
-                    FROM leads
-                    WHERE lead_status='closed'
-                    AND created_by_id=?
-                    AND created_by_type='employee'
-                    `,
-                    [employeeId],
-                    (err, closedResult) => {
-
-                      if (err)
-                        return res.status(500).json(err);
-
-                      stats.closed = closedResult[0].closed;
-
-                      // Not Interested
-                      db.query(
-                        `
-                        SELECT COUNT(*) AS notInterested
-                        FROM leads
-                        WHERE lead_status='not interested'
-                        AND created_by_id=?
-                        AND created_by_type='employee'
-                        `,
-                        [employeeId],
-                        (err, notInterestedResult) => {
-
-                          if (err)
-                            return res.status(500).json(err);
-
-                          stats.notInterested =
-                            notInterestedResult[0].notInterested;
-
-                          // Recent Leads
-                          db.query(
-                            `
-                            SELECT *
-                            FROM leads
-                            WHERE created_by_id=?
-                            AND created_by_type='employee'
-                            ORDER BY id DESC
-                            LIMIT 5
-                            `,
-                            [employeeId],
-                            (err, recentResult) => {
-
-                              if (err)
-                                return res.status(500).json(err);
-
-                              stats.recentLeads = recentResult;
-
-                              res.status(200).json(stats);
-
-                            }
-                          );
-
-                        }
-                      );
-
-                    }
-                  );
-
-                }
-              );
-
-            }
-          );
-
-        }
-      );
-
+    if (!employee) {
+      return;
     }
-  );
 
-};   
+    /*
+      Employee can see:
+      1. Leads created by the employee
+      2. Leads assigned to the employee by manager
+    */
+
+    const leadCondition = `
+      l.company_id = ?
+      AND (
+        (
+          l.created_by_type = 'employee'
+          AND l.created_by_id = ?
+        )
+        OR
+        l.assigned_employee_id = ?
+      )
+    `;
+
+    
+
+    // ==========================
+    // Dashboard Counts
+    // ==========================
+
+    const [countResult] = await db.promise().query(
+  `
+  SELECT
+    COUNT(*) AS totalLeads,
+
+    SUM(
+      CASE
+        WHEN LOWER(
+          REPLACE(
+            REPLACE(TRIM(l.lead_status), '_', ' '),
+            '-', ' '
+          )
+        ) = 'new'
+        THEN 1 ELSE 0
+      END
+    ) AS newLeads,
+
+    SUM(
+      CASE
+        WHEN LOWER(
+          REPLACE(
+            REPLACE(TRIM(l.lead_status), '_', ' '),
+            '-', ' '
+          )
+        ) = 'converted'
+        THEN 1 ELSE 0
+      END
+    ) AS converted,
+
+    SUM(
+      CASE
+        WHEN LOWER(
+          REPLACE(
+            REPLACE(TRIM(l.lead_status), '_', ' '),
+            '-', ' '
+          )
+        ) = 'not responded'
+        THEN 1 ELSE 0
+      END
+    ) AS notResponded,
+
+    SUM(
+      CASE
+        WHEN LOWER(
+          REPLACE(
+            REPLACE(TRIM(l.lead_status), '_', ' '),
+            '-', ' '
+          )
+        ) = 'not interested'
+        THEN 1 ELSE 0
+      END
+    ) AS notInterested
+
+  FROM leads l
+  WHERE ${leadCondition}
+  `,
+  [
+  employee.company_id,
+  employee.employee_id,
+  employee.employee_id
+]
+);
+
+
+const [todoResult] = await db.promise().query(
+  `
+    SELECT COUNT(DISTINCT l.id) AS todoCount
+    FROM leads l
+    WHERE l.company_id = ?
+      AND (
+        l.assigned_employee_id = ?
+        OR (
+          l.assigned_employee_id IS NULL
+          AND l.created_by_type = 'employee'
+          AND l.created_by_id = ?
+        )
+      )
+      AND LOWER(
+        REPLACE(
+          REPLACE(
+            TRIM(COALESCE(l.lead_status, '')),
+            '_', ' '
+          ),
+          '-', ' '
+        )
+      ) IN (
+        'interested',
+        'proposed',
+        'proposal',
+        'offered',
+        'meeting scheduled',
+        'sponsorship'
+      )
+  `,
+  [
+    employee.company_id,
+    employee.employee_id,
+    employee.employee_id
+  ]
+);
+
+
+    // ==========================
+    // Recent Leads
+    // ==========================
+
+    const [recentLeads] = await db.promise().query(
+      `
+      SELECT l.*
+
+      FROM leads l
+
+      WHERE
+        ${leadCondition}
+
+      ORDER BY l.id DESC
+
+      LIMIT 5
+      `,
+      [
+        employee.company_id,
+        employee.employee_id,
+        employee.employee_id
+      ]
+    );
+
+
+    const counts = countResult[0];
+
+const stats = {
+  totalLeads: Number(counts.totalLeads || 0),
+  newLeads: Number(counts.newLeads || 0),
+  todoCount: Number(todoResult[0].todoCount || 0),
+  converted: Number(counts.converted || 0),
+  notResponded: Number(counts.notResponded || 0),
+  notInterested: Number(counts.notInterested || 0),
+  recentLeads
+};
+
+res.status(200).json(stats);
+
+   
+
+  } catch (err) {
+
+    console.error(
+      "Employee Dashboard Stats Error:",
+      err
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch employee dashboard"
+    });
+
+  }
+
+};
 // ==========================
 // EMPLOYEE WELCOME POPUP
 // ==========================
 const getEmployeeWelcome = async (req, res) => {
-
   try {
+    const employee = await getAuthorizedEmployee(req, res);
 
-    const employeeId = req.params.id;
+if (!employee) {
+  return;
+}
 
-    const welcome = {};
+const employeeId = employee.employee_id;
+const companyId = employee.company_id;
 
-    // ==========================
-    // Today's Follow-ups
-    // ==========================
-    // ==========================
-// Today's Follow-ups Count
+const welcome = {
+  employeeName: employee.full_name || "",
+};
+
+// ==========================
+// Today's Follow-ups
+// From Employee To-Do List
 // ==========================
 const [todayResult] = await db.promise().query(
   `
   SELECT COUNT(*) AS total
-  FROM follow_ups
-  WHERE
-    employee_id = ?
-    AND status = 'pending'
-    AND DATE(next_followup_date) = CURDATE()
+  FROM (
+    SELECT DISTINCT l.id
+    FROM leads l
+    INNER JOIN task_followups tf
+      ON tf.lead_id = l.id
+      AND tf.employee_id = ?
+    WHERE l.company_id = ?
+      AND DATE(tf.followup_date) = CURDATE()
+      AND LOWER(
+        REPLACE(
+          REPLACE(TRIM(COALESCE(l.lead_status, '')), '_', ' '),
+          '-', ' '
+        )
+      ) IN (
+        'interested',
+        'proposed',
+        'proposal',
+        'offered',
+        'meeting scheduled',
+        'not responded'
+      )
+      AND (
+        l.assigned_employee_id = ?
+        OR (
+          l.assigned_employee_id IS NULL
+          AND l.created_by_id = ?
+          AND l.created_by_type = 'employee'
+        )
+      )
+  ) AS today_tasks
   `,
-  [employeeId]
+ [
+  employeeId,
+  companyId,
+  employeeId,
+  employeeId
+]
 );
 
-welcome.todayFollowups = todayResult[0].total;
+welcome.todayFollowups = Number(todayResult[0].total || 0);
 
-    // ==========================
-    // Overdue Follow-ups
-    // ==========================
-    const [overdueResult] = await db.promise().query(
-      `
-      SELECT COUNT(*) AS total
-      FROM follow_ups
-      WHERE
-        employee_id = ?
-        AND status = 'pending'
-        AND DATE(next_followup_date) < CURDATE()
-      `,
-      [employeeId]
-    );
 
-    welcome.overdueFollowups = overdueResult[0].total;
+// ==========================
+// Overdue Follow-ups
+// Count all eligible To-Do List leads
+// Ignore follow-up dates
+// ==========================
+const [overdueResult] = await db.promise().query(
+  `
+  SELECT COUNT(DISTINCT l.id) AS total
+  FROM leads l
+  LEFT JOIN task_followups tf
+    ON tf.lead_id = l.id
+    AND tf.employee_id = ?
+  WHERE l.company_id = ?
+    AND LOWER(
+      REPLACE(
+        REPLACE(TRIM(COALESCE(l.lead_status, '')), '_', ' '),
+        '-', ' '
+      )
+    ) IN (
+      'interested',
+      'proposed',
+      'proposal',
+      'offered',
+      'meeting scheduled',
+      'not responded'
+    )
+    AND (
+      l.assigned_employee_id = ?
+      OR (
+        l.assigned_employee_id IS NULL
+        AND l.created_by_id = ?
+        AND l.created_by_type = 'employee'
+      )
+    )
+  `,
+  [
+  employeeId,
+  companyId,
+  employeeId,
+  employeeId
+]
+);
 
-    // ==========================
-    // Pending Tasks (New Leads)
-    // ==========================
-    const [pendingResult] = await db.promise().query(
-      `
-      SELECT COUNT(*) AS total
-      FROM leads
-      WHERE
-        created_by_id = ?
+welcome.overdueFollowups = Number(overdueResult[0].total || 0);
+
+// ==========================
+// Pending Tasks (New Leads)
+// ==========================
+const [pendingResult] = await db.promise().query(
+  `
+  SELECT COUNT(*) AS total
+  FROM leads
+  WHERE company_id = ?
+    AND LOWER(TRIM(lead_status)) = 'new'
+    AND (
+      assigned_employee_id = ?
+      OR (
+        assigned_employee_id IS NULL
+        AND created_by_id = ?
         AND created_by_type = 'employee'
-        AND lead_status = 'new'
-      `,
-      [employeeId]
-    );
+      )
+    )
+  `,
+  [companyId, employeeId, employeeId]
+);
 
-    welcome.pendingTasks = pendingResult[0].total;
+welcome.pendingTasks = Number(pendingResult[0].total || 0);
 
-    // ==========================
-    // Important Leads
-    // ==========================
-    const [importantResult] = await db.promise().query(
-      `
-      SELECT COUNT(*) AS total
-      FROM leads
-      WHERE
-        created_by_id = ?
+// ==========================
+// Important Leads
+// ==========================
+const [importantResult] = await db.promise().query(
+  `
+  SELECT COUNT(*) AS total
+  FROM leads
+  WHERE company_id = ?
+    AND important_lead = 1
+    AND (
+      assigned_employee_id = ?
+      OR (
+        assigned_employee_id IS NULL
+        AND created_by_id = ?
         AND created_by_type = 'employee'
-        AND important_lead = 1
-      `,
-      [employeeId]
-    );
+      )
+    )
+  `,
+  [companyId, employeeId, employeeId]
+);
 
-    welcome.importantLeads = importantResult[0].total;
+welcome.importantLeads = Number(importantResult[0].total || 0);
 
-    // ==========================
-    // Employee Name
-    // ==========================
-    const [employee] = await db.promise().query(
-      `
-      SELECT full_name
-      FROM employees
-      WHERE employee_id = ?
-      `,
-      [employeeId]
-    );
-
-    welcome.employeeName = employee.length
-      ? employee[0].full_name
-      : "";
+    
 
     res.json(welcome);
 
@@ -756,6 +1074,96 @@ welcome.todayFollowups = todayResult[0].total;
   }
 
 };   
+
+// ==========================
+// EMPLOYEE NOT RESPONDED LEADS
+// ==========================
+
+const getEmployeeNotRespondedLeads = async (req, res) => {
+  try {
+    const employee = await getAuthorizedEmployee(req, res);
+
+    if (!employee) {
+      return;
+    }
+
+    const [leads] = await db.promise().query(
+      `
+      SELECT l.*
+      FROM leads l
+      WHERE l.company_id = ?
+        AND (
+          l.assigned_employee_id = ?
+          OR (
+            l.assigned_employee_id IS NULL
+            AND l.created_by_type = 'employee'
+            AND l.created_by_id = ?
+          )
+        )
+        AND LOWER(
+          REPLACE(
+            REPLACE(TRIM(COALESCE(l.lead_status, '')), '_', ' '),
+            '-', ' '
+          )
+        ) = 'not responded'
+      ORDER BY l.id DESC
+      `,
+      [
+        employee.company_id,
+        employee.employee_id,
+        employee.employee_id,
+      ]
+    );
+
+    return res.status(200).json(leads);
+
+  } catch (err) {
+    console.error("Employee Not Responded Leads Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch not responded leads",
+    });
+  }
+};
+
+// ==========================
+// MANAGER NOT RESPONDED LEADS
+// ==========================
+const getManagerNotRespondedLeads = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId;
+
+    if (!companyId) {
+      return res.status(400).json({
+        message: "Company context is missing",
+      });
+    }
+
+    const [leads] = await db.promise().query(
+      `
+      SELECT l.*
+      FROM leads l
+      WHERE l.company_id = ?
+        AND LOWER(
+          REPLACE(
+            REPLACE(TRIM(COALESCE(l.lead_status, '')), '_', ' '),
+            '-', ' '
+          )
+        ) = 'not responded'
+      ORDER BY l.id DESC
+      `,
+      [companyId]
+    );
+
+    return res.status(200).json(leads);
+  } catch (err) {
+    console.error("Manager Not Responded Leads Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch company Not Responded leads",
+    });
+  }
+};
 module.exports = {
 
   getDashboardStats,
@@ -769,7 +1177,10 @@ module.exports = {
 
   getEmployeeLeadStatusChart,
   getEmployeeLeadTrend,
-  getEmployeeFollowupChart
+  getEmployeeFollowupChart,
+
+  getEmployeeNotRespondedLeads,
+  getManagerNotRespondedLeads
 
 
 };

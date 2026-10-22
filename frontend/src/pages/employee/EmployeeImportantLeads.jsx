@@ -1,3 +1,4 @@
+import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
 import {
   useEffect,
@@ -26,6 +27,8 @@ import {
 } from "lucide-react";
 
 export default function ImportantLeads() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [
     leads,
@@ -48,11 +51,7 @@ export default function ImportantLeads() {
   const navigate =
   useNavigate();
 
-  const user =
-    JSON.parse(localStorage.getItem("user"));
-
-  const employeeId =
-    user?.id;
+  const [employeeId, setEmployeeId] = useState(null);
 
 
   // ==========================
@@ -62,6 +61,7 @@ export default function ImportantLeads() {
   async () => {
 
     try {
+      
 
       const response =
       await  api.get(
@@ -69,9 +69,8 @@ export default function ImportantLeads() {
       );
 
 
-      setLeads(
-        response.data
-      );
+
+setLeads(response.data);
 
     }
 
@@ -82,27 +81,52 @@ export default function ImportantLeads() {
     }
 
   };
-const fetchAllLeads = async () => {
 
-  //const response =
-  await  api.get(
-    `/leads/employee/${employeeId}`
-  );
-
- // setAllLeads(response.data);
-
-};
 
   // ==========================
   // Load Data
   // ==========================
  useEffect(() => {
 
-  const loadLeads =
-  async () => {
+  const loadLeads = async () => {
 
-    await fetchLeads();
-    await fetchAllLeads();
+    try {
+
+      // Get CRM employee profile
+      const employeeResponse =
+        await api.get("/employee/me");
+
+      const employeeId =
+        employeeResponse.data.data.employee_id;
+
+      console.log(
+        "CRM EMPLOYEE ID:",
+        employeeId
+      );
+
+      setEmployeeId(employeeId);
+
+      // Get important leads
+      const response =
+        await api.get(
+          `/leads/employee/${employeeId}/important`
+        );
+
+      console.log(
+        "IMPORTANT API RESPONSE:",
+        response.data
+      );
+
+      setLeads(response.data);
+
+    } catch (error) {
+
+      console.error(
+        "Failed to fetch important leads:",
+        error
+      );
+
+    }
 
   };
 
@@ -116,6 +140,8 @@ const fetchAllLeads = async () => {
   // ==========================
   const handleDelete =
   async (id) => {
+    if (!canWrite) return;
+
 
     const confirmDelete =
     window.confirm(
@@ -351,7 +377,9 @@ const fetchAllLeads = async () => {
                           View Lead
                         </button>
 
-                        <button
+                        {canWrite && (
+<>
+<button
                           className="action-item"
                           onClick={() =>
                             navigate(`/employee/edit-lead/${lead.id}`)
@@ -371,6 +399,8 @@ const fetchAllLeads = async () => {
                           <Trash2 size={16} />
                           Delete Lead
                         </button>
+</>
+)}
 
                       </div>
 

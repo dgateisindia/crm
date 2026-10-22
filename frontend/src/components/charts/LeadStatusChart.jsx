@@ -8,26 +8,23 @@ import {
 
 import { PieChart as PieChartIcon } from "lucide-react";
 
-import { STATUS_THEME } from "../../utils/statusTheme";
+import { getStatusTheme } from "../../utils/statusTheme";
 import {
   normalizeStatus,
   formatStatus
 } from "../../utils/statusUtils";
 export default function LeadStatusChart({ data }) {
 
-  const chartData = data.map((item) => {
-
+  const chartData = (Array.isArray(data) ? data : []).map((item) => {
   const status = normalizeStatus(item.lead_status);
 
   return {
     status,
     name: formatStatus(item.lead_status),
-    value: Number(item.total),
-    color: STATUS_THEME[status]?.color || "#94A3B8",
+    value: Number(item.total) || 0,
+    color: getStatusTheme(item.lead_status).color,
   };
-
 });
-
   return (
 
     <div

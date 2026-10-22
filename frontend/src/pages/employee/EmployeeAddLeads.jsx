@@ -1,11 +1,13 @@
 import api from "../../utils/api";
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Upload, UserPlus } from "lucide-react";
 import { useNavigate,useParams,useLocation } from "react-router-dom";
 import EmployeLayout from "../../layouts/EmployeeLayout";
 //import {Briefcase,PhoneCall} from "lucide-react";
-import "../../styles/addlead.css";
+import "../../styles/addLead.css";
 import {useSearchParams} from "react-router-dom";
+import ExcelImportGuide from "../../components/ExcelImportGuide.jsx";
+
 function AddLeads() {
 
   const { id } = useParams();
@@ -13,6 +15,9 @@ function AddLeads() {
   //const [uploadType, setUploadType] = useState("leads");
 
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const [uploadResult, setUploadResult] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   //const [showUploadModal, setShowUploadModal] = useState(false);
 
@@ -23,6 +28,9 @@ useSearchParams();
 
 const from =
 searchParams.get("from");
+
+const fileInputRef = useRef(null);
+const autoPickerOpened = useRef(false);
 
   const [leadData, setLeadData] =
   useState({
@@ -45,6 +53,38 @@ searchParams.get("from");
   });
   const navigate = useNavigate();
 
+  useEffect(() => {
+  if (!location.state?.openFilePicker) {
+    autoPickerOpened.current = false;
+    return;
+  }
+
+  if (autoPickerOpened.current || !fileInputRef.current) {
+    return;
+  }
+
+  autoPickerOpened.current = true;
+
+  // Open the existing Excel/CSV file picker.
+  fileInputRef.current.click();
+
+  // Clear navigation state so it doesn't reopen unexpectedly.
+  navigate(
+    {
+      pathname: location.pathname,
+      search: location.search,
+    },
+    {
+      replace: true,
+      state: null,
+    }
+  );
+}, [
+  location.state,
+  location.pathname,
+  location.search,
+  navigate,
+]);
         // ==========================
       // Fetch Existing Lead
       // ==========================
@@ -62,7 +102,8 @@ searchParams.get("from");
             await  api.get(
               `/leads/${id}`
             );
-            console.log(response.data);
+            console.log("EDIT LEAD DATA:", response.data);
+console.log("CATEGORY FROM DB:", response.data.category);
 
             setLeadData({
 
@@ -159,249 +200,128 @@ searchParams.get("from");
 
   };
 
-  const handleSubmit =
-  async (e) => {
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  try {
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
 
-    try {
+    if (!leadData.company_name.trim()) {
+      return alert("Company Name is required");
+    }
 
-      const user =
-      JSON.parse(
-        localStorage.getItem(
-          "user"
-        )
+    if (!leadData.phone.trim() && !leadData.email.trim()) {
+      return alert(
+        "Please enter either Phone Number or Email Address."
       );
-      if (!leadData.company_name.trim()) {
+    }
 
-          return alert(
-            "Company Name is required"
-          );
+    if (
+      leadData.phone &&
+      !/^\d{10}$/.test(leadData.phone)
+    ) {
+      return alert(
+        "Phone Number must contain exactly 10 digits"
+      );
+    }
 
-        }
+    if (leadData.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-       
-
-    // Either Phone or Email is required
-      if (!leadData.phone.trim() && !leadData.email.trim()) {
-        return alert(
-          "Please enter either Phone Number or Email Address."
-        );
+      if (!emailRegex.test(leadData.email)) {
+        return alert("Please enter a valid Email Address.");
       }
+    }
 
-      // Validate phone only if entered
-      if (
-        leadData.phone &&
-        !/^\d{10}$/.test(leadData.phone)
-      ) {
-        return alert(
-          "Phone Number must contain exactly 10 digits"
-        );
-      }
+    if (id) {
+      await api.put(
+        `/leads/update/${id}`,
+        leadData
+      );
 
-      // Validate email only if entered
-      if (leadData.email) {
+      alert("Lead Updated Successfully");
 
-        const emailRegex =
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      navigate(
+        from === "tasks"
+          ? "/employee/tasks"
+          : "/employee/my-leads"
+      );
 
-        if (!emailRegex.test(leadData.email)) {
-
-          return alert(
-            "Please enter a valid Email Address."
-          );
-
-        }
-
-      }
-
-      if (id) {
-
-          await  api.put(
-
-            `/leads/update/${id}`,
-
-            leadData
-
-          );
-
-          alert("Lead Updated Successfully");
-            console.log(location.state);
-
-          navigate(
-
-              from === "tasks"
-
-              ? "/employee/tasks"
-
-              : "/employee/my-leads"
-
-            );
-
-        }
-
-        else {
-
-          await  api.post(
-
-            "/leads/add",
-
-            {
-              ...leadData,
-              created_by_id:
-              user?.id || 1,
-              created_by_type:
-              "employee",
-              created_by_name:
-              user?.full_name || "Employee Name",
-            }
-
-          );
-
-          alert("Lead Added Successfully");
-          navigate("/employee/my-leads");
-        }
-              
-
-      setLeadData({
-
-        company_name: "",
-        contact_person_name: "",
-        designation: "",
-        email: "",
-        phone: "",
-        address: "",
-        website: "",
-        city: "",
-        category: "",
-        source: "",
-        lead_mode: "",
-        lead_status: "",
-        remarks: "",
-        important_lead: false,
-
+    } else {
+      await api.post("/leads/add", {
+        ...leadData,
+        created_by_id: user?.id || 1,
+        created_by_type: "employee",
+        created_by_name:
+          user?.full_name || "Employee Name"
       });
 
+      alert("Lead Added Successfully");
+      navigate("/employee/my-leads");
     }
 
-    catch (error) {
+  } catch (error) {
+    console.error("SAVE LEAD ERROR:", error);
 
-      console.log(error);
+    alert(
+      error.response?.data?.message ||
+      "Failed to Save Lead"
+    );
+  }
+};
 
-      alert(
+ 
+const handleUpload = async () => {
+  if (!selectedFile) {
+    setUploadResult({
+      success: false,
+      message: "Please select an Excel or CSV file.",
+      totalRows: 0,
+      inserted: 0,
+      duplicates: 0,
+      invalid: 0,
+      errors: []
+    });
+    return;
+  }
 
-        error.response?.data
-        ?.message ||
+  setUploading(true);
+  setUploadResult(null);
 
-        "Failed to Add Lead"
+  try {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
 
-      );
+    const response = await api.post(
+      "/tasks/upload",
+      formData
+    );
 
-    }
+    setUploadResult(response.data);
 
-  };
-  const handleUpload =
-      async () => {
+  } catch (error) {
+    console.error("EXCEL UPLOAD ERROR:", error);
 
-        if (!selectedFile) {
+    const data = error.response?.data;
 
-          return alert(
-            "Please select file"
-          );
+    setUploadResult({
+      success: false,
+      message: data?.message || "Excel upload failed. Please try again.",
+      totalRows: data?.totalRows ?? 0,
+      inserted: data?.inserted ?? 0,
+      duplicates: data?.duplicates ?? 0,
+      invalid: data?.invalid ?? 0,
+      errors: data?.errors || []
+    });
 
-        }
+  } finally {
+    setUploading(false);
+  }
+};
 
-        try {
-
-          const user =
-          JSON.parse(
-
-            localStorage.getItem(
-              "user"
-            )
-
-          );
-
-          const formData =
-            new FormData();
-
-            formData.append(
-              "file",
-              selectedFile
-            );
-
-          
-            formData.append(
-              "created_by_id",
-              user?.id || 1
-            );
-            console.log(user);
-
-            formData.append(
-              "created_by_type",
-              "employee"
-            );
-
-            formData.append(
-              "created_by_name",
-              user?.full_name || "Employee Name"
-            );
-  const uploadUrl =
-    "/tasks/upload";
-
-          const response =
-          await  api.post(
-
-            uploadUrl,
-
-            formData,
-
-            {
-              headers: {
-                "Content-Type":
-                "multipart/form-data"
-              }
-            }
-
-          );
-
-          let message = `${response.data.inserted} Records Inserted\n\n`;
-
-              if (response.data.errors && response.data.errors.length > 0) {
-
-                  message += `${response.data.duplicates} Rows Skipped\n\n`;
-
-                  response.data.errors.forEach((error) => {
-
-                      message += `Row ${error.row} : ${error.reason}\n`;
-
-                  });
-
-              }
-
-              alert(message);
-          navigate("/employee/my-leads");
-
-        }
-
-       catch (error) {
-
-  console.log(
-    "UPLOAD ERROR:",
-    error
-  );
-
-  alert(
-
-    JSON.stringify(
-      error.response?.data
-    )
-
-  );
-
-}
-
-      };
 
   return (
 
@@ -825,9 +745,19 @@ searchParams.get("from");
                         Converted
                       </option>
 
-                      <option value="closed">
-                        Closed
+                      <option value="sponsorship">
+                        Sponsorship
                       </option>
+
+                      <option value="invalid">
+                        Invalid
+                      </option>
+
+                      <option value="not responded">
+                        Not Responded 
+                      </option>
+
+                      
 
                     </select>
 
@@ -908,11 +838,10 @@ searchParams.get("from");
                     Choose Excel File
 
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept=".xlsx,.xls,.csv"
-                      onChange={
-                        handleFileChange
-                      }
+                      onChange={handleFileChange}
                       hidden
                     />
 
@@ -935,19 +864,119 @@ searchParams.get("from");
                   }
 
                   <button
+                    type="button"
                     className="uploadBtn"
                     onClick={handleUpload}
+                    disabled={uploading}
                   >
-                    Upload Excel
+                    {uploading ? "Importing..." : "Upload Excel"}
                   </button>
+                  
 
                 </div>
+                <ExcelImportGuide />
 
               </div>
 
             </div>
 
           </div>
+          
+            {uploadResult && (
+              <div className="excelModalOverlay">
+                <div
+                  className="excelModal"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="excelModalTitle"
+                >
+                  <button
+                    type="button"
+                    className="excelModalClose"
+                    onClick={() => setUploadResult(null)}
+                    aria-label="Close import summary"
+                  >
+                    ×
+                  </button>
+
+                  <div className="excelModalIcon">
+                    {Number(uploadResult.inserted || 0) > 0 ? "✓" : "!"}
+                  </div>
+
+                  <h2 id="excelModalTitle">
+                    {Number(uploadResult.inserted || 0) > 0
+                      ? Number(uploadResult.duplicates || 0) > 0 ||
+                        Number(uploadResult.invalid || 0) > 0
+                        ? "Partially Imported"
+                        : "Import Successful"
+                      : Number(uploadResult.duplicates || 0) > 0
+                        ? "No New Records"
+                        : "Import Failed"}
+                  </h2>
+
+                  <p className="excelModalSubtitle">
+                    {Number(uploadResult.inserted || 0) > 0
+                      ? "Your Excel file has been processed."
+                      : Number(uploadResult.duplicates || 0) > 0
+                        ? "The uploaded records already exist or were skipped."
+                        : uploadResult.message || "Unable to import records."}
+                  </p>
+
+                  <div className="excelModalStats">
+                    {[
+                      ["Total Rows", uploadResult.totalRows],
+                      ["Imported", uploadResult.inserted],
+                      ["Duplicates", uploadResult.duplicates],
+                      ["Invalid", uploadResult.invalid]
+                    ].map(([label, value]) => (
+                      <div className="excelModalStat" key={label}>
+                        <strong>{Number(value || 0)}</strong>
+                        <span>{label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {uploadResult.errors?.length > 0 && (
+                    <details className="excelModalErrors">
+                      <summary>
+                        View {uploadResult.errors.length} skipped or invalid rows
+                      </summary>
+
+                      <div className="excelModalErrorList">
+                        {uploadResult.errors.map((error, index) => (
+                          <p key={index}>
+                            <strong>Row {error.row ?? "N/A"}:</strong>{" "}
+                            {error.reason || "Record could not be imported"}
+                          </p>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+
+                  <div className="excelModalActions">
+                    <button
+                      type="button"
+                      className="excelModalSecondary"
+                      onClick={() => setUploadResult(null)}
+                    >
+                      Close
+                    </button>
+
+                    <button
+                      type="button"
+                      className="excelModalPrimary"
+                      onClick={() => {
+                        setUploadResult(null);
+                        navigate("/employee/my-leads");
+                      }}
+                    >
+                      View Leads
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           
     </EmployeLayout>
 

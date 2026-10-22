@@ -8,3 +8,20 @@ backend/.env
 
 dist/
 build/
+# Private files
+.env
+.env.*
+!.env.example
+*.sql
+*.zip
+*.pem
+*.key
+*.backup*
+*.before-*
+*.bak
+*.log
+node_modules/
+dist/
+uploads/
+_backups/
+database-backups/

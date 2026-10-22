@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import "../../styles/managerDashboard.css";
 import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
-import { STATUS_THEME } from "../../utils/statusTheme";
+import { getStatusTheme } from "../../utils/statusTheme";
 import StatCard from "../../components/dashboard/StatCard";
 
 export default function ManagerDashboard() {
@@ -23,14 +23,14 @@ export default function ManagerDashboard() {
   const [leadStatus, setLeadStatus] = useState([]);
 
   const [stats, setStats] = useState({
-  totalLeads: 0,
-  newLeads: 0,
-  followups: 0,
-  converted: 0,
-  closed: 0,
-  notInterested: 0,
-  recentLeads: [],
-});
+    totalLeads: 0,
+    newLeads: 0,
+    todoCount: 0,
+    converted: 0,
+    notResponded: 0,
+    notInterested: 0,
+    recentLeads: [],
+  });
     const [
     employeePerformance,
     setEmployeePerformance
@@ -132,12 +132,12 @@ export default function ManagerDashboard() {
   />
 
   <StatCard
-    title="Followups"
-    value={stats.followups}
-    color="blue"
-    icon={<Briefcase size={18} />}
-    onClick={() => navigate("/manager/followups")}
-  />
+  title="To Do List"
+  value={stats.todoCount ?? 0}
+  color="blue"
+  icon={<Briefcase size={18} />}
+  onClick={() => navigate("/manager/followups")}
+/>
 
   <StatCard
     title="Converted"
@@ -148,12 +148,12 @@ export default function ManagerDashboard() {
   />
 
   <StatCard
-    title="Closed"
-    value={stats.closed}
-    color="orange"
-    icon={<Users size={18} />}
-    //onClick={() => navigate("/manager/leads")}
-  />
+  title="Not Responded"
+  value={stats.notResponded}
+  color="orange"
+  icon={<Users size={18} />}
+  onClick={() => navigate("/manager/not-responded")}
+/>
 
   <StatCard
     title="Not Interested"
@@ -253,25 +253,16 @@ export default function ManagerDashboard() {
                     </td>
 
                     <td>
-
-                       <span
+                      <span
                         className="status-badge"
                         style={{
-                          background:
-                            STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                            ]?.bg || "#E5E7EB",
-
-                          color:
-                            STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                            ]?.color || "#374151",
+                          backgroundColor: getStatusTheme(lead.lead_status).bg,
+                          color: getStatusTheme(lead.lead_status).color,
                         }}
                       >
                         {formatStatus(lead.lead_status)}
                       </span>
-
-                      </td>
+                    </td>
 
                       <td>
 

@@ -16,7 +16,7 @@ from "../../components/charts/LeadStatusChart";
 import NotesCard from "../../components/dashboard/NotesCard";
 import LeadTrendChart
 from "../../components/charts/LeadTrendChart";
-import { STATUS_THEME } from "../../utils/statusTheme";
+import { getStatusTheme } from "../../utils/statusTheme";
 import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
 import StatCard from "../../components/dashboard/StatCard";
 import {
@@ -40,87 +40,127 @@ useState([]);
 const [leadTrend, setLeadTrend] =
 useState([]);
 
-
+const [employeeId, setEmployeeId] = useState(null);
 
 const [showWelcome, setShowWelcome] = useState(false);
 
 const [welcomeData, setWelcomeData] = useState(null);
 
-  const [stats, setStats] = useState({
+const [stats, setStats] = useState({
   totalLeads: 0,
   newLeads: 0,
-  followups: 0,
+  todoCount: 0,
   converted: 0,
-  closed: 0,
+  notResponded: 0,
   notInterested: 0,
   recentLeads: [],
 });
 
-
-  // ==========================
-  // Get Logged In User
-  // ==========================
-  const user =
-  JSON.parse(
-
-    localStorage.getItem(
-      "user"
-    )
-
-  );
-
-  const userId =
-
-    user?.employee_id ||
-
-    user?.id;
 
 
   // ==========================
   // Fetch Dashboard Data
   // ==========================
   useEffect(() => {
+  const fetchDashboardData = async () => {
+    try {
+      // Get CRM employee ID from backend
+      const employeeResponse = await api.get("/employee/me");
 
-  if (!userId) return;
+      const employeeId = Number(
+        employeeResponse.data.data.employee_id
+      );
 
-  // Dashboard Cards
-  api.get(`/dashboard/employee/${userId}`)
-    .then((res) => setStats(res.data))
-    .catch(console.error);
+      if (!Number.isSafeInteger(employeeId) || employeeId <= 0) {
+        throw new Error("Invalid employee ID");
+      }
 
-  // Lead Status
-  api.get(`/dashboard/employee/${userId}/lead-status`)
-    .then((res) => setLeadStatus(res.data))
-    .catch(console.error);
+      setEmployeeId(employeeId);
 
-  // Lead Trend
-  api.get(`/dashboard/employee/${userId}/lead-trend`)
-    .then((res) => setLeadTrend(res.data))
-    .catch(console.error);
+      console.log("CRM EMPLOYEE ID:", employeeId);
 
-  
+      // Dashboard Cards
+      const statsResponse =
+        await api.get(
+          `/dashboard/employee/${employeeId}`
+        );
 
-  // Welcome Popup
-  api.get(`/dashboard/employee/${userId}/welcome`)
-    .then((res) => {
+      console.log(
+        "DASHBOARD STATS:",
+        statsResponse.data
+      );
 
-      setWelcomeData(res.data);
+      setStats(statsResponse.data);
 
-      if (!sessionStorage.getItem("employeeWelcomeShown")) {
+      // Lead Status
+      const statusResponse =
+        await api.get(
+          `/dashboard/employee/${employeeId}/lead-status`
+        );
 
+      console.log(
+        "LEAD STATUS:",
+        statusResponse.data
+      );
+
+      setLeadStatus(statusResponse.data);
+
+      // Lead Trend
+      const trendResponse =
+        await api.get(
+          `/dashboard/employee/${employeeId}/lead-trend`
+        );
+
+      console.log(
+        "LEAD TREND:",
+        trendResponse.data
+      );
+
+      setLeadTrend(trendResponse.data);
+
+      // Welcome Popup
+      const welcomeResponse =
+        await api.get(
+          `/dashboard/employee/${employeeId}/welcome`
+        );
+
+      console.log(
+        "WELCOME DATA:",
+        welcomeResponse.data
+      );
+
+      setWelcomeData(
+        welcomeResponse.data
+      );
+
+      if (
+        !sessionStorage.getItem(
+          "employeeWelcomeShown"
+        )
+      ) {
         setShowWelcome(true);
 
         sessionStorage.setItem(
           "employeeWelcomeShown",
           "true"
         );
-
       }
 
-    })
-    .catch(console.error);
+    } catch (error) {
+      console.error(
+        "EMPLOYEE DASHBOARD ERROR:",
+        error
+      );
 
-}, [userId]);
+      console.error(
+        "ERROR RESPONSE:",
+        error.response?.data
+      );
+    }
+  };
+
+  fetchDashboardData();
+}, []);
 
 
   return (
@@ -167,30 +207,30 @@ const [welcomeData, setWelcomeData] = useState(null);
           />
 
           <StatCard
-              title="Follow-ups"
-              value={stats.followups}
-              subtitle="Pending Follow-ups"
-              color="orange"
-              icon={<Briefcase size={22}/>}
-              onClick={() => navigate("/employee/followups")}
+            title="To-Do List"
+            value={stats.todoCount ?? 0}
+            subtitle="Pending Tasks"
+            color="blue"
+            icon={<Briefcase size={22}/>}
+            onClick={() => navigate("/employee/task-followups")}
           />
 
           <StatCard
               title="Converted"
               value={stats.converted}
               subtitle="Successfully Converted"
-              color="blue"
+              color="purple"
               icon={<BadgeCheck size={22}/>}
               onClick={() => navigate("/employee/converted-leads")}
           />
 
           <StatCard
-              title="Closed"
-              value={stats.closed}
-              subtitle="Closed Leads"
-              color="purple"
-              icon={<Briefcase size={22}/>}
-              //onClick={() => navigate("/employee/closed-leads")}
+            title="Not Responded"
+            value={stats.notResponded}
+            subtitle="Leads with no response"
+            color="orange"
+            icon={<Briefcase size={22} />}
+            onClick={() => navigate("/employee/not-responded")}
           />
 
           <StatCard
@@ -215,7 +255,7 @@ const [welcomeData, setWelcomeData] = useState(null);
         />
 
         <NotesCard
-          employeeId={userId}
+          employeeId={employeeId}
         />
 
         
@@ -317,14 +357,10 @@ const [welcomeData, setWelcomeData] = useState(null);
                               style={{
 
                              background:
-                              STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                              ]?.bg,
+                              getStatusTheme(lead.lead_status).bg,
 
                               color:
-                              STATUS_THEME[
-                              normalizeStatus(lead.lead_status)
-                              ]?.color,
+                              getStatusTheme(lead.lead_status).color,
 
                               }}
 

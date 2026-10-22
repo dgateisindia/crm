@@ -4,11 +4,8 @@ import { useEffect, useState } from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
 import "../../styles/status.css";
-import { STATUS_THEME } from "../../utils/statusTheme";
-import {
-  normalizeStatus,
-  formatStatus,
-} from "../../utils/statusUtils";
+import { getStatusTheme } from "../../utils/statusTheme";
+import { formatStatus } from "../../utils/statusUtils";
 export default function NotInterestedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
@@ -156,24 +153,15 @@ export default function NotInterestedLeads() {
                     </td>
 
                     <td className="table-data">
-                      <span
-                                          className="status-badge"
-                                          style={{
-                                            background:
-                                              STATUS_THEME[
-                                                normalizeStatus(lead.lead_status)
-                                              ]?.bg || "#E5E7EB",
-                      
-                                            color:
-                                              STATUS_THEME[
-                                                normalizeStatus(lead.lead_status)
-                                              ]?.color || "#374151",
-                                          }}
-                                        >
-                      
-                                          {formatStatus(lead.lead_status)}
-                      
-                                        </span>
+                       <span
+                        className="status-badge"
+                        style={{
+                          backgroundColor: getStatusTheme(lead.lead_status).bg,
+                          color: getStatusTheme(lead.lead_status).color,
+                        }}
+                      >
+                        {formatStatus(lead.lead_status)}
+                      </span>
                     </td>
 
                   </tr>

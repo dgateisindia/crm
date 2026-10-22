@@ -1,8 +1,8 @@
-const express =
-require("express");
+const express = require("express");
+const router = express.Router();
 
-const router =
-express.Router();
+const { requireAuth } = require("../middleware/authMiddleware");
+const { requireRole } = require("../middleware/roleMiddleware");
 
 const {
   getDashboardStats,
@@ -13,43 +13,89 @@ const {
   getEmployeeFollowupChart,
   getEmployeeLeadStatusChart,
   getEmployeeLeadTrend,
-  getEmployeeWelcome
-} = require(
-  "../controllers/dashboardController"
-);
+  getEmployeeWelcome,
+  getEmployeeNotRespondedLeads,
+  getManagerNotRespondedLeads
+} = require("../controllers/dashboardController");
 
-router.get("/stats", getDashboardStats);
+// =====================================================
+// Apply authentication to all dashboard routes
+// =====================================================
 
-router.get("/lead-status", getLeadStatusChart);
+router.use(requireAuth);
 
-router.get("/employee-performance", getEmployeePerformance);
+// =====================================================
+// Manager Dashboard
+// =====================================================
 
-router.get("/lead-trend", getLeadTrend);
-router.get(
-"/employee/:id/lead-status",
-getEmployeeLeadStatusChart
-);
-
-router.get(
-"/employee/:id/lead-trend",
-getEmployeeLeadTrend
-);
 
 router.get(
-"/employee/:id/followup-chart",
-getEmployeeFollowupChart
+  "/stats",
+  requireRole("owner", "manager"),
+  getDashboardStats
 );
+
+router.get(
+  "/lead-status",
+  requireRole("owner", "manager"),
+  getLeadStatusChart
+);
+
+router.get(
+  "/employee-performance",
+  requireRole("owner", "manager"),
+  getEmployeePerformance
+);
+
+router.get(
+  "/lead-trend",
+  requireRole("owner", "manager"),
+  getLeadTrend
+);
+
+router.get(
+  "/manager/not-responded",
+  requireRole("owner", "manager"),
+  getManagerNotRespondedLeads
+);
+
+
+// =====================================================
+// Employee Dashboard
+// =====================================================
+
+router.get(
+  "/employee/:id/lead-status",
+  getEmployeeLeadStatusChart
+);
+
+router.get(
+  "/employee/:id/lead-trend",
+  getEmployeeLeadTrend
+);
+
+router.get(
+  "/employee/:id/followup-chart",
+  getEmployeeFollowupChart
+);
+
 router.get(
   "/employee/:id/welcome",
   getEmployeeWelcome
 );
 
+router.get(
+  "/employee/:id/not-responded",
+  getEmployeeNotRespondedLeads
+);
 
 router.get(
   "/employee/:id",
   getEmployeeStats
 );
 
+// =====================================================
+// Export
+// =====================================================
 
-module.exports =
-router;
+module.exports = router;

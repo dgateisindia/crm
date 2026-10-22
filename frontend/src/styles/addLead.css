@@ -302,3 +302,441 @@
   border-color:#2563eb;
   background:#eff6ff;
 }
+/* =========================================
+   LEAD ALLOCATION MODAL
+========================================= */
+
+.allocationModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+
+.allocationModal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+
+.allocationModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+
+.allocationModalHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+
+.allocationModalHeader p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+
+.allocationCloseBtn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: #f1f3f6;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+
+.allocationModalSummary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+
+.allocationStat {
+  padding: 14px;
+  background: #f6f8fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+
+.allocationStat span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+
+.allocationStat strong {
+  font-size: 20px;
+  color: #172033;
+}
+
+
+.allocationEmployees {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.allocationEmployeeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px;
+  border: 1px solid #e1e5eb;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+
+.allocationEmployeeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+
+.allocationEmployeeInfo strong {
+  font-size: 14px;
+}
+
+
+.allocationEmployeeInfo span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+
+.allocationEmployeeRow input {
+  width: 80px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #cfd5dd;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 15px;
+  padding: 5px;
+}
+
+
+.allocationEmployeeRow input:focus {
+  outline: none;
+  border-color: #1d5fd1;
+}
+
+
+.allocationModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+
+.allocationCancelBtn,
+.allocationConfirmBtn {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+.allocationCancelBtn {
+  background: #eef1f5;
+  color: #374151;
+}
+
+
+.allocationConfirmBtn {
+  background: #071936;
+  color: #ffffff;
+}
+
+
+.allocationConfirmBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Employee search toolbar */
+.allocationEmployeeSection {
+  min-width: 0;
+}
+
+.allocationEmployeeToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.allocationEmployeeToolbar label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.allocationEmployeeToolbar span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Search field */
+.allocationSearchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.allocationSearchBox:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.allocationSearchBox input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+}
+
+.allocationSearchClear {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Scrollable employee list */
+.allocationEmployees {
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 5px 2px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.allocationEmployees::-webkit-scrollbar {
+  width: 6px;
+}
+
+.allocationEmployees::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.allocationEmployeeRow {
+  flex-shrink: 0;
+}
+
+.allocationNoResults {
+  padding: 24px 12px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Excel Import Result Modal */
+
+.excelModalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 15, 35, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.excelModal {
+  position: relative;
+  width: 100%;
+  max-width: 490px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+
+.excelModalClose {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.excelModalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: #e8f8ef;
+  color: #16a34a;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.excelModal h2 {
+  margin: 0;
+  color: #07183c;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.excelModalSubtitle {
+  margin: 10px 0 24px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.excelModalStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.excelModalStat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 6px;
+  border: 1px solid #e5eaf2;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.excelModalStat strong {
+  font-size: 23px;
+  color: #07183c;
+}
+
+.excelModalStat span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.excelModalErrors {
+  margin-top: 22px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-align: left;
+  font-size: 13px;
+}
+
+.excelModalErrors summary {
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.excelModalErrorList {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.excelModalErrorList p {
+  margin: 8px 0;
+  color: #64748b;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.excelModalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.excelModalActions button {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.excelModalSecondary {
+  border: 1px solid #dbe2ec;
+  background: #ffffff;
+  color: #334155;
+}
+
+.excelModalPrimary {
+  border: none;
+  background: #07183c;
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .excelModal {
+    padding: 24px 18px;
+  }
+
+  .excelModalStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -19,6 +19,11 @@ from "../../layouts/ManagerLayout";
 
 import "../../styles/employees.css";
 import { useNavigate } from "react-router-dom";
+import {
+  useSubscription
+} from "../../context/SubscriptionContext";
+
+
 export default function Employees() {
 
   const [
@@ -26,12 +31,19 @@ export default function Employees() {
     setEmployees
   ] = useState([]);
 
+  const [retryingEmployeeId, setRetryingEmployeeId] = useState(null);
+
   const {
   openMenu,
   toggleMenu,
   menuRef,
   setOpenMenu
 } = useActionMenu();
+
+const subscription = useSubscription();
+
+const canWrite =
+  subscription?.canWrite === true;
 
   
     
@@ -48,19 +60,14 @@ export default function Employees() {
 
     try {
 
-      console.log(
-        "Fetching employees..."
-      );
+      
 
       const response =
       await  api.get(
         "/employee/all"
       );
 
-      console.log(
-        "API Response:",
-        response.data
-      );
+      
 
       setEmployees(
         response.data
@@ -82,11 +89,64 @@ export default function Employees() {
   fetchEmployees();
 
 }, []);
+
+
+  // ==========================
+  // Retry Failed Invitation
+  // ==========================
+  const handleRetryInvitation = async (employee) => {
+    if (!canWrite || retryingEmployeeId !== null) {
+      return;
+    }
+
+    if (
+      employee.status !== "invited" ||
+      employee.user_id != null
+    ) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Retry invitation for ${employee.email}?`
+    );
+
+    if (!confirmed) return;
+
+    setRetryingEmployeeId(employee.employee_id);
+    setOpenMenu(null);
+
+    try {
+      const response = await api.post(
+        `/employee/${employee.employee_id}/retry-invitation`
+      );
+
+      alert(
+        response.data?.message ||
+        "Invitation sent successfully."
+      );
+
+      const updated = await api.get("/employee/all");
+      setEmployees(updated.data);
+
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+        "Unable to retry invitation."
+      );
+    } finally {
+      setRetryingEmployeeId(null);
+    }
+  };
+
   // ==========================
   // Delete Employee
   // ==========================
-  const handleDelete =
-  async (employee_id) => {
+ const handleDelete =
+async (employee_id) => {
+
+  if (!canWrite) {
+    return;
+  }
 
     const confirmDelete =
     window.confirm(
@@ -138,6 +198,10 @@ export default function Employees() {
   employeeId,
   status
 ) => {
+
+  if (!canWrite) {
+    return;
+  }
 
   try {
 
@@ -451,6 +515,12 @@ export default function Employees() {
                             "active"
                           }
                           className="statusSelect"
+                          disabled={!canWrite}
+                          title={
+                            canWrite
+                              ? "Change employee status"
+                              : "Subscription expired — status changes are disabled"
+                          }
                           onChange={(e) =>
                             updateEmployeeStatus(
                               employee.employee_id,
@@ -512,27 +582,57 @@ export default function Employees() {
                                   View Details
                                 </div>
 
-                                <div
-                                  className="action-item"
-                                  onClick={() => {
-                                    navigate(
-                                      `/manager/edit-employee/${employee.employee_id}`
-                                    );
-                                    setOpenMenu(null);
-                                  }}
-                                >
-                                  Edit
-                                </div>
+                                {canWrite && (
+                                    <>
+                                      <div
+                                        className="action-item"
+                                        onClick={() => {
+                                          navigate(
+                                            `/manager/edit-employee/${employee.employee_id}`
+                                          );
 
-                                <div
-                                  className="action-item deleteBtn"
-                                  onClick={() => {
-                                    handleDelete(employee.employee_id);
-                                    setOpenMenu(null);
-                                  }}
-                                >
-                                  Delete
-                                </div>
+                                          setOpenMenu(null);
+                                        }}
+                                      >
+                                        Edit
+                                      </div>
+                                      
+                                        {employee.status === "invited" &&
+                                          employee.user_id == null && (
+                                            <button
+                                              type="button"
+                                              className="action-item"
+                                              style={{
+                                                display: "block",
+                                                width: "100%",
+                                                textAlign: "left",
+                                                cursor: "pointer",
+                                                border: "none",
+                                                background: "transparent"
+                                              }}
+                                              disabled={retryingEmployeeId !== null}
+                                              onClick={() =>
+                                                handleRetryInvitation(employee)
+                                              }
+                                            >
+                                              {retryingEmployeeId === employee.employee_id
+                                                ? "Sending invitation..."
+                                                : "Retry Invitation"}
+                                            </button>
+                                          )}
+
+
+                                      <div
+                                        className="action-item deleteBtn"
+                                        onClick={() => {
+                                          handleDelete(employee.employee_id);
+                                          setOpenMenu(null);
+                                        }}
+                                      >
+                                        Delete
+                                      </div>
+                                    </>
+                                  )}
 
                               </div>
 

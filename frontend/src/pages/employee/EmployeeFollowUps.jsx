@@ -1,11 +1,13 @@
+import FloatingActionMenu from "../../components/common/FloatingActionMenu";
+import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
 import useActionMenu from "../../hooks/useActionMenu";
 import {
   useEffect,
   useState
 } from "react";
-import { STATUS_THEME } from "../../utils/statusTheme";
-import {normalizeStatus,formatStatus,} from "../../utils/statusUtils";
+import { getStatusTheme } from "../../utils/statusTheme";
+import { formatStatus } from "../../utils/statusUtils";
 import {
   MoreVertical,
   Eye,
@@ -24,6 +26,8 @@ import React from "react";
 import "../../styles/leads.css";
 import "../../styles/totallead.css";
 export default function FollowUps() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [
     followups,
@@ -34,6 +38,7 @@ export default function FollowUps() {
   openMenu,
   toggleMenu,
   menuRef,
+  menuAnchor,
   setOpenMenu
 } = useActionMenu();
 const historyRef = useRef(null);
@@ -61,6 +66,8 @@ const [followupData, setFollowupData] = useState({
 });
 
 const openFollowupModal = (lead) => {
+    if (!canWrite) return;
+
 
   setSelectedLead(lead);
 
@@ -74,6 +81,8 @@ const openFollowupModal = (lead) => {
 
 };
 const handleFollowupSubmit = async () => {
+    if (!canWrite) return;
+
   if (!followupData.followup_mode || !followupData.lead_status) {
 
   alert("Please select Followup Mode and Lead Status.");
@@ -138,41 +147,44 @@ const handleFollowupSubmit = async () => {
   // ==========================
   // Fetch Followups
   // ==========================
-  const fetchFollowups =
-  async () => {
+ const fetchFollowups = async () => {
 
-    try {
+  try {
 
-   const user = JSON.parse(
-  localStorage.getItem("user")
-    );
+    // Get logged-in CRM employee
+    const employeeResponse =
+      await api.get("/employee/me");
 
     const employeeId =
-      user?.employee_id ||
-      user?.id;
+      employeeResponse.data.data.employee_id;
 
-    const response =
-    await  api.get(
-      `/followups/employee/${employeeId}`
+    console.log(
+      "CRM EMPLOYEE ID:",
+      employeeId
     );
 
-      setFollowups(
-        response.data
+    // Get employee's lead follow-up records
+    const response =
+      await api.get(
+        `/followups/employee/${employeeId}`
       );
 
-    }
+    console.log(
+      "EMPLOYEE FOLLOWUPS:",
+      response.data
+    );
 
-    catch (error) {
+    setFollowups(response.data);
 
-      console.log(error);
+  } catch (error) {
 
-      alert(
-"Failed to fetch followups"
-      );
+    console.error(
+      "FAILED TO FETCH EMPLOYEE FOLLOWUPS:",
+      error
+    );
 
-    }
-
-  };
+  }
+};
   const toggleHistory = async (leadId) => {
 
   if (expandedLead === leadId) {
@@ -377,7 +389,7 @@ const handleFollowupSubmit = async () => {
             filteredFollowups.map(
 
             (item) => (
-              <React.Fragment key={item.lead_id}>
+              <React.Fragment key={item.followup_id}>
 
             <tr
 
@@ -427,21 +439,14 @@ const handleFollowupSubmit = async () => {
   <td className="table-data">
 
     <span
-      className="status-badge"
-      style={{
-        background:
-          STATUS_THEME[
-            normalizeStatus(item.lead_status)
-          ]?.bg,
-
-        color:
-          STATUS_THEME[
-            normalizeStatus(item.lead_status)
-          ]?.color,
-      }}
-      >
-        {formatStatus(item.lead_status)}
-      </span>
+    className="status-badge"
+    style={{
+      backgroundColor: getStatusTheme(item.lead_status).bg,
+      color: getStatusTheme(item.lead_status).color,
+    }}
+  >
+    {formatStatus(item.lead_status)}
+  </span>
 
   </td>
  <td className="table-data">
@@ -449,18 +454,15 @@ const handleFollowupSubmit = async () => {
  <div className="action-menu-container">
 
   <button
-    className="action-menu-btn"
-    onClick={() => toggleMenu(item.lead_id)}
+    className="action-menu-btn crm-action-trigger"
+    onClick={(event) => toggleMenu(item.followup_id, event)}
   >
     <MoreVertical size={18} />
   </button>
 
-  {openMenu === item.lead_id && (
+  {openMenu === item.followup_id && (
 
-    <div
-      ref={menuRef}
-      className="action-dropdown"
-    >
+    <FloatingActionMenu menuRef={menuRef} anchor={menuAnchor}>
 
       <div
         className="action-item"
@@ -474,6 +476,7 @@ const handleFollowupSubmit = async () => {
         <Eye size={16} />
         View History
       </div>
+{canWrite && (
 
       <div
         className="action-item"
@@ -486,9 +489,10 @@ const handleFollowupSubmit = async () => {
       >
         <PhoneCall size={16} />
         Add Followup
-      </div>
+      </div>)}
 
-    </div>
+
+    </FloatingActionMenu>
 
   )}
 
@@ -557,20 +561,11 @@ expandedLead === item.lead_id && (
                 <span
                   className="status-badge"
                   style={{
-                    background:
-                      STATUS_THEME[
-                        normalizeStatus(record.lead_status)
-                      ]?.bg || "#E5E7EB",
-
-                    color:
-                      STATUS_THEME[
-                        normalizeStatus(record.lead_status)
-                      ]?.color || "#374151",
+                    backgroundColor: getStatusTheme(record.lead_status).bg,
+                    color: getStatusTheme(record.lead_status).color,
                   }}
                 >
-
                   {formatStatus(record.lead_status)}
-
                 </span>
 
               </td>
@@ -632,7 +627,7 @@ No Followups Found
 
       
       {
-showFollowupModal && (
+showFollowupModal && canWrite && (
 
 <div className="crmModalOverlay">
 
@@ -760,6 +755,19 @@ showFollowupModal && (
 
           <option value="converted">
             Converted
+          </option>
+
+
+          <option value="sponsorship">
+            Sponsorship
+          </option>
+
+          <option value="invalid">
+            Invalid
+          </option>
+
+          <option value="not responded">
+              Not Responded 
           </option>
 
         </select>

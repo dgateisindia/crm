@@ -38,13 +38,34 @@ export default function ConvertedLeads() {
   // Load Data
   // ==========================
   useEffect(() => {
-    const loadLeads = async () => {
-      await fetchLeads();
-    };
+  const fetchConvertedLeads = async () => {
+    try {
+      // Get CRM employee ID
+      const employeeResponse = await api.get("/employee/me");
 
-    loadLeads();
-  }, []);
+      const employeeId =
+        employeeResponse.data.data.employee_id;
 
+      console.log("CRM EMPLOYEE ID:", employeeId);
+
+      // Get converted leads
+      const response = await api.get(
+        `/leads/employee/${employeeId}/converted`
+      );
+
+      console.log("CONVERTED API RESPONSE:", response.data);
+
+      setLeads(response.data);
+    } catch (error) {
+      console.error(
+        "FAILED TO FETCH CONVERTED LEADS:",
+        error
+      );
+    }
+  };
+
+  fetchConvertedLeads();
+}, []);
   // ==========================
   // Search Filter
   // ==========================

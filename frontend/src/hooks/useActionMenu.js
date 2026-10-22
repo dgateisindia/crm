@@ -1,57 +1,32 @@
-import { useState, useRef, useEffect } from "react";
-
+import { useEffect, useRef, useState } from "react";
 export default function useActionMenu() {
-
-    const [openMenu, setOpenMenu] = useState(null);
-
-    const menuRef = useRef(null);
-
-    useEffect(() => {
-
-        function handleClickOutside(e) {
-
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(e.target)
-            ) {
-
-                setOpenMenu(null);
-
-            }
-
-        }
-
-        document.addEventListener(
-            "mousedown",
-            handleClickOutside
-        );
-
-        return () =>
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutside
-            );
-
-    }, []);
-
-    const toggleMenu = (id) => {
-
-        setOpenMenu((prev) =>
-            prev === id ? null : id
-        );
-
+  const [openMenu, setOpenMenu] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const menuRef = useRef(null);
+  const toggleMenu = (id, event) => {
+    if (openMenu === id) {
+      setOpenMenu(null);
+      setMenuAnchor(null);
+    } else {
+      setMenuAnchor(event?.currentTarget || null);
+      setOpenMenu(id);
+    }
+  };
+  useEffect(() => {
+    if (openMenu === null) return;
+    const outside = e => {
+      if (!menuRef.current?.contains(e.target) &&
+          !menuAnchor?.contains(e.target)) setOpenMenu(null);
     };
-
-    return {
-
-        openMenu,
-
-        toggleMenu,
-
-        menuRef,
-
-        setOpenMenu
-
+    const close = () => setOpenMenu(null);
+    document.addEventListener("pointerdown", outside);
+    window.addEventListener("resize", close);
+    window.addEventListener("scroll", close, true);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      window.removeEventListener("resize", close);
+      window.removeEventListener("scroll", close, true);
     };
-
+  }, [openMenu, menuAnchor]);
+  return {openMenu, toggleMenu, menuRef, setOpenMenu, menuAnchor};
 }

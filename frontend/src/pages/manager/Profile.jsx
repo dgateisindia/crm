@@ -1,3 +1,4 @@
+import { useSubscription } from "../../context/SubscriptionContext";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import ManagerLayout from "../../layouts/ManagerLayout";
@@ -19,6 +20,8 @@ import {
 import "../../styles/employeeprofile.css";
 
 export default function ManagerProfile() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [profile, setProfile] = useState(null);
 
@@ -44,76 +47,46 @@ export default function ManagerProfile() {
   // ===============================
 
   const fetchProfile = async () => {
-
     try {
 
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
+        const currentUserResponse =
+            await api.get("/auth/current-user");
 
-      const { data } = await api.get(
-        `/managers/profile/${user.id}`
-      );
+        const manager =
+            currentUserResponse.data.manager;
 
-    setProfile(data);
+        console.log("MANAGER PROFILE:", manager);
 
-    }
-
-    catch (err) {
-
-      console.log(err);
-
-      alert("Failed to load profile.");
-
-    }
-
-    finally {
-
-      setLoading(false);
-
-    }
-
-  };
-useEffect(() => {
-
-    let mounted = true;
-
-    const loadProfile = async () => {
-
-        try {
-
-            const user = JSON.parse(
-                localStorage.getItem("user")
-            );
-
-            const { data } = await api.get(
-                `/managers/profile/${user.id}`
-            );
-
-            if (mounted) {
-
-                setProfile(data);
-
-                setLoading(false);
-
-            }
-
-        } catch (err) {
-
-            console.log(err);
-
+        if (!manager) {
+            throw new Error("Manager profile not found.");
         }
 
-    };
+        setProfile(manager);
 
-    loadProfile();
+        setEditData({
+            full_name: manager.full_name || "",
+            phone: manager.phone || "",
+            designation: manager.designation || ""
+        });
 
-    return () => {
+    } catch (err) {
 
-        mounted = false;
+        console.error(
+            "Failed to load manager profile:",
+            err
+        );
 
-    };
+        alert("Failed to load profile.");
 
+    } finally {
+
+        setLoading(false);
+
+    }
+};
+
+useEffect(() => {
+    fetchProfile();
 }, []);
 
   
@@ -186,6 +159,8 @@ useEffect(() => {
   // ===============================
 
   const startEditing = () => {
+    if (!canWrite) return;
+
 
     setEditData({
 
@@ -226,6 +201,8 @@ useEffect(() => {
   // ===============================
 
   const updateProfile = async () => {
+    if (!canWrite) return;
+
 
     if (!editData.full_name.trim()) {
 
@@ -276,6 +253,8 @@ useEffect(() => {
   // ===============================
 
   const updatePassword = async () => {
+    if (!canWrite) return;
+
 
     if (!passwords.newPassword.trim()) {
 
@@ -434,7 +413,7 @@ useEffect(() => {
 
                     className="saveBtn"
 
-                    onClick={updateProfile}
+                    onClick={updateProfile} disabled={!canWrite}
 
                   >
 
@@ -466,7 +445,7 @@ useEffect(() => {
 
                   className="editBtn"
 
-                  onClick={startEditing}
+                  onClick={startEditing} disabled={!canWrite}
 
                 >
 
@@ -659,6 +638,7 @@ useEffect(() => {
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="New Password"
+                        disabled={!canWrite}
                         value={passwords.newPassword}
                         onChange={(e)=>
                             setPasswords({
@@ -694,6 +674,7 @@ useEffect(() => {
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm Password"
+                        disabled={!canWrite}
                         value={passwords.confirmPassword}
                         onChange={(e)=>
                             setPasswords({
@@ -723,7 +704,7 @@ useEffect(() => {
 
                 <button
                     className="passwordBtn"
-                    onClick={updatePassword}
+                    onClick={updatePassword} disabled={!canWrite}
                 >
                     Update Password
                 </button>

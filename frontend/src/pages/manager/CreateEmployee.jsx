@@ -1,73 +1,48 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from "../../utils/api";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/createEmployee.css";
-import { Eye, EyeOff } from "lucide-react";
 
 export default function CreateEmployee() {
   const initialState = {
-    manager_id: 1,
-    role_id: 1,
     full_name: "",
     email: "",
     phone: "",
-    password: "",
     department: "",
     designation: "",
-    status: "active",
   };
 
-  const [employee, setEmployee] =
-    useState(initialState);
+  const [employee, setEmployee] = useState(initialState);
 
-    const [showPassword, setShowPassword] =
-useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
+  // ==========================
+  // Fetch Employee for Edit
+  // ==========================
+  useEffect(() => {
+    if (id) {
+      api
+        .get(`/employee/${id}`)
+        .then((res) => {
+          console.log("Employee Data:", res.data);
 
-    const { id } = useParams();
-
-    const navigate = useNavigate();
-    useEffect(() => {
-
-  if (id) {
-
-     api.get(
-
-      `/employee/${id}`
-
-    )
-
-    .then((res) => {
-
-      console.log(
-        "Employee Data:",
-        res.data
-      );
-
-      setEmployee({
-
-        ...res.data,
-
-        password: ""
-
-      });
-
-    })
-
-    .catch((err) => {
-
-      console.log(err);
-
-      alert(
-        "Failed to fetch employee details"
-      );
-
-    });
-
-  }
-
-}, [id]);
+          setEmployee({
+            full_name: res.data.full_name || "",
+            email: res.data.email || "",
+            phone: res.data.phone || "",
+            department: res.data.department || "",
+            designation: res.data.designation || "",
+            employee_code: res.data.employee_code || "",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Failed to fetch employee details");
+        });
+    }
+  }, [id]);
 
   // ==========================
   // Handle Input Change
@@ -75,8 +50,7 @@ useState(false);
   const handleChange = (e) => {
     setEmployee({
       ...employee,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -85,68 +59,47 @@ useState(false);
   // ==========================
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
 
-  !/^\d{10}$/.test(employee.phone)
+    if (!/^\d{10}$/.test(employee.phone)) {
+      alert("Phone number must contain exactly 10 digits");
+      return;
+    }
 
-) {
-
-  alert(
-
-    "Phone number must contain exactly 10 digits"
-
-  );
-
-  return;
-
-}
+    const employeeData = {
+      full_name: employee.full_name.trim(),
+      email: employee.email.trim().toLowerCase(),
+      phone: employee.phone,
+      department: employee.department?.trim() || "",
+      designation: employee.designation?.trim() || "",
+    };
 
     try {
       if (id) {
+        await api.put(
+          `/employee/update/${id}`,
+          employeeData
+        );
 
-  await  api.put(
+        alert("Employee Updated Successfully");
+      } else {
+        const response = await api.post(
+          "/employee/create",
+          employeeData
+        );
 
-    `/employee/update/${id}`,
+        alert(
+          `${response.data.message}\nEmployee ID: ${response.data.employee_code}`
+        );
+      }
 
-    employee
-
-  );
-
-  alert(
-    "Employee Updated Successfully"
-  );
-
-}
-
-else {
-
-  const response =
-    await  api.post(
-
-      "/employee/create",
-
-      employee
-
-    );
-
-  alert(
-
-    `${response.data.message}
-
-Employee ID:
-${response.data.employee_code}`
-
-  );
-
-}
-navigate("/manager/employees");
-
+      navigate("/manager/employees");
       setEmployee(initialState);
-
     } catch (error) {
+      console.error("Employee submit error:", error);
+
       alert(
         error.response?.data?.message ||
-          "Failed to create employee"
+          "Failed to save employee"
       );
     }
   };
@@ -157,23 +110,16 @@ navigate("/manager/employees");
 
         {/* Header */}
         <div className="createEmployeeHeader">
-         <h1>
-
-          {
-
-            id
-
-            ? "Edit Employee"
-
-            : "Create Employee Login"
-
-          }
-
-        </h1>
+          <h1>
+            {id
+              ? "Edit Employee"
+              : "Create Employee"}
+          </h1>
 
           <p>
-            Create an account for a new employee and
-            send login credentials.
+            {id
+              ? "Update employee information."
+              : "Add an employee and send them a secure invitation to join your CRM."}
           </p>
         </div>
 
@@ -230,7 +176,7 @@ navigate("/manager/employees");
                       handleChange
                     }
                     placeholder="Enter email address"
-                     autoComplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -248,22 +194,19 @@ navigate("/manager/employees");
                   <input
                     type="tel"
                     name="phone"
-                    value={employee.phone}
+                    value={
+                      employee.phone
+                    }
                     onChange={(e) => {
-
                       const value =
                         e.target.value
-                        .replace(/\D/g, "")
-                        .slice(0, 10);
+                          .replace(/\D/g, "")
+                          .slice(0, 10);
 
                       setEmployee({
-
                         ...employee,
-
-                        phone: value
-
+                        phone: value,
                       });
-
                     }}
                     placeholder="Enter 10-digit phone number"
                     maxLength={10}
@@ -320,62 +263,13 @@ navigate("/manager/employees");
                   <input
                     type="text"
                     value={
-
                       id
-
-                      ? employee.employee_code || ""
-
-                      : "Auto Generated"
-
+                        ? employee.employee_code || ""
+                        : "Auto Generated"
                     }
                     disabled
                     className="bg-gray-100 cursor-not-allowed"
                   />
-                </div>
-
-              </div>
-
-              {/* Login Credentials */}
-              <div className="loginSection">
-
-                <h2>
-                  Login Credentials
-                </h2>
-
-                <div className="formGroup">
-                  <label>
-                    Password
-                  </label>
-
-                 <div className="passwordField">
-
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={employee.password}
-                      onChange={handleChange}
-                      placeholder={
-                        id
-                          ? "Leave blank to keep current password"
-                          : "Enter password"
-                      }
-                      autoComplete="new-password"
-                      required={!id}
-                    />
-
-                    <button
-                      type="button"
-                      className="passwordToggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <Eye size={18} />
-                      ) : (
-                        <EyeOff size={18} />
-                      )}
-                    </button>
-
-                  </div>
                 </div>
 
               </div>
@@ -387,9 +281,9 @@ navigate("/manager/employees");
                   type="button"
                   className="cancelBtn"
                   onClick={() =>
-
-                    navigate("/manager/employees")
-
+                    navigate(
+                      "/manager/employees"
+                    )
                   }
                 >
                   Cancel
@@ -399,28 +293,21 @@ navigate("/manager/employees");
                   type="submit"
                   className="submitBtn"
                 >
-                 {
-
-                    id
-
+                  {id
                     ? "Update Employee"
-
-                    : "Create Employee"
-
-                  }
+                    : "Create Employee"}
                 </button>
 
               </div>
 
             </form>
-
           </div>
 
           {/* RIGHT SIDE */}
           <div className="previewCard">
 
             <h2>
-              Login Preview
+              Employee Preview
             </h2>
 
             <div className="previewProfile">
@@ -451,19 +338,20 @@ navigate("/manager/employees");
               </p>
 
               <p>
-
                 Employee ID:
 
                 {
-
                   id
-
-                  ? employee.employee_code || ""
-
-                  : "Auto Generated"
-
+                    ? employee.employee_code || ""
+                    : "Auto Generated"
                 }
+              </p>
 
+              <p>
+                {
+                  employee.email ||
+                  "employee@example.com"
+                }
               </p>
 
             </div>
@@ -471,7 +359,6 @@ navigate("/manager/employees");
           </div>
 
         </div>
-
       </div>
     </ManagerLayout>
   );

@@ -1,3 +1,4 @@
+import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
 import {
   useEffect,
@@ -7,11 +8,8 @@ import "../../styles/status.css";
 
 import ManagerLayout from "../../layouts/ManagerLayout";
 import "../../styles/leads.css";
-import { STATUS_THEME } from "../../utils/statusTheme";
-import {
-  normalizeStatus,
-  formatStatus,
-} from "../../utils/statusUtils";
+import { getStatusTheme } from "../../utils/statusTheme";
+import { formatStatus } from "../../utils/statusUtils";
 import {
   useNavigate
 } from "react-router-dom";
@@ -28,6 +26,8 @@ import {
 } from "lucide-react";
 
 export default function ImportantLeads() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [
     leads,
@@ -123,6 +123,8 @@ export default function ImportantLeads() {
   // ==========================
   const handleDelete =
   async (id) => {
+    if (!canWrite) return;
+
 
     const confirmDelete =
     window.confirm(
@@ -310,24 +312,15 @@ export default function ImportantLeads() {
 
                 <td className="table-data">
 
-                  <span
-                    className="status-badge"
-                    style={{
-                      background:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.bg || "#E5E7EB",
-
-                      color:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.color || "#374151",
-                    }}
-                  >
-
-                    {formatStatus(lead.lead_status)}
-
-                  </span>
+                   <span
+                                          className="status-badge"
+                                          style={{
+                                            backgroundColor: getStatusTheme(lead.lead_status).bg,
+                                            color: getStatusTheme(lead.lead_status).color,
+                                          }}
+                                        >
+                                          {formatStatus(lead.lead_status)}
+                                        </span>
 
                 </td>
 
@@ -364,7 +357,9 @@ export default function ImportantLeads() {
                           View Lead
                         </button>
 
-                        <button
+                        {canWrite && (
+<>
+<button
                           className="action-item"
                           onClick={() =>
                             navigate(`/manager/edit-lead/${lead.id}`)
@@ -384,6 +379,8 @@ export default function ImportantLeads() {
                           <Trash2 size={16} />
                           Delete Lead
                         </button>
+</>
+)}
 
                       </div>
 

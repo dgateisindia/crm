@@ -2,12 +2,13 @@ export const normalizeStatus = (status = "") => {
   return status
     .toString()
     .trim()
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
 };
 
 export const formatStatus = (status = "") => {
   return normalizeStatus(status)
-    .split(" ")
+    .split("_")
     .map(
       word =>
         word.charAt(0).toUpperCase() +

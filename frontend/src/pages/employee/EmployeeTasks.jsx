@@ -1,3 +1,5 @@
+import FloatingActionMenu from "../../components/common/FloatingActionMenu";
+import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,16 +13,21 @@ import {
  // CheckCircle,
  // PhoneCall,
   MoreVertical,
+  Search,
   Eye,
   SquarePen,
   CalendarPlus,
   MessageSquarePlus
 } from "lucide-react";
 import "../../styles/status.css";
+import "../../styles/totallead.css";
 
 export default function EmployeeTasks() {
+  const { canWrite = false } = useSubscription() || {};
+
 
       const [tasks, setTasks] = useState([]);
+      const [search, setSearch] = useState("");
 
       const [showFollowupModal,
           setShowFollowupModal] =
@@ -47,13 +54,18 @@ export default function EmployeeTasks() {
       setRemarks] =
       useState("");
 
+      const [followupMode, setFollowupMode] = useState("call");
+      const [leadStatus, setLeadStatus] = useState("");
+      const [importantLead, setImportantLead] = useState(false);
+
       
 
       const {
       openMenu,
       toggleMenu,
       menuRef,
-      setOpenMenu
+      setOpenMenu,
+      menuAnchor
   } = useActionMenu();
       
 
@@ -81,6 +93,7 @@ export default function EmployeeTasks() {
       setOpenMenu(null);
 
       if (!action) return;
+      if (!canWrite && action !== "view") return;
 
       try {
         if (action === "view") {
@@ -137,37 +150,32 @@ export default function EmployeeTasks() {
     };
 const saveFollowup =
 async () => {
+    if (!canWrite) return;
+
 
   const user = JSON.parse(
   localStorage.getItem("user")
 );
 
   try {
+await api.post(
+  "/tasks/followup",
+  {
+    lead_id: selectedTask.id,
 
-    await  api.post(
+    employee_id:
+      user?.employee_id ||
+      user?.id,
 
-      "/tasks/followup",
+    followup_date: followupDate,
+    followup_time: followupTime,
+    remarks: remarks,
 
-      {
-
-        lead_id:
-        selectedTask.id,
-
-        employee_id:
-        user?.employee_id ||
-        user?.id,
-
-        followup_date:
-        followupDate,
-
-        followup_time:
-        followupTime,
-
-        remarks
-
-      }
-
-    );
+    followup_mode: followupMode,
+    lead_status: leadStatus,
+    important_lead: importantLead
+  }
+);
 
     alert(
       "Followup Scheduled"
@@ -196,51 +204,70 @@ async () => {
 
     setRemarks("");
 
+    setFollowupMode("call");
+
+    setLeadStatus("");
+
+    setImportantLead(false);
+
   }
 
   catch (error) {
-
-    console.log(error);
-
-  }
+  console.log("SAVE FOLLOWUP ERROR:", error.response?.data || error.message);
+  alert(
+    error.response?.data?.message ||
+    "Failed to save followup"
+  );
+}
 
 };
 
 
   useEffect(() => {
 
-    const fetchTasks = async () => {
+  const fetchTasks = async () => {
 
-      try {
+    try {
 
-        const user = JSON.parse(
-          localStorage.getItem("user")
+      // Get the CRM employee profile
+      const employeeResponse =
+        await api.get("/employee/me");
+
+      const employeeId =
+        employeeResponse.data.data.employee_id;
+
+      console.log(
+        "CRM EMPLOYEE ID:",
+        employeeId
+      );
+
+      // Get this employee's leads
+      const response =
+        await api.get(
+          `/leads/employee/${employeeId}`
         );
 
-        const employeeId =
-          user?.employee_id ||
-          user?.id;
+      console.log(
+        "EMPLOYEE LEADS:",
+        response.data
+      );
 
-        const response =
-          await  api.get(
-            `/tasks/employee/${employeeId}`
-          );
+      setTasks(response.data);
 
-        setTasks(response.data);
+    } catch (error) {
 
-      }
+      console.error(
+        "Failed to fetch employee leads:",
+        error
+      );
 
-      catch (error) {
+    }
 
-        console.log(error);
+  };
 
-      }
+  fetchTasks();
 
-    };
-
-    fetchTasks();
-
-  }, []);
+}, []);
   const saveLeadFollowup =
 async () => {
 
@@ -320,6 +347,25 @@ async () => {
   
   
 
+   // Search is applied only to the employee's already-authorized tasks.
+   const searchText = search.trim().toLowerCase();
+   const filteredTasks = tasks.filter((task) =>
+     [
+       task.company_name,
+       task.contact_person_name,
+       task.designation,
+       task.phone,
+       task.email,
+       task.source,
+       task.lead_mode,
+       task.lead_status,
+       task.city,
+       task.category
+     ].some((value) =>
+       String(value ?? "").toLowerCase().includes(searchText)
+     )
+   );
+
   return (
 
     <EmployeeLayout>
@@ -338,14 +384,14 @@ async () => {
 
         </div>
 
-        <button
+        {canWrite && (<button
           className="add-lead-btn"
           onClick={() =>
             navigate("/employee/add-leads")
           }
         >
           + Add Task
-        </button>
+        </button>)}
 
       </div>
 
@@ -438,6 +484,21 @@ async () => {
       </div>
       */}
 
+       {/* Search: same styling as Employee Leads */}
+       <div className="leadToolbar">
+         <div className="searchContainer">
+           <Search size={18} className="searchIcon" />
+           <input
+             type="search"
+             className="leadSearchInput"
+             placeholder="Search company, contact, phone, status..."
+             aria-label="Search tasks"
+             value={search}
+             onChange={(e) => setSearch(e.target.value)}
+           />
+         </div>
+       </div>
+
       {/* Table */}
 
       <div className="recent-card">
@@ -468,10 +529,10 @@ async () => {
             <tbody>
 
               {
-                tasks.length > 0
+                filteredTasks.length > 0
                 ? (
 
-                  tasks.map(task => (
+                  filteredTasks.map(task => (
 
                     <tr
                       key={task.id}
@@ -520,7 +581,7 @@ async () => {
 
                       <button
                             className="action-menu-btn"
-                            onClick={() => toggleMenu(task.id)}
+                            onClick={(event) => toggleMenu(task.id, event)}
                         >
 
                         <MoreVertical
@@ -534,10 +595,7 @@ async () => {
                         openMenu ===
                         task.id && (
 
-                                <div
-                                    ref={menuRef}
-                                    className="action-dropdown"
-                                >                            
+                                <FloatingActionMenu anchor={menuAnchor} menuRef={menuRef}>                            
                                 <div
                               onClick={() =>{
                                 handleTaskAction(task, "view");
@@ -550,7 +608,8 @@ async () => {
                               View New Lead
                             </div>
 
-                            <div
+                            {canWrite && (<>
+<div
                                             onClick={() =>{
                                 handleTaskAction(task, "edit");
                                 setOpenMenu(null);
@@ -585,15 +644,12 @@ async () => {
                               <MessageSquarePlus size={16} />
                               Add Lead Followup
                             </div>
+</>)}
 
-                          </div>
-
-                        )
-
-                      }
-
-                    </div>
-                      </td>
+                          </FloatingActionMenu>
+                        )}
+                      </div>
+                    </td>
 
                     </tr>
 
@@ -615,7 +671,7 @@ async () => {
                       }}
                     >
 
-                      No Tasks Found
+                      {searchText ? "No matching tasks found" : "No Tasks Found"}
 
                     </td>
 
@@ -633,7 +689,7 @@ async () => {
 
      
       {
-showFollowupModal && (
+showFollowupModal && canWrite && (
 
 <div className="followup-modal-overlay">
 
@@ -642,6 +698,38 @@ showFollowupModal && (
     <h2>
       Schedule Followup
     </h2>
+   
+    <div className="followup-form-group">
+      <label>Followup Mode</label>
+      <select
+        value={followupMode}
+        onChange={(e) => setFollowupMode(e.target.value)}
+      >
+        <option value="call">Call</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="email">Email</option>
+        <option value="meeting">Meeting</option>
+      </select>
+    </div>
+
+      <div className="followup-form-group">
+        <label>Lead Status</label>
+        <select
+          value={leadStatus}
+          onChange={(e) => setLeadStatus(e.target.value)}
+        >
+          <option value="">Select Lead Status</option>
+          <option value="new">New</option>
+          <option value="interested">Interested</option>
+          <option value="proposed">Proposed</option>
+          <option value="offered">Offered</option>
+          <option value="meeting scheduled">Meeting Scheduled</option>
+          <option value="not responded">Not Responded</option>
+          <option value="not interested">Not Interested</option>
+          <option value="converted">Converted</option>
+        </select>
+      </div>
+
 
     <div className="followup-form-group">
 
@@ -707,41 +795,29 @@ showFollowupModal && (
       />
 
     </div>
+   
+    <div className="followup-form-group important-checkbox-group">
+      <label className="important-checkbox-label">
+        <input
+          type="checkbox"
+          checked={importantLead}
+          onChange={(e) => setImportantLead(e.target.checked)}
+        />
+        <span>Mark as Important</span>
+      </label>
+    </div>
 
     <div className="followup-modal-actions">
-
       <button
-
         className="cancel-btn"
-
-        onClick={() =>
-
-          setShowFollowupModal(
-            false
-          )
-
-        }
-
+        onClick={() => setShowFollowupModal(false)}
       >
-
         Cancel
-
       </button>
 
-      <button
-
-        className="save-btn"
-
-        onClick={
-          saveFollowup
-        }
-
-      >
-
+      <button className="save-btn" onClick={saveFollowup}>
         Save Followup
-
       </button>
-
     </div>
 
   </div>
@@ -750,7 +826,7 @@ showFollowupModal && (
 
 )
 }
-{showLeadFollowupModal && (
+{showLeadFollowupModal && canWrite && (
 
 <div className="crmModalOverlay">
 
@@ -909,6 +985,10 @@ showFollowupModal && (
 
           <option value="converted">
             Converted
+          </option>
+
+          <option value="not responded">
+            Not Responded 
           </option>
 
 

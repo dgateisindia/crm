@@ -1,3 +1,4 @@
+import FloatingActionMenu from "../../components/common/FloatingActionMenu";
 import api from "../../utils/api";
 
 import {
@@ -8,7 +9,7 @@ import "../../styles/status.css";
 import useActionMenu from "../../hooks/useActionMenu";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
-import { STATUS_THEME } from "../../utils/statusTheme";
+import { getStatusTheme } from "../../utils/statusTheme";
 import "../../styles/totallead.css";
 import {useNavigate} from "react-router-dom";
 import StatCard from "../../components/dashboard/StatCard";
@@ -28,6 +29,10 @@ Plus
 }
 from "lucide-react";
 
+import {
+  useSubscription
+} from "../../context/SubscriptionContext";
+
 
 export default function Leads() {
 
@@ -46,11 +51,19 @@ export default function Leads() {
   const [showFollowupModal,
     setShowFollowupModal] =
     useState(false); 
+    const subscription = useSubscription();
+
+  const canWrite =
+    subscription?.canWrite === true;
+
+  const isReadOnly =
+    subscription?.isReadOnly === true;
     
   const {
   openMenu,
   toggleMenu,
   menuRef,
+  menuAnchor,
   setOpenMenu
 } = useActionMenu();
 
@@ -133,6 +146,11 @@ useEffect(() => {
   // ==========================
   const handleDelete =
   async (id) => {
+  
+  if (!canWrite) {
+  return;
+}
+  
 
     const confirmDelete =
     window.confirm(
@@ -486,17 +504,24 @@ useEffect(() => {
 
               </option>
 
+              <option value="not responded">
+                Not Responded 
+              </option>
+
             </select>
 
 
-            {/* Add Lead */}
-            <button
-              className="leadAddBtn"
-              onClick={() => navigate("/manager/add-leads")}
-            >
-              <Plus size={20} strokeWidth={3} />
-              <span>Add Lead</span>
-            </button>
+            
+            {/* Add Lead — Full Access Only */}
+            {canWrite && (
+              <button
+                className="leadAddBtn"
+                onClick={() => navigate("/manager/add-leads")}
+              >
+                <Plus size={20} strokeWidth={3} />
+                <span>Add Lead</span>
+              </button>
+            )}
 
           </div>
          
@@ -637,15 +662,8 @@ useEffect(() => {
                   <span
                     className="status-badge"
                     style={{
-                      background:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.bg,
-
-                      color:
-                        STATUS_THEME[
-                          normalizeStatus(lead.lead_status)
-                        ]?.color,
+                      backgroundColor: getStatusTheme(lead.lead_status).bg,
+                      color: getStatusTheme(lead.lead_status).color,
                     }}
                   >
                     {formatStatus(lead.lead_status)}
@@ -672,18 +690,15 @@ useEffect(() => {
                   <div className="dropdownMenu">
 
                     <button
-                      className="actionBtn"
-                      onClick={() => toggleMenu(lead.id)}
+                      className="actionBtn crm-action-trigger"
+                      onClick={(event) => toggleMenu(lead.id, event)}
                     >
                       <MoreVertical size={20} />
                     </button>
 
                     {openMenu === lead.id && (
 
-                      <div
-                        ref={menuRef}
-                        className="action-dropdown"
-                      >
+                      <FloatingActionMenu menuRef={menuRef} anchor={menuAnchor}>
 
                         <div
                           className="action-item"
@@ -696,40 +711,47 @@ useEffect(() => {
                           View Lead
                         </div>
 
-                        <div
-                          className="action-item"
-                          onClick={() => {
-                            navigate(`/manager/edit-lead/${lead.id}`);
-                            setOpenMenu(null);
-                          }}
-                        >
-                          <Pencil size={16} />
-                          Edit Lead
-                        </div>
+                        {canWrite && (
+                          <>
+                            <div
+                              className="action-item"
+                              onClick={() => {
+                                navigate(
+                                  `/manager/edit-lead/${lead.id}`
+                                );
 
-                        <div
-                          className="action-item"
-                          onClick={() => {
-                            openFollowupModal(lead);
-                            setOpenMenu(null);
-                          }}
-                        >
-                          <PhoneCall size={16} />
-                          Add Followup
-                        </div>
+                                setOpenMenu(null);
+                              }}
+                            >
+                              <Pencil size={16} />
+                              Edit Lead
+                            </div>
 
-                        <div
-                          className="action-item deleteBtn"
-                          onClick={() => {
-                            handleDelete(lead.id);
-                            setOpenMenu(null);
-                          }}
-                        >
-                          <Trash2 size={16} />
-                          Delete Lead
-                        </div>
+                            <div
+                              className="action-item"
+                              onClick={() => {
+                                openFollowupModal(lead);
+                                setOpenMenu(null);
+                              }}
+                            >
+                              <PhoneCall size={16} />
+                              Add Followup
+                            </div>
 
-                      </div>
+                            <div
+                              className="action-item deleteBtn"
+                              onClick={() => {
+                                handleDelete(lead.id);
+                                setOpenMenu(null);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                              Delete Lead
+                            </div>
+                          </>
+                        )}
+
+                      </FloatingActionMenu>
 
                     )}
 
@@ -773,7 +795,7 @@ useEffect(() => {
       {
 
 
-showFollowupModal && (
+showFollowupModal && canWrite && (
 
 <div className="crmModalOverlay">
 
@@ -950,10 +972,8 @@ e.target.value
 
     </option>
 
-    <option value="lost">
-
-      Lost
-
+    <option value="not responded">
+      Not Responded 
     </option>
 
   </select>

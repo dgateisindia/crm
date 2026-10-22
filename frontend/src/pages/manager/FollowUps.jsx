@@ -1,3 +1,5 @@
+import FloatingActionMenu from "../../components/common/FloatingActionMenu";
+import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
 
 import {
@@ -14,7 +16,7 @@ import {
 } from "lucide-react";
 import useActionMenu from "../../hooks/useActionMenu";
 import {normalizeStatus,formatStatus} from "../../utils/statusUtils";
-import { STATUS_THEME } from "../../utils/statusTheme";
+import { STATUS_THEME, getStatusTheme } from "../../utils/statusTheme";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import React from "react";
 import "../../styles/leads.css";
@@ -22,6 +24,8 @@ import "../../styles/totallead.css";
 import "../../styles/status.css";
 import { useRef } from "react";
 export default function FollowUps() {
+  const { canWrite = false } = useSubscription() || {};
+
 
   const [
     followups,
@@ -40,6 +44,7 @@ const {
   openMenu,
   toggleMenu,
   menuRef,
+  menuAnchor,
   setOpenMenu
 } = useActionMenu();
 
@@ -56,6 +61,8 @@ const [followupData, setFollowupData] = useState({
 
 const openFollowupModal =
 (item) => {
+    if (!canWrite) return;
+
 
   setSelectedLead(item);
 
@@ -63,6 +70,8 @@ const openFollowupModal =
 
 };
 const handleFollowupSubmit = async () => {
+    if (!canWrite) return;
+
 
   try {
 
@@ -309,7 +318,7 @@ const handleFollowupSubmit = async () => {
             followups.map(
 
             (item) => (
-              <React.Fragment key={item.lead_id}>
+              <React.Fragment key={item.followup_id}>
 
             <tr
 
@@ -375,15 +384,8 @@ const handleFollowupSubmit = async () => {
     <span
   className="status-badge"
   style={{
-    background:
-      STATUS_THEME[
-        normalizeStatus(item.lead_status)
-      ]?.bg,
-
-    color:
-      STATUS_THEME[
-        normalizeStatus(item.lead_status)
-      ]?.color,
+    backgroundColor: getStatusTheme(item.lead_status).bg,
+    color: getStatusTheme(item.lead_status).color,
   }}
 >
   {formatStatus(item.lead_status)}
@@ -401,18 +403,15 @@ const handleFollowupSubmit = async () => {
   <div className="action-menu-container">
 
     <button
-      className="action-menu-btn"
-      onClick={() => toggleMenu(item.lead_id)}
+      className="action-menu-btn crm-action-trigger"
+      onClick={(event) => toggleMenu(item.followup_id, event)}
     >
       <MoreVertical size={18} />
     </button>
 
-    {openMenu === item.lead_id && (
+    {openMenu === item.followup_id && (
 
-      <div
-        ref={menuRef}
-        className="action-dropdown"
-      >
+      <FloatingActionMenu menuRef={menuRef} anchor={menuAnchor}>
 
         <div
           className="action-item"
@@ -427,6 +426,7 @@ const handleFollowupSubmit = async () => {
           <Eye size={16} />
           View History
         </div>
+{canWrite && (
 
         <div
           className="action-item"
@@ -440,9 +440,10 @@ const handleFollowupSubmit = async () => {
         >
           <PhoneCall size={16} />
           Add Followup
-        </div>
+        </div>)}
 
-      </div>
+
+      </FloatingActionMenu>
 
     )}
 
@@ -585,7 +586,7 @@ No Followups Found
 
       </div>
       {
-showFollowupModal && (
+showFollowupModal && canWrite && (
 
 <div className="crmModalOverlay">
 
@@ -713,6 +714,19 @@ showFollowupModal && (
 
           <option value="converted">
             Converted
+          </option>
+
+
+          <option value="sponsorship">
+            Sponsorship
+          </option>
+          
+          <option value="invalid">
+            Invalid
+          </option>
+
+          <option value="not responded">
+            Not Responded 
           </option>
 
         </select>
