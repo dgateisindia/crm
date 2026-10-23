@@ -46,6 +46,9 @@ export default function EmployeeLeadDetails() {
   ] =
   useState(null);
 
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
   const [
     followups,
     setFollowups
@@ -121,25 +124,67 @@ export default function EmployeeLeadDetails() {
   // Load Data
   // ==========================
   useEffect(() => {
+    let cancelled = false;
 
-    const loadData =
-    async () => {
+    const loadData = async () => {
+      setLoading(true);
+      setLoadError("");
+      setLead(null);
+      setFollowups([]);
 
-      await fetchLead();
+      try {
+        const leadResponse = await api.get(`/leads/${id}`);
 
-      await fetchFollowups();
+        const leadData = leadResponse.data?.data ?? leadResponse.data;
 
+        if (!cancelled) {
+          setLead(leadData);
+        }
+
+        try {
+          const followupResponse = await api.get(`/followups/lead/${id}`);
+
+          if (!cancelled) {
+            setFollowups(
+              Array.isArray(followupResponse.data)
+                ? followupResponse.data
+                : []
+            );
+          }
+        } catch (followupError) {
+          console.warn("Unable to load follow-ups:", followupError);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          const status = error.response?.status;
+
+          setLoadError(
+            status === 403
+              ? "Access denied. You do not have permission to view this lead."
+              : status === 404
+                ? "Lead not found or you do not have access to it."
+                : "Unable to load lead details. Please try again."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     };
 
     loadData();
 
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
 
   // ==========================
   // Loading State
   // ==========================
-  if (!lead) {
+  if (loading || loadError || !lead) {
 
     return (
 
@@ -149,7 +194,7 @@ export default function EmployeeLeadDetails() {
 
           <p className="text-lg text-gray-500">
 
-            Loading Lead Details...
+            {loadError || (loading ? "Loading Lead Details..." : "Lead details unavailable.")}
 
           </p>
 

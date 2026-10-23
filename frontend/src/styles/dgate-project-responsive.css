@@ -1,0 +1,60 @@
+/* Scoped responsive adjustments for the EXISTING CRM; no elements or features removed. */
+html, body, #root { min-width: 0; width: 100%; max-width: 100%; }
+html { overflow-x: clip; }
+body { overflow-x: clip; }
+*, *::before, *::after { box-sizing: border-box; }
+.crm-app-shell { min-width: 0; width: 100%; max-width: 100%; align-items: stretch; }
+.crm-app-shell > .crm-sidebar-holder { flex: 0 0 240px; width: 240px; min-width: 0; align-self: stretch; }
+/* The left navigation uses document scrolling, not a second internal scrollbar. */
+@media (min-width: 901px) {
+ .crm-app-shell > .crm-sidebar-holder { position: relative !important; transform: none !important; height: auto !important; }
+ .crm-app-shell > .crm-sidebar-holder > .sidebar {
+   position: relative !important;
+   height: auto !important;
+   min-height: 100vh !important;
+   max-height: none !important;
+   overflow: visible !important;
+   scrollbar-width: none !important;
+   display: flex;
+ }
+ .crm-app-shell > .crm-main { height: auto !important; min-height: 100vh; overflow: visible !important; }
+}
+.crm-app-shell > .crm-main { min-width: 0 !important; flex: 1 1 0%; max-width: 100%; }
+.crm-app-shell .crm-page-content { min-width: 0; max-width: 100%; }
+.crm-app-shell .topbar { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+.crm-app-shell .topbar-title { min-width: 0; overflow-wrap: anywhere; }
+.crm-app-shell .topbar-actions { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+.crm-app-shell .topbar-actions > * { max-width: 100%; }
+.crm-app-shell :is(input, select, textarea) { max-width: 100%; }
+.crm-app-shell :is(img, svg, canvas) { max-width: 100%; }
+.crm-app-shell :is(.dashboard-grid, .stats-grid, .report-cards, .charts-grid) { min-width: 0; }
+.crm-app-shell :is(.crmModalCard, .export-modal, .modal-content) { max-width: calc(100vw - 24px) !important; }
+/* Always preserve table fields/actions; wide tables can scroll INSIDE their existing cards. */
+.crm-app-shell :is(.tableWrapper, .table-wrapper, .table-container) { min-width: 0; max-width: 100%; }
+/* An older Lead History inline 1450px min-width can push action/status offscreen. */
+.dg-history-responsive table { min-width: 0 !important; width: 100% !important; max-width: 100%; }
+@media (max-width: 1199px) and (min-width: 901px) {
+ .crm-app-shell .topbar { gap: 12px; padding: 14px 16px; }
+ .crm-app-shell .topbar-title { font-size: clamp(19px, 2vw, 26px); }
+ .crm-app-shell .crm-page-content { padding: 16px !important; }
+ .dg-history-responsive table { min-width: 0 !important; }
+}
+@media (max-width: 900px) {
+ .crm-app-shell { display: block !important; }
+ .crm-app-shell > .crm-sidebar-holder { width: min(280px, 85vw) !important; flex: none; }
+ /* The existing drawer still needs touch access to ALL links on short screens. */
+ .crm-app-shell > .crm-sidebar-holder > .sidebar { width: 100% !important; min-height: 0 !important; }
+ .crm-app-shell > .crm-main { width: 100% !important; max-width: 100% !important; height: auto !important; overflow-x: clip !important; }
+ .crm-app-shell .crm-page-content { padding: 14px !important; }
+ .crm-app-shell .topbar { gap: 10px; padding: 12px; }
+ .crm-app-shell .topbar-actions { justify-content: flex-start; gap: 7px; }
+ .crm-app-shell .topbar-title { font-size: clamp(18px, 4vw, 24px); }
+ .crm-app-shell .export-modal { width: 100%; }
+}
+@media (max-width: 600px) {
+ .crm-app-shell .crm-page-content { padding: 10px !important; }
+ .crm-app-shell .topbar { padding: 10px; }
+ .crm-app-shell .topbar-actions { width: 100%; }
+ .crm-app-shell .topbar-action-btn { min-width: 0; }
+ .crm-app-shell :is(.stats-grid, .report-cards, .charts-grid) { grid-template-columns: minmax(0, 1fr) !important; }
+}

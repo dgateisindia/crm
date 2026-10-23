@@ -1,4 +1,4 @@
-﻿/* D-GATE: shared portal menu - outside table scroll containers */
+/* D-GATE: shared portal menu - outside table scroll containers */
 .crm-floating-action-menu {
   box-sizing: border-box !important;
   display: flex !important;
@@ -11,7 +11,7 @@
   background: #fff !important;
   border: 1px solid #e5eaf1 !important;
   border-radius: 12px !important;
-  box-shadow: 0 14px 38px rgba(7,23,57,.16) !important;
+  box-shadow: none !important;
   isolation: isolate;
 }
 .crm-floating-action-menu > :is(.action-item, .taskMenuItem, .menuItem, button, [role="menuitem"]) {

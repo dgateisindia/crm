@@ -189,25 +189,18 @@ const managerId = manager[0].manager_id;
 
     try {
      
-const crmPublicUrl = process.env.CRM_PUBLIC_URL;
 
-if (!crmPublicUrl) {
-  throw new Error("CRM_PUBLIC_URL is not configured");
-}
 
-      invitation =
-        await clerkClient.invitations.createInvitation({
-          emailAddress: normalizedEmail,
-
-          redirectUrl:
-            `${crmPublicUrl.replace(/\/$/, "")}/#/accept-invitation`,
-
-          publicMetadata: {
-            crmCompanyId: companyId,
-            crmEmployeeId: employeeId,
-            crmRole: "employee"
-          }
-        });
+   invitation = await clerkClient.invitations.createInvitation({
+  emailAddress: normalizedEmail,
+  ignoreExisting: true,
+  notify: true,
+  publicMetadata: {
+    crmCompanyId: companyId,
+    crmEmployeeId: employeeId,
+    crmRole: "employee"
+  }
+});
 
     } catch (clerkError) {
       console.error(
@@ -1472,28 +1465,14 @@ const retryEmployeeInvitation = async (req, res) => {
       }
     }
 
-
-    const crmPublicUrl = process.env.CRM_PUBLIC_URL;
-
-    if (!crmPublicUrl) {
-      return res.status(503).json({
-        success: false,
-        message: "Invitation service is not configured"
-      });
-    }
-
-    const invitation =
-      await clerkClient.invitations.createInvitation({
-        emailAddress: employee.email,
-        redirectUrl:
-          `${crmPublicUrl.replace(/\/$/, "")}` +
-          "/accept-invitation",
-        publicMetadata: {
-          crmCompanyId: companyId,
-          crmEmployeeId: employee.employee_id,
-          crmRole: "employee"
-        }
-      });
+    const invitation = await clerkClient.invitations.createInvitation({
+  emailAddress: employee.email,
+  publicMetadata: {
+    crmCompanyId: companyId,
+    crmEmployeeId: employee.employee_id,
+    crmRole: "employee"
+  }
+});
 
     // Link invitation without replacing an existing link.
     const [updated] = await db.promise().query(

@@ -1,3 +1,4 @@
+import "../../styles/managerHistoryResponsive.css";
 import FloatingActionMenu from "../../components/common/FloatingActionMenu";
 import { useSubscription } from "../../context/SubscriptionContext";
 import api from "../../utils/api";
@@ -33,6 +34,20 @@ export default function FollowUps() {
   ] = useState([]);
 
   const historyRef = useRef(null);
+const [leadHistorySearch, setLeadHistorySearch] = useState("");
+
+const filteredFollowups = followups.filter((item) => {
+  const search = leadHistorySearch.trim().toLowerCase();
+
+  if (!search) return true;
+
+  return Object.values(item).some((value) =>
+    value !== null &&
+    value !== undefined &&
+    String(value).toLowerCase().includes(search)
+  );
+});
+
 
   const [expandedLead, setExpandedLead] = useState(null);
   const [history, setHistory] = useState({});
@@ -59,6 +74,71 @@ const [followupData, setFollowupData] = useState({
   remarks: ""
 });
 
+const [historyDialog, setHistoryDialog] = useState(null);
+const [historyLoading, setHistoryLoading] = useState(false);
+const [historyError, setHistoryError] = useState("");
+
+const openHistoryDialog = async (leadId) => {
+  if (leadId === null || leadId === undefined) {
+    alert("This follow-up has no lead ID.");
+    return;
+  }
+
+  setHistoryDialog({ leadId, records: [] });
+  setHistoryLoading(true);
+  setHistoryError("");
+
+  try {
+    const response = await api.get(
+      `/followups/lead-history/${leadId}`
+    );
+
+    const records = Array.isArray(response.data)
+      ? response.data
+      : response.data?.data;
+
+    if (!Array.isArray(records)) {
+      throw new Error("Unexpected history response");
+    }
+
+    setHistoryDialog((current) =>
+      current?.leadId === leadId
+        ? { leadId, records }
+        : current
+    );
+  } catch (error) {
+    console.error("VIEW HISTORY ERROR:", error);
+    setHistoryError(
+      error.response?.data?.message ||
+      error.message ||
+      "Could not load history"
+    );
+  } finally {
+    setHistoryLoading(false);
+  }
+};
+const getLeadDisplayName = (lead) => {
+  const usable = (value) => {
+    const text = String(value ?? "").trim();
+
+    return (
+      text !== "" &&
+      text !== "." &&
+      text.toUpperCase() !== "N/A" &&
+      text.toUpperCase() !== "NULL"
+    );
+  };
+
+  if (usable(lead.company_name)) {
+    return lead.company_name;
+  }
+
+  if (usable(lead.contact_person_name)) {
+    return lead.contact_person_name;
+  }
+
+  return "Company name unavailable";
+};
 const openFollowupModal =
 (item) => {
     if (!canWrite) return;
@@ -159,35 +239,44 @@ const handleFollowupSubmit = async () => {
 
   };
   const toggleHistory = async (leadId) => {
+    if (!leadId) {
+      alert("Lead ID is missing.");
+      return;
+    }
 
-  if (expandedLead === leadId) {
+    if (expandedLead === leadId) {
+      setExpandedLead(null);
+      return;
+    }
 
-    setExpandedLead(null);
-    return;
-
-  }
-
-  try {
-
-    const response =
-      await  api.get(
+    try {
+      const response = await api.get(
         `/followups/lead-history/${leadId}`
       );
 
-    setHistory({
-      ...history,
-      [leadId]: response.data
-    });
+      const records = Array.isArray(response.data)
+        ? response.data
+        : response.data?.data;
 
-    setExpandedLead(leadId);
+      if (!Array.isArray(records)) {
+        throw new Error("Unexpected history API response");
+      }
 
-  } catch (error) {
+      setHistory(prev => ({
+        ...prev,
+        [leadId]: records
+      }));
 
-    console.log(error);
-
-  }
-
-};
+      setExpandedLead(leadId);
+    } catch (error) {
+      console.error("VIEW HISTORY ERROR:", error);
+      alert(
+        error.response?.data?.message ||
+        error.message ||
+        "Unable to load follow-up history"
+      );
+    }
+  };
 
 
   useEffect(() => {
@@ -202,34 +291,7 @@ const handleFollowupSubmit = async () => {
     loadFollowups();
 
   }, []);
-  useEffect(() => {
-
-  const handleClickOutside = (event) => {
-
-    if (
-      historyRef.current &&
-      !historyRef.current.contains(event.target)
-    ) {
-      setExpandedLead(null);
-    }
-
-  };
-
-  document.addEventListener(
-    "mousedown",
-    handleClickOutside
-  );
-
-  return () => {
-
-    document.removeEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-  };
-
-}, []);
+  
 
 
   return (
@@ -258,9 +320,38 @@ const handleFollowupSubmit = async () => {
 
 
         {/* Table */}
-        <div className="leads-card tableWrapper">
+        <div style={{
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  flexWrap: "wrap",
+  marginBottom: 18
+}}>
+  <input
+    type="search"
+    placeholder="Search company, phone, email, category, lead ID, employee..."
+    value={leadHistorySearch}
+    onChange={(e) => setLeadHistorySearch(e.target.value)}
+    aria-label="Search lead history"
+    style={{
+      flex: "1 1 320px",
+      minWidth: 230,
+      maxWidth: 620,
+      padding: "12px 16px",
+      border: "1px solid #d8deea",
+      borderRadius: 10,
+      background: "#fff",
+      color: "#17233d",
+      outlineColor: "#6948DB"
+    }}
+  />
+  <span style={{ color: "#64748b", fontSize: 13 }}>
+    Showing {filteredFollowups.length} of {followups.length} leads
+  </span>
+</div>
+<div className="leads-card tableWrapper dg-history-responsive" style={{ overflowX: "auto" }}>
 
-          <table className="w-full">
+          <table className="w-full" style={{ minWidth: 1450 }}>
 
             {/* Table Header */}
             <thead>
@@ -273,11 +364,10 @@ const handleFollowupSubmit = async () => {
 
                 </th>
 
-                <th className="table-head">
-
-                  Employee
-
-                </th>
+                <th className="table-head">Phone</th>
+<th className="table-head">Email</th>
+<th className="table-head">Category</th>
+<th className="table-head">Employee</th>
 
                 <th className="table-head">
 
@@ -311,20 +401,16 @@ const handleFollowupSubmit = async () => {
 
               {
 
-            followups.length > 0
+            filteredFollowups.length > 0
 
             ? (
 
-            followups.map(
+            filteredFollowups.map(
 
             (item) => (
-              <React.Fragment key={item.followup_id}>
+              <React.Fragment key={item.latest_followup}>
 
             <tr
-
-            key={
-            item.followup_id
-            }
 
             className="table-row"
 
@@ -333,14 +419,26 @@ const handleFollowupSubmit = async () => {
               {/* Company */}
               <td className="table-data">
 
-                {
-            item.company_name
-                }
+                <div>{getLeadDisplayName(item)}</div>
+<div style={{ fontSize: 11, color: "#94a3b8", marginTop: 3 }}>
+  Lead #{item.lead_id}
+</div>
 
               </td>
 
 
-              {/* Employee */}
+              <td className="table-data">
+  {item.phone || "â€”"}
+</td>
+
+<td className="table-data">
+  {item.email || "â€”"}
+</td>
+
+<td className="table-data">
+  {item.category || "â€”"}
+</td>
+{/* Employee */}
               <td className="table-data">
 
                 {
@@ -404,12 +502,12 @@ const handleFollowupSubmit = async () => {
 
     <button
       className="action-menu-btn crm-action-trigger"
-      onClick={(event) => toggleMenu(item.followup_id, event)}
+      onClick={(event) => toggleMenu(item.latest_followup, event)}
     >
       <MoreVertical size={18} />
     </button>
 
-    {openMenu === item.followup_id && (
+    {openMenu === item.latest_followup && (
 
       <FloatingActionMenu menuRef={menuRef} anchor={menuAnchor}>
 
@@ -417,7 +515,7 @@ const handleFollowupSubmit = async () => {
           className="action-item"
           onClick={() => {
 
-            toggleHistory(item.lead_id);
+            openHistoryDialog(item.lead_id);
 
             setOpenMenu(null);
 
@@ -458,7 +556,7 @@ expandedLead === item.lead_id && (
 
 <tr>
 
-<td colSpan="6">
+<td colSpan="9">
 
   <div className="history-box" ref={historyRef}>
 
@@ -566,7 +664,7 @@ expandedLead === item.lead_id && (
 
 <tr>
 
-<td colSpan="5"className="text-center p-6 text-gray-500">
+<td colSpan="9"className="text-center p-6 text-gray-500">
 
 No Followups Found
 
@@ -604,7 +702,7 @@ showFollowupModal && canWrite && (
           setShowFollowupModal(false)
         }
       >
-        ✕
+        ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢
       </button>
 
     </div>
@@ -805,7 +903,65 @@ showFollowupModal && canWrite && (
 )
 }
 
-    </ManagerLayout>
+    {historyDialog && (
+  <div
+    className="crmModalOverlay"
+    onMouseDown={(event) => {
+      if (event.target === event.currentTarget) {
+        setHistoryDialog(null);
+      }
+    }}
+  >
+    <div className="crmModalCard" style={{ maxWidth: 850, width: "95%" }}>
+      <div className="crmModalHeader">
+        <h2>Follow-up History ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Lead #{historyDialog.leadId}</h2>
+        <button
+          type="button"
+          className="closeBtn"
+          onClick={() => setHistoryDialog(null)}
+        >
+          Close
+        </button>
+      </div>
+
+      <div style={{ maxHeight: "60vh", overflow: "auto", padding: 20 }}>
+        {historyLoading ? (
+          <p>Loading history...</p>
+        ) : historyError ? (
+          <p role="alert" style={{ color: "#c62828" }}>{historyError}</p>
+        ) : historyDialog.records.length === 0 ? (
+          <p>No follow-up history found.</p>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Mode</th>
+                <th>Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {historyDialog.records.map((record) => (
+                <tr key={record.followup_id}>
+                  <td>{record.contact_date
+                    ? new Date(record.contact_date).toLocaleString()
+                    : record.created_at
+                    ? new Date(record.created_at).toLocaleString()
+                    : "N/A"}</td>
+                  <td>{record.followup_mode || "N/A"}</td>
+                  <td>{formatStatus(record.lead_status || record.status)}</td>
+                  <td>{record.remarks || "No remarks"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+</ManagerLayout>
 
   );
 

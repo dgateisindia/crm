@@ -66,10 +66,60 @@ export default function EmployeeTopbar() {
     year: "numeric",
   });
 
+  const [employeeDisplayName, setEmployeeDisplayName] = useState("");
+
+  useEffect(() => {
+    if (!user?.id) {
+      setEmployeeDisplayName("");
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadEmployeeName = async () => {
+      try {
+        const token = await getToken();
+        if (!token) return;
+
+        const response = await fetch(
+          `${API_URL}/employee/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+        const profile = result.data || result;
+
+        const name =
+          typeof profile.full_name === "string"
+            ? profile.full_name.trim()
+            : "";
+
+        if (!cancelled) {
+          setEmployeeDisplayName(name);
+        }
+      } catch (error) {
+        console.warn("Employee profile name unavailable");
+      }
+    };
+
+    setEmployeeDisplayName("");
+    loadEmployeeName();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, getToken]);
+
   const fullName =
+    employeeDisplayName ||
     user?.fullName ||
     user?.firstName ||
-    user?.primaryEmailAddress?.emailAddress ||
     "Employee";
 
   const email = user?.primaryEmailAddress?.emailAddress || "";

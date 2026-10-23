@@ -1,27 +1,53 @@
-node_modules/
-frontend/node_modules/
-backend/node_modules/
-
-.env
-frontend/.env
-backend/.env
-
-dist/
-build/
-# Private files
+# Environment credentials
 .env
 .env.*
 !.env.example
-*.sql
-*.zip
-*.pem
-*.key
-*.backup*
-*.before-*
-*.bak
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and builds
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+**/.vite/
+
+# Logs and temporary files
 *.log
-node_modules/
-dist/
-uploads/
-_backups/
-database-backups/
+*.tmp
+*.zip
+
+# Local database files
+*.sql
+*.sqlite
+*.db
+
+# Extra extracted source folder
+DGATE_CRM_V2_Responsive_Source/
+
+# Local test and audit files
+responsive-audit*.txt
+
+# Duplicate projects
+/frontend/frontend/
+/frontend/testapp/
+/frontend/components/
+
+# Local uploads and backups
+/backend/uploads/
+*.backup-*
+*.before-menu-fix
+
+# Local migration test scripts
+/backend/migration/migrate-local.js
+/backend/migration/migrate-test*.js
+
+/frontend/frontend/
+/frontend/testapp/
+/frontend/components/
+/backend/uploads/
+*.backup-*
+*.before-menu-fix
+/backend/migration/migrate-local.js
+/backend/migration/migrate-test*.js

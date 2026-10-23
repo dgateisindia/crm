@@ -42,7 +42,7 @@ export default function EmployeeLayout({
         aria-controls="crm-mobile-sidebar"
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        {menuOpen ? "Close" : "? Menu"}
+        {menuOpen ? "Close" : "Menu"}
       </button>
     </div>
 

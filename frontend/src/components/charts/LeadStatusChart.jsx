@@ -20,7 +20,11 @@ export default function LeadStatusChart({ data }) {
 
   return {
     status,
-    name: formatStatus(item.lead_status),
+    name:
+      status === "not_responded" ||
+      status === "not responded"
+        ? "Not Responded"
+        : formatStatus(item.lead_status),
     value: Number(item.total) || 0,
     color: getStatusTheme(item.lead_status).color,
   };

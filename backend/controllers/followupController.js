@@ -121,17 +121,15 @@ if (role === "employee") {
         lead_id,
         employee_id,
         followup_mode,
-        remarks,
-        lead_status
+        remarks
       )
-      VALUES (?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?)
       `,
       [
         lead_id,
         employeeId,
         followup_mode || "other",
-        remarks || null,
-        lead_status || null
+        remarks || null
       ]
     );
 
@@ -213,6 +211,22 @@ const getFollowups = async (req, res) => {
       SELECT
         l.id AS lead_id,
         l.company_name,
+        MAX(l.phone) AS phone,
+        MAX(l.email) AS email,
+        MAX(l.category) AS category,
+        MAX(l.contact_person_name) AS contact_person_name,
+        MAX(l.contact_person_number) AS contact_person_number,
+        MAX(l.city) AS city,
+        MAX(l.address) AS address,
+        MAX(l.website) AS website,
+        MAX(l.source) AS source,
+        MAX(l.priority) AS priority,
+        MAX(l.designation) AS designation,
+        MAX(l.created_by_name) AS created_by_name,
+        MAX(l.lead_mode) AS lead_mode,
+        MAX(f.created_at) AS latest_followup_date,
+        l.contact_person_name,
+        l.phone,
         l.lead_status,
 
         MAX(f.followup_id) AS latest_followup,
@@ -255,6 +269,8 @@ const getFollowups = async (req, res) => {
       GROUP BY
         l.id,
         l.company_name,
+        l.contact_person_name,
+        l.phone,
         l.lead_status
 
       ORDER BY latest_followup DESC
@@ -574,7 +590,7 @@ if (role === "employee") {
       SELECT
         follow_ups.followup_id,
         follow_ups.followup_mode,
-        follow_ups.lead_status,
+        leads.lead_status AS lead_status,
         follow_ups.remarks,
         follow_ups.next_followup_date,
         follow_ups.created_at

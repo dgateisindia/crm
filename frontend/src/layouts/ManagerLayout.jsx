@@ -42,7 +42,7 @@ export default function ManagerLayout({
         aria-controls="crm-mobile-sidebar"
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        {menuOpen ? "Close" : "? Menu"}
+        {menuOpen ? "Close" : "Menu"}
       </button>
     </div>
 
@@ -72,9 +72,7 @@ export default function ManagerLayout({
         className="
           crm-main
           flex-1
-          h-screen
-          overflow-y-auto
-          overflow-x-hidden
+          min-h-screen
         "
       >
 
