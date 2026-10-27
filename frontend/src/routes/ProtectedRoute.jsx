@@ -11,6 +11,7 @@ import {
 import { useAuth } from "@clerk/react";
 
 import api from "../utils/api";
+import CrmAccessError from "../components/CrmAccessError";
 
 
 import {
@@ -228,12 +229,7 @@ export default function ProtectedRoute({ children }) {
     }
 
 
-    return (
-      <Navigate
-        to="/500"
-        replace
-      />
-    );
+    return <CrmAccessError status={error || 500} />;
 
   }
 

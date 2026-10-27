@@ -1,12 +1,14 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@clerk/react";
 import api from "../utils/api";
+import CrmAccessError from "../components/CrmAccessError";
 
 export default function AuthRedirect() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
 
   const [status, setStatus] = useState("loading");
+  const [httpError, setHttpError] = useState(500);
 
   // Always keep the latest Clerk token getter.
   const getTokenRef = useRef(getToken);
@@ -66,6 +68,7 @@ export default function AuthRedirect() {
         );
 
         const httpStatus = error.response?.status;
+        setHttpError(httpStatus || 503);
 
         if (httpStatus === 401) {
           setStatus("unauthorized");
@@ -108,5 +111,5 @@ export default function AuthRedirect() {
     return <Navigate to="/403" replace />;
   }
 
-  return <Navigate to="/500" replace />;
+  return <CrmAccessError status={httpError} />;
 }
