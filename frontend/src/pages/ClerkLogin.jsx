@@ -1,17 +1,24 @@
 
 import { SignIn, useAuth, useClerk, useUser } from "@clerk/react";
-import { useNavigate } from "react-router-dom";
+
+import { useEffect } from "react";
 import "../styles/clerklogin.css";
 
 export default function ClerkLogin() {
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
-  const navigate = useNavigate();
+  const goToCRM = () => window.location.replace(`${window.location.origin}/#/auth-redirect`);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+
+    goToCRM();
+  }, [isLoaded, isSignedIn]);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/", { replace: true });
+    window.location.replace(`${window.location.origin}/sign-in`);
   };
 
   return (
@@ -83,7 +90,7 @@ export default function ClerkLogin() {
 
               <button
                 type="button"
-                onClick={() => navigate("/auth-redirect")}
+                onClick={goToCRM}
                 style={{
                   padding: "14px",
                   background: "#071739",
@@ -113,9 +120,9 @@ export default function ClerkLogin() {
             </div>
           ) : (
             <SignIn
-              routing="virtual"
-              forceRedirectUrl="/auth-redirect"
-              fallbackRedirectUrl="/auth-redirect"
+              routing="path" path="/sign-in"
+              forceRedirectUrl={`${window.location.origin}/#/auth-redirect`}
+              fallbackRedirectUrl={`${window.location.origin}/#/auth-redirect`}
               appearance={{
                 variables: {
                   colorPrimary: "#071739",
@@ -154,3 +161,4 @@ export default function ClerkLogin() {
     </div>
   );
 }
+

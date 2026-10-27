@@ -35,11 +35,12 @@ export default function AcceptInvitation() {
         </p>
 
         <SignUp
-          routing="virtual"
-          forceRedirectUrl="/auth-redirect"
-          fallbackRedirectUrl="/auth-redirect"
+          routing="path" path="/accept-invitation"
+          forceRedirectUrl={`${window.location.origin}/#/auth-redirect`}
+          fallbackRedirectUrl={`${window.location.origin}/#/auth-redirect`}
         />
       </section>
     </main>
   );
 }
+

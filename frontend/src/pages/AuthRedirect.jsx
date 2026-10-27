@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@clerk/react";
 import api from "../utils/api";
@@ -8,6 +7,10 @@ export default function AuthRedirect() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
 
   const [status, setStatus] = useState("loading");
+
+  // Always keep the latest Clerk token getter.
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -23,12 +26,12 @@ export default function AuthRedirect() {
       setStatus("loading");
 
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
 
         if (cancelled) return;
 
         if (!token) {
-          setStatus("signed-out");
+          setStatus("unauthorized");
           return;
         }
 
@@ -37,14 +40,15 @@ export default function AuthRedirect() {
           {
             headers: {
               Authorization: `Bearer ${token}`
-            }
+            },
+            timeout: 15000
           }
         );
 
         if (cancelled) return;
 
-        const user = response.data?.user;
-        const role = user?.role?.toLowerCase();
+        const role =
+          response.data?.user?.role?.toLowerCase();
 
         if (role === "manager" || role === "owner") {
           setStatus("manager");
@@ -55,6 +59,11 @@ export default function AuthRedirect() {
         }
       } catch (error) {
         if (cancelled) return;
+
+        console.error(
+          "CRM access verification failed:",
+          error.response?.status || error.message
+        );
 
         const httpStatus = error.response?.status;
 
@@ -73,14 +82,14 @@ export default function AuthRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [isLoaded, isSignedIn, getToken]);
+  }, [isLoaded, isSignedIn]);
 
   if (!isLoaded || status === "loading") {
     return <div>Verifying D-GATE CRM access...</div>;
   }
 
   if (status === "signed-out") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/clerk-login" replace />;
   }
 
   if (status === "manager") {

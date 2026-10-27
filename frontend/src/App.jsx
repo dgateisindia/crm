@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 //import Login from "./pages/Login";
@@ -53,6 +54,12 @@ import AuthRedirect from "./pages/AuthRedirect";
 
 import RootRedirect from "./pages/RootRedirect";
 
+function AuthEntryRedirect() {
+  React.useEffect(() => {
+    window.location.replace(`${window.location.origin}/sign-in`);
+  }, []);
+  return <div>Opening secure sign-in...</div>;
+}
 function App() {
   return (
     <Routes>
@@ -67,7 +74,7 @@ function App() {
 
  <Route
   path="/"
-  element={<ClerkLogin />}
+  element={<AuthEntryRedirect />}
 />
 
 
@@ -77,10 +84,10 @@ function App() {
 
       <Route
         path="/clerk-login/*"
-        element={<ClerkLogin />}
+        element={<AuthEntryRedirect />}
       />
 
-      <Route path="/accept-invitation/*" element={<AcceptInvitation />} />
+      <Route path="/accept-invitation/*" element={<AuthEntryRedirect />} />
 
       <Route
         path="/clerk-test"
