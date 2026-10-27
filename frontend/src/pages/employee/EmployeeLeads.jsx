@@ -193,14 +193,12 @@ const openFollowupModal = (lead) => {
   }
 
   try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      
       await  api.post(
         "/followups/add",
         {
           lead_id: selectedLead.id,
-          employee_id:
-          user?.employee_id
-          || user?.id,
+          
           ...followupData
         }
       );

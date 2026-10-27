@@ -19,15 +19,13 @@ import EmployeeDetails from "./pages/manager/EmployeeDetails";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
 
 import AddLeads from "./pages/manager/AddLeads";
-import CreateManager from "./pages/manager/CreateManager";
+
 import LeadDetails from "./pages/manager/LeadDetails";
 import ImportantLeads from "./pages/manager/ImportantLeads";
 import NotInterestedLeads from "./pages/manager/NotInterested";
 import ConvertedLeads from "./pages/manager/ConvertedLeads";
 import ManagerNotResponded from "./pages/manager/NotResponded";
 
-import ResetPassword from "./pages/manager/ResetPassword";
-import ForgotPassword from "./pages/manager/ForgotPassword";
 
 import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
 import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
@@ -48,8 +46,6 @@ import ManagerProfile from "./pages/manager/Profile";
 
 
 
-import ClerkTest from "./pages/ClerkTest";
-import ClerkApiTest from "./ClerkApiTest";
 import AuthRedirect from "./pages/AuthRedirect";
 
 
@@ -90,16 +86,6 @@ function App() {
       <Route path="/accept-invitation/*" element={<AuthEntryRedirect />} />
 
       <Route
-        path="/clerk-test"
-        element={<ClerkTest />}
-      />
-
-      <Route
-        path="/clerk-api-test"
-        element={<ClerkApiTest />}
-      />
-
-      <Route
         path="/auth-redirect"
         element={<AuthRedirect />}
       />
@@ -108,16 +94,6 @@ function App() {
       {/* =========================================
           PASSWORD RESET
           ========================================= */}
-
-      <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
-      />
-
-      <Route
-        path="/reset-password/:token"
-        element={<ResetPassword />}
-      />
 
 
       {/* =========================================
@@ -201,15 +177,6 @@ function App() {
         element={
           <ProtectedRoute>
             <EmployeeDetails />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/manager/create-manager"
-        element={
-          <ProtectedRoute>
-            <CreateManager />
           </ProtectedRoute>
         }
       />

@@ -155,9 +155,7 @@ const handleFollowupSubmit = async () => {
 
   try {
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
+    
 
     await  api.post(
 
@@ -167,9 +165,7 @@ const handleFollowupSubmit = async () => {
 
         lead_id: selectedLead.lead_id,
 
-        employee_id:
-          user?.employee_id ||
-          user?.id,
+        
 
         followup_mode:
           followupData.followup_mode,

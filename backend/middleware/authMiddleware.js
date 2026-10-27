@@ -603,6 +603,28 @@ const requireAuth = (
           }
 
           // =========================================
+          // EMPLOYEE_ACTIVE_PROFILE_GUARD
+          if (role === "employee") {
+            const [profiles] = await db.promise().query(
+              `SELECT employee_id, status
+               FROM employees
+               WHERE user_id = ?
+                 AND company_id = ?
+               LIMIT 1`,
+              [user.id, user.company_id]
+            );
+
+            if (
+              profiles.length !== 1 ||
+              profiles[0].status !== "active"
+            ) {
+              return res.status(403).json({
+                success: false,
+                code: "EMPLOYEE_ACCESS_INACTIVE",
+                message: "Employee access is not active"
+              });
+            }
+          }
           // STEP 6: VERIFY SAAS ENTITLEMENT
           // =========================================
 

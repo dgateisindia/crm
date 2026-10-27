@@ -220,19 +220,49 @@ const managerId = manager[0].manager_id;
     // ==========================
     // Store Clerk invitation ID
     // ==========================
-    await db.promise().query(
-      `
-      UPDATE employees
-      SET clerk_invitation_id = ?
-      WHERE employee_id = ?
-        AND company_id = ?
-      `,
-      [
-        invitation.id,
-        employeeId,
-        companyId
-      ]
-    );
+    let invitationLinked = false;
+
+    try {
+      // CLERK_INVITATION_LINK_GUARD_V1
+      const [linkResult] = await db.promise().query(
+        `UPDATE employees
+         SET clerk_invitation_id = ?
+         WHERE employee_id = ?
+           AND company_id = ?
+           AND user_id IS NULL
+           AND status = 'invited'
+           AND clerk_invitation_id IS NULL`,
+        [invitation.id, employeeId, companyId]
+      );
+
+      invitationLinked = linkResult.affectedRows === 1;
+    } catch (linkError) {
+      console.error(
+        "CLERK INVITATION DATABASE LINK ERROR:",
+        linkError.code || "DATABASE_ERROR"
+      );
+    }
+
+    if (!invitationLinked) {
+      try {
+        await clerkClient.invitations.revokeInvitation(
+          invitation.id
+        );
+      } catch (revokeError) {
+        console.error(
+          "CLERK INVITATION REVOKE ERROR:",
+          revokeError.code || "CLERK_ERROR"
+        );
+      }
+
+      return res.status(409).json({
+        success: false,
+        message:
+          "Invitation could not be linked to employee. " +
+          "Administrator review required.",
+        employee_id: employeeId
+      });
+    }
 
     // ==========================
     // Success
@@ -535,107 +565,162 @@ const deleteEmployee = async (req, res) => {
 // ==========================
 
 const updateEmployeeStatus = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
+  // EMPLOYEE_STATUS_TRANSACTION_V2
+  const employeeId = Number(req.params?.id);
+  const status = req.body?.status;
 
-        const {
-            id: currentUserId,
-            companyId,
-            role: currentUserRole
-        } = req.user;
+  const {
+    id: managerUserId,
+    companyId,
+    role
+  } = req.user || {};
 
-        // ==========================
-        // Verify company
-        // ==========================
-        if (!companyId) {
-            return res.status(403).json({
-                success: false,
-                message: "User is not associated with a company"
-            });
-        }
+  if (!companyId || role !== "manager") {
+    return res.status(403).json({
+      success: false,
+      message: "Manager access required"
+    });
+  }
 
-        // ==========================
-        // Only Manager can update
-        // employee status
-        // ==========================
-        if (currentUserRole !== "manager") {
-            return res.status(403).json({
-                success: false,
-                message: "Only manager can update employee status"
-            });
-        }
+  if (
+    !Number.isSafeInteger(employeeId) ||
+    employeeId < 1 ||
+    !["active", "inactive", "leave", "invited"].includes(status)
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid employee status"
+    });
+  }
 
-        // ==========================
-        // Validate status
-        // ==========================
-        if (!status) {
-            return res.status(400).json({
-                success: false,
-                message: "Status is required"
-            });
-        }
+  let connection;
+  let transactionStarted = false;
 
-        // ==========================
-        // Get current Manager
-        // ==========================
-        const [manager] = await db.promise().query(
-            `
-            SELECT manager_id
-            FROM managers
-            WHERE user_id = ?
-              AND company_id = ?
-              AND status = 'active'
-            LIMIT 1
-            `,
-            [currentUserId, companyId]
-        );
+  try {
+    const [managers] = await db.promise().query(
+      `SELECT manager_id
+       FROM managers
+       WHERE user_id = ?
+         AND company_id = ?
+         AND status = 'active'
+       LIMIT 1`,
+      [managerUserId, companyId]
+    );
 
-        if (manager.length === 0) {
-            return res.status(403).json({
-                success: false,
-                message: "Manager profile could not be found"
-            });
-        }
-
-        const managerId = manager[0].manager_id;
-
-        // ==========================
-        // Update employee status
-        // only if employee belongs
-        // to this Manager
-        // ==========================
-        const [result] = await db.promise().query(
-            `
-            UPDATE employees
-            SET status = ?
-            WHERE employee_id = ?
-              AND company_id = ?
-              AND manager_id = ?
-            `,
-            [status, id, companyId, managerId]
-        );
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Employee not found"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Status Updated"
-        });
-
-    } catch (error) {
-        console.error("UPDATE EMPLOYEE STATUS ERROR:", error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Update Failed"
-        });
+    if (!managers.length) {
+      return res.status(403).json({
+        success: false,
+        message: "Manager profile not active"
+      });
     }
+
+    connection = await db.promise().getConnection();
+    await connection.beginTransaction();
+    transactionStarted = true;
+
+    const [employees] = await connection.query(
+      `SELECT employee_id, user_id
+       FROM employees
+       WHERE employee_id = ?
+         AND company_id = ?
+         AND manager_id = ?
+       LIMIT 1 FOR UPDATE`,
+      [
+        employeeId,
+        companyId,
+        managers[0].manager_id
+      ]
+    );
+
+    if (!employees.length) {
+      await connection.rollback();
+      transactionStarted = false;
+
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found"
+      });
+    }
+
+    const linkedUserId = employees[0].user_id;
+
+    if (linkedUserId != null) {
+      const [users] = await connection.query(
+        `SELECT id, status
+         FROM users
+         WHERE id = ?
+           AND company_id = ?
+           AND role = 'employee'
+         LIMIT 1 FOR UPDATE`,
+        [linkedUserId, companyId]
+      );
+
+      if (!users.length || users[0].status === "suspended") {
+        await connection.rollback();
+        transactionStarted = false;
+
+        return res.status(409).json({
+          success: false,
+          message: "Linked account requires administrator review"
+        });
+      }
+
+      const userStatus = status === "active"
+        ? "active"
+        : status === "invited"
+          ? "invited"
+          : "inactive";
+
+      await connection.query(
+        `UPDATE users
+         SET status = ?
+         WHERE id = ?
+           AND company_id = ?
+           AND role = 'employee'`,
+        [userStatus, linkedUserId, companyId]
+      );
+    }
+
+    await connection.query(
+      `UPDATE employees
+       SET status = ?
+       WHERE employee_id = ?
+         AND company_id = ?
+         AND manager_id = ?`,
+      [
+        status,
+        employeeId,
+        companyId,
+        managers[0].manager_id
+      ]
+    );
+
+    await connection.commit();
+    transactionStarted = false;
+
+    return res.status(200).json({
+      success: true,
+      message: "Employee status updated"
+    });
+
+  } catch (error) {
+    if (transactionStarted && connection) {
+      await connection.rollback().catch(() => {});
+    }
+
+    console.error(
+      "EMPLOYEE STATUS ERROR:",
+      error.code || "DATABASE_ERROR"
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Employee status update failed"
+    });
+
+  } finally {
+    connection?.release();
+  }
 };
 // ==========================
 // Get Employee Profile
@@ -766,57 +851,7 @@ const getMyEmployeeProfile = async (req, res) => {
     }
 };
 
-const changePassword =
-(req, res) => {
 
-  const id =
-  req.params.id;
-
-  const {
-    newPassword
-  } = req.body;
-
-  db.query(
-
-    `
-
-      UPDATE employees
-
-      SET password = ?
-
-      WHERE employee_id = ?
-
-    `,
-
-    [
-
-      newPassword,
-      id
-
-    ],
-
-    (err) => {
-
-      if (err) {
-
-        return res
-        .status(500)
-        .json(err);
-
-      }
-
-      res.json({
-
-        message:
-        "Password Updated"
-
-      });
-
-    }
-
-  );
-
-};
 // ==========================
 // Update Employee Profile
 // ==========================
@@ -1474,38 +1509,56 @@ const retryEmployeeInvitation = async (req, res) => {
   }
 });
 
-    // Link invitation without replacing an existing link.
-    const [updated] = await db.promise().query(
-      `UPDATE employees
-       SET clerk_invitation_id = ?
-       WHERE employee_id = ?
-         AND company_id = ?
-         AND manager_id = ?
-         AND user_id IS NULL
-         AND status = 'invited'
-         AND clerk_invitation_id <=> ?`,
-      [
-        invitation.id,
-        employeeId,
-        companyId,
-        managers[0].manager_id,
-        previousInvitationId
-      ]
-    );
+    // RETRY_INVITATION_CLEANUP_V1
+    // Revoke the newly created Clerk invitation if CRM linking fails.
+    let retryLinked = false;
 
-    if (updated.affectedRows !== 1) {
-      console.error(
-        "INVITATION LINK CONFLICT:",
-        { employeeId, companyId, invitationId: invitation.id }
+    try {
+      const [updated] = await db.promise().query(
+        `UPDATE employees
+         SET clerk_invitation_id = ?
+         WHERE employee_id = ?
+           AND company_id = ?
+           AND manager_id = ?
+           AND user_id IS NULL
+           AND status = 'invited'
+           AND clerk_invitation_id <=> ?`,
+        [
+          invitation.id,
+          employeeId,
+          companyId,
+          managers[0].manager_id,
+          previousInvitationId
+        ]
       );
+
+      retryLinked = updated.affectedRows === 1;
+    } catch (linkError) {
+      console.error(
+        "RETRY INVITATION LINK ERROR:",
+        linkError.code || "DATABASE_ERROR"
+      );
+    }
+
+    if (!retryLinked) {
+      try {
+        await clerkClient.invitations.revokeInvitation(
+          invitation.id
+        );
+      } catch (revokeError) {
+        console.error(
+          "RETRY INVITATION CLEANUP ERROR:",
+          revokeError.code || "CLERK_ERROR"
+        );
+      }
 
       return res.status(409).json({
         success: false,
         message:
-          "Invitation was created, but employee linking needs review"
+          "Invitation could not be linked. " +
+          "Administrator review required."
       });
     }
-
     return res.status(200).json({
       success: true,
       message: "Employee invitation sent successfully"
@@ -1560,7 +1613,6 @@ module.exports = {
   deleteEmployee,
   updateEmployeeStatus,
   getEmployeeProfile,
-  changePassword,
   getEmployeeStats,
   updateEmployee,
   updateEmployeeProfile,

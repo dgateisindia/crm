@@ -12,27 +12,12 @@ export default function ConvertedLeads() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-  const employeeId = user?.id;
+  
 
   // ==========================
   // Fetch Converted Leads
   // ==========================
-  const fetchLeads = async () => {
-    try {
-      const response = await  api.get(
-        `/leads/employee/${employeeId}/converted`
-      );
-
-      setLeads(response.data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   // ==========================
   // Load Data

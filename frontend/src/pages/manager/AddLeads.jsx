@@ -239,12 +239,6 @@ initialState
 
     try {
 
-      const user =
-      JSON.parse(
-        localStorage.getItem(
-          "user"
-        )
-      );
 
       if (id) {
 
@@ -267,29 +261,7 @@ navigate("/manager/leads");
 
 else {
 
-      await  api.post(
-
-        "/leads/add",
-
-        {
-
-          ...leadData,
-
-          created_by_id:
-
-          user?.manager_id ||
-
-          user?.id ||
-
-          1,
-          created_by_type:"manager",
-          created_by_name:
-          user?.full_name ||
-          "Manager Name"
-
-        }
-
-      );
+      await api.post("/leads/add", leadData);
 
       alert(
         "Lead Added Successfully"

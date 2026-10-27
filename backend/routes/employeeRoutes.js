@@ -70,7 +70,6 @@ const {
   deleteEmployee,
   updateEmployeeStatus,
   getEmployeeProfile,
-  changePassword,
   getEmployeeStats,
   updateEmployee,
   updateEmployeeProfile,

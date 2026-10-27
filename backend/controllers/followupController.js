@@ -4,191 +4,244 @@ require("../db");
 // Add Followup
 // ==========================
 const addFollowup = async (req, res) => {
+  // FOLLOWUP_ATOMIC_V1
+  const {
+    lead_id,
+    followup_mode,
+    remarks,
+    lead_status
+  } = req.body || {};
+
+  const { companyId, id: userId, role } = req.user || {};
+  const leadId = Number(lead_id);
+
+  if (
+    !companyId ||
+    !userId ||
+    !["manager", "owner", "employee"].includes(role)
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied"
+    });
+  }
+
+  if (!Number.isSafeInteger(leadId) || leadId < 1) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid lead ID"
+    });
+  }
+
+  const mode = followup_mode || "other";
+
+  if (![
+    "call",
+    "whatsapp",
+    "email",
+    "meeting",
+    "other"
+  ].includes(mode)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid follow-up mode"
+    });
+  }
+
+  if (remarks != null && typeof remarks !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid remarks"
+    });
+  }
+
+  if (lead_status != null && typeof lead_status !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid lead status"
+    });
+  }
+
+  const note = remarks?.trim() || null;
+
+  let connection;
+  let transactionStarted = false;
+
   try {
-    const {
-      lead_id,
-      followup_mode,
-      remarks,
-      lead_status
-    } = req.body;
+    connection = await db.promise().getConnection();
 
-    const { companyId, id: userId, role } = req.user;
+    await connection.beginTransaction();
+    transactionStarted = true;
 
-    // ==========================
-    // Basic Validation
-    // ==========================
-    if (!companyId) {
-      return res.status(403).json({
-        success: false,
-        message: "User is not associated with a company"
-      });
-    }
-
-    if (!lead_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Lead ID is required"
-      });
-    }
-
-    // ==========================
-    // Verify Lead Belongs
-    // To Current Company
-    // ==========================
-    const [leadRows] = await db.promise().query(
-      `
-      SELECT
-        id,
-        company_id,
-        lead_status
-      FROM leads
-      WHERE id = ?
-        AND company_id = ?
-      LIMIT 1
-      `,
-      [lead_id, companyId]
+    // Lock lead before updating related records.
+    const [leadRows] = await connection.query(
+      `SELECT
+         id,
+         company_id,
+         lead_status,
+         assigned_employee_id,
+         created_by_type,
+         created_by_id
+       FROM leads
+       WHERE id = ?
+         AND company_id = ?
+       LIMIT 1 FOR UPDATE`,
+      [leadId, companyId]
     );
 
-    if (leadRows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Lead Not Found"
-      });
+    if (!leadRows.length) {
+      const error = new Error("Lead not found");
+      error.httpStatus = 404;
+      throw error;
     }
 
-    // ==========================
-    // Resolve Employee
-    // ==========================
     let employeeId = null;
 
     if (role === "employee") {
-      const [employeeRows] = await db.promise().query(
-        `
-        SELECT employee_id
-        FROM employees
-        WHERE user_id = ?
-          AND company_id = ?
-          AND status = 'active'
-        LIMIT 1
-        `,
+      const [profiles] = await connection.query(
+        `SELECT employee_id
+         FROM employees
+         WHERE user_id = ?
+           AND company_id = ?
+           AND status = 'active'
+         LIMIT 1`,
         [userId, companyId]
       );
 
-      if (employeeRows.length === 0) {
-        return res.status(403).json({
-          success: false,
-          message: "Employee profile is not linked to this account"
-        });
+      if (!profiles.length) {
+        const error = new Error("Employee access inactive");
+        error.httpStatus = 403;
+        throw error;
       }
 
-      employeeId = employeeRows[0].employee_id;
+      employeeId = profiles[0].employee_id;
+
+      const lead = leadRows[0];
+
+      const canAccess = lead.assigned_employee_id == null
+        ? (
+            lead.created_by_type === "employee" &&
+            Number(lead.created_by_id) === Number(employeeId)
+          )
+        : Number(lead.assigned_employee_id) === Number(employeeId);
+
+      if (!canAccess) {
+        const error = new Error(
+          "Not authorized to update this lead"
+        );
+
+        error.httpStatus = 403;
+        throw error;
+      }
     }
-    // Verify employee can access this lead
-if (role === "employee") {
-  const [accessRows] = await db.promise().query(
-    `
-    SELECT id
-    FROM leads
-    WHERE id = ?
-      AND company_id = ?
-      AND (
-        assigned_employee_id = ?
-        OR (
-          assigned_employee_id IS NULL
-          AND created_by_type = 'employee'
-          AND created_by_id = ?
-        )
-      )
-    LIMIT 1
-    `,
-    [lead_id, companyId, employeeId, employeeId]
-  );
 
-  if (accessRows.length === 0) {
-    return res.status(403).json({
-      success: false,
-      message: "You are not authorized to update this lead"
-    });
-  }
-}
+    const status =
+      lead_status?.trim() ||
+      leadRows[0].lead_status ||
+      "pending";
 
-    // ==========================
-    // Add Permanent Lead History
-    // ==========================
-    await db.promise().query(
-      `
-      INSERT INTO follow_ups (
-        lead_id,
-        employee_id,
-        followup_mode,
-        remarks
-      )
-      VALUES (?, ?, ?, ?)
-      `,
-      [
-        lead_id,
-        employeeId,
-        followup_mode || "other",
-        remarks || null
-      ]
+    if (status.length > 50) {
+      const error = new Error("Lead status too long");
+      error.httpStatus = 400;
+      throw error;
+    }
+
+    // Prevent identical retries within 10 seconds.
+    // The locked lead serializes concurrent submissions.
+    const [existing] = await connection.query(
+      `SELECT followup_id
+       FROM follow_ups
+       WHERE lead_id = ?
+         AND employee_id <=> ?
+         AND followup_mode = ?
+         AND remarks <=> ?
+         AND lead_status = ?
+         AND contact_date >= DATE_SUB(
+           NOW(),
+           INTERVAL 10 SECOND
+         )
+       ORDER BY followup_id DESC
+       LIMIT 1`,
+      [leadId, employeeId, mode, note, status]
     );
 
-    // ==========================
-    // Update Lead Status
-    // IMPORTANT:
-    // Company-scoped
-    // ==========================
-    await db.promise().query(
-      `
-      UPDATE leads
-      SET lead_status = ?
-      WHERE id = ?
-        AND company_id = ?
-      `,
-      [
-        lead_status,
-        lead_id,
-        companyId
-      ]
+    if (existing.length) {
+      await connection.commit();
+      transactionStarted = false;
+
+      return res.status(200).json({
+        success: true,
+        duplicate: true,
+        message: "Follow-up already recorded"
+      });
+    }
+
+    await connection.query(
+      `INSERT INTO follow_ups (
+         lead_id,
+         employee_id,
+         followup_mode,
+         remarks,
+         lead_status
+       )
+       VALUES (?, ?, ?, ?, ?)`,
+      [leadId, employeeId, mode, note, status]
     );
 
-    // ==========================
-    // Remove Pending Task Followup
-    // Only for this company's lead
-    // ==========================
-    await db.promise().query(
-      `
-      DELETE tf
-      FROM task_followups tf
-      INNER JOIN leads l
-        ON l.id = tf.lead_id
-      WHERE tf.lead_id = ?
-        AND l.company_id = ?
-      `,
-      [
-        lead_id,
-        companyId
-      ]
+    await connection.query(
+      `UPDATE leads
+       SET lead_status = ?
+       WHERE id = ?
+         AND company_id = ?`,
+      [status, leadId, companyId]
     );
 
-    // ==========================
-    // Success
-    // ==========================
+    await connection.query(
+      `DELETE tf
+       FROM task_followups tf
+       INNER JOIN leads l
+         ON l.id = tf.lead_id
+       WHERE tf.lead_id = ?
+         AND l.company_id = ?`,
+      [leadId, companyId]
+    );
+
+    await connection.commit();
+    transactionStarted = false;
+
     return res.status(201).json({
       success: true,
       message: "Followup Added Successfully"
     });
 
   } catch (error) {
-    console.error("ADD FOLLOWUP ERROR:", error);
+    if (transactionStarted && connection) {
+      try {
+        await connection.rollback();
+      } catch (rollbackError) {
+        console.error(
+          "FOLLOWUP ROLLBACK:",
+          rollbackError.code || "ROLLBACK_FAILED"
+        );
+      }
+    }
 
-    return res.status(500).json({
+    if (!error.httpStatus) {
+      console.error(
+        "ADD FOLLOWUP ERROR:",
+        error.code || "DATABASE_ERROR"
+      );
+    }
+
+    return res.status(error.httpStatus || 500).json({
       success: false,
-      message:
-        error.sqlMessage ||
-        error.message ||
-        "Failed to add followup"
+      message: error.httpStatus
+        ? error.message
+        : "Failed to save follow-up"
     });
+
+  } finally {
+    connection?.release();
   }
 };
 

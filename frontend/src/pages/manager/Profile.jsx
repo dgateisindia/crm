@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/react";
 import { useSubscription } from "../../context/SubscriptionContext";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
@@ -12,9 +13,6 @@ import {
   Edit3,
   Save,
   X,
-  Eye,
-  EyeOff
- 
 } from "lucide-react";
 
 import "../../styles/employeeprofile.css";
@@ -27,12 +25,7 @@ export default function ManagerProfile() {
 
   const [loading, setLoading] = useState(true);
 
-  const [passwords,setPasswords]=useState({
-      newPassword:"",
-      confirmPassword:""
-  });
-
-  const [showPassword,setShowPassword]=useState(false);
+  
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -248,64 +241,7 @@ useEffect(() => {
 
   };
 
-  // ===============================
-  // Change Password
-  // ===============================
-
-  const updatePassword = async () => {
-    if (!canWrite) return;
-
-
-    if (!passwords.newPassword.trim()) {
-
-        return alert("Please enter a new password.");
-
-    }
-
-    if (passwords.newPassword.length < 6) {
-
-        return alert("Password must be at least 6 characters.");
-
-    }
-
-    if (passwords.newPassword !== passwords.confirmPassword) {
-
-        return alert("Passwords do not match.");
-
-    }
-
-    try {
-
-        await api.put(
-
-            `/managers/change-password/${profile.manager_id}`,
-
-            {
-                newPassword: passwords.newPassword
-            }
-
-        );
-
-        alert("Password Updated Successfully");
-
-        setPasswords({
-
-            newPassword: "",
-            confirmPassword: ""
-
-        });
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-        alert("Failed to update password");
-
-    }
-
-};
+  
     return (
 
     <ManagerLayout>
@@ -624,92 +560,12 @@ useEffect(() => {
 
            
 
-            {/* Password Card */}
-
-
-            <div className="infoCard">
-
-                <h2>Security</h2>
-
-                {/* New Password */}
-
-                <div className="passwordBox">
-
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="New Password"
-                        disabled={!canWrite}
-                        value={passwords.newPassword}
-                        onChange={(e)=>
-                            setPasswords({
-                                ...passwords,
-                                newPassword:e.target.value
-                            })
-                        }
-                    />
-
-                    <button
-                        type="button"
-                        className="eyeBtn"
-                        onClick={()=>
-                            setShowPassword(!showPassword)
-                        }
-                    >
-                        {
-                            showPassword
-                            ?
-                            <Eye size={18}/>
-                            :
-                            <EyeOff size={18}/>
-                        }
-                    </button>
-
-                </div>
-
-
-                {/* Confirm Password */}
-
-                <div className="passwordBox">
-
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Confirm Password"
-                        disabled={!canWrite}
-                        value={passwords.confirmPassword}
-                        onChange={(e)=>
-                            setPasswords({
-                                ...passwords,
-                                confirmPassword:e.target.value
-                            })
-                        }
-                    />
-
-                    <button
-                        type="button"
-                        className="eyeBtn"
-                        onClick={()=>
-                            setShowPassword(!showPassword)
-                        }
-                    >
-                        {
-                            showPassword
-                            ?
-                            <Eye size={18}/>
-                            :
-                            <EyeOff size={18}/>
-                        }
-                    </button>
-
-                </div>
-
-                <button
-                    className="passwordBtn"
-                    onClick={updatePassword} disabled={!canWrite}
-                >
-                    Update Password
-                </button>
-
-            </div>
+            {/* Clerk Account Security */}
+<div className="infoCard">
+  <h2>Account Security</h2>
+  <p>Manage your D-GATE Account security.</p>
+  <UserButton />
+</div>
 
           </div>
 

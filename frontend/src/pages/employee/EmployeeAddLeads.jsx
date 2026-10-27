@@ -205,9 +205,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
+
 
     if (!leadData.company_name.trim()) {
       return alert("Company Name is required");
@@ -251,13 +249,7 @@ const handleSubmit = async (e) => {
       );
 
     } else {
-      await api.post("/leads/add", {
-        ...leadData,
-        created_by_id: user?.id || 1,
-        created_by_type: "employee",
-        created_by_name:
-          user?.full_name || "Employee Name"
-      });
+      await api.post("/leads/add", leadData);
 
       alert("Lead Added Successfully");
       navigate("/employee/my-leads");
@@ -296,7 +288,7 @@ const handleUpload = async () => {
     formData.append("file", selectedFile);
 
     const response = await api.post(
-      "/tasks/upload",
+      "/leads/upload",
       formData
     );
 

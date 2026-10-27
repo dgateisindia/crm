@@ -153,9 +153,7 @@ async () => {
     if (!canWrite) return;
 
 
-  const user = JSON.parse(
-  localStorage.getItem("user")
-);
+  
 
   try {
 await api.post(
@@ -163,9 +161,7 @@ await api.post(
   {
     lead_id: selectedTask.id,
 
-    employee_id:
-      user?.employee_id ||
-      user?.id,
+    
 
     followup_date: followupDate,
     followup_time: followupTime,
@@ -273,10 +269,7 @@ async () => {
 
   try {
 
-    const user =
-    JSON.parse(
-      localStorage.getItem("user")
-    );
+    
 
     await  api.post(
 
@@ -287,9 +280,7 @@ async () => {
         lead_id:
         selectedTask.id,
 
-        employee_id:
-        user?.employee_id ||
-        user?.id,
+        
 
         ...leadFollowupData
 

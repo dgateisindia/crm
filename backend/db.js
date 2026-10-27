@@ -23,14 +23,11 @@ const db = mysql.createPool({
 db.getConnection((err, connection) => {
 
   if (err) {
-
-    //console.log(
-      //"Database Connection Failed:",
-      //err
-    //);
-
-    return;
-
+    console.error(
+      "MySQL connection failed:",
+      err.code || "DATABASE_UNAVAILABLE"
+    );
+    process.exit(1);
   }
 
   //console.log(

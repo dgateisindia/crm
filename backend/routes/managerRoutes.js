@@ -9,11 +9,9 @@ router.use(requireAuth);
 
 const {
 
-  createManager,
   getManagers,
   getManagerProfile,
   updateManagerProfile,
-  changeManagerPassword
 
 } = require(
   "../controllers/managerController"

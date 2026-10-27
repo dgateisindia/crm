@@ -4,11 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-const {
-  clerkMiddleware,
-  getAuth,
-  createClerkClient
-} = require("@clerk/express");
+const { clerkMiddleware } = require("@clerk/express");
 
 const {
   requireAuth
@@ -87,13 +83,7 @@ const adminPlanRoutes = require(
 
 app.use(clerkMiddleware());
 
-const clerkClient = createClerkClient({
-  secretKey:
-    process.env.CLERK_SECRET_KEY,
 
-  publishableKey:
-    process.env.CLERK_PUBLISHABLE_KEY
-});
 
 // =====================================================
 // CORS CONFIGURATION
@@ -512,160 +502,6 @@ app.get(
     res.send(
       "Backend Running Successfully"
     );
-  }
-);
-
-// =====================================================
-// DATABASE TEST
-// =====================================================
-
-app.get(
-  "/api/test-db",
-  (req, res) => {
-    db.query(
-      "SELECT * FROM employee_roles",
-
-      (error, result) => {
-        if (error) {
-          return res.status(500).json({
-            success: false,
-
-            message:
-              "Database Error",
-
-            error
-          });
-        }
-
-        return res.status(200).json({
-          success: true,
-
-          message:
-            "Database Connected Successfully",
-
-          data: result
-        });
-      }
-    );
-  }
-);
-
-// =====================================================
-// CLERK AUTHENTICATION TEST
-// =====================================================
-
-app.get(
-  "/api/clerk-test",
-
-  async (req, res) => {
-    try {
-      const auth = getAuth(req);
-
-      console.log(
-        "\n========== CLERK AUTH TEST =========="
-      );
-
-      console.log(
-        "Token type:",
-        auth.tokenType
-      );
-
-      console.log(
-        "Authenticated:",
-        auth.isAuthenticated
-      );
-
-      console.log(
-        "User ID:",
-        auth.userId
-      );
-
-      console.log(
-        "Session ID:",
-        auth.sessionId
-      );
-
-      console.log(
-        "=====================================\n"
-      );
-
-      if (!auth.isAuthenticated) {
-        return res.status(401).json({
-          success: false,
-
-          message:
-            "Clerk authentication failed",
-
-          tokenType:
-            auth.tokenType || null,
-
-          isAuthenticated:
-            auth.isAuthenticated,
-
-          userId:
-            auth.userId || null,
-
-          sessionId:
-            auth.sessionId || null
-        });
-      }
-
-      const user =
-        await clerkClient.users.getUser(
-          auth.userId
-        );
-
-      return res.status(200).json({
-        success: true,
-
-        message:
-          "Clerk backend authentication working",
-
-        clerkUserId:
-          auth.userId,
-
-        email:
-          user.emailAddresses?.[0]
-            ?.emailAddress || null
-      });
-
-    } catch (error) {
-      console.error(
-        "CLERK TEST ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        success: false,
-
-        message:
-          "Clerk test error",
-
-        error:
-          error.message
-      });
-    }
-  }
-);
-
-// =====================================================
-// TENANT TEST
-// =====================================================
-
-app.get(
-  "/api/tenant-test",
-
-  requireAuth,
-
-  (req, res) => {
-    return res.status(200).json({
-      success: true,
-
-      message:
-        "Tenant context successfully resolved",
-
-      user: req.user
-    });
   }
 );
 

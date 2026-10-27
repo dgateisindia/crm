@@ -319,25 +319,14 @@ async () => {
 
   try {
 
-    const user =
-    JSON.parse(
-
-      localStorage.getItem(
-        "user"
-      )
-
-    );
+    
 
     await  api.put(
 
   `/tasks/followups/edit/${selectedTask.lead_id}`,
       {
 
-        employee_id:
-
-        user?.employee_id ||
-
-        user?.id,
+        
 
         followup_date:
 
@@ -375,14 +364,7 @@ async () => {
 
   try {
 
-    const user =
-    JSON.parse(
-
-      localStorage.getItem(
-        "user"
-      )
-
-    );
+    
 
     await  api.post(
 
@@ -394,11 +376,7 @@ async () => {
 
         selectedTask.lead_id,
 
-        employee_id:
-
-        user?.employee_id ||
-
-        user?.id,
+        
 
         ...leadFollowupData
 
@@ -425,12 +403,12 @@ const addNextTaskFollowup = async () => {
     if (!canWrite) return;
 
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
+    
 
     await api.put(
       `/tasks/followups/add/${selectedTask.lead_id}`,
       {
-        employee_id: user?.employee_id || user?.id,
+        
         followup_date: followupDate,
         followup_time: followupTime,
         remarks: remarks,
