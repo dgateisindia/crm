@@ -46,13 +46,13 @@ import Error503 from "./pages/errors/503";
 
 import ManagerProfile from "./pages/manager/Profile";
 
-import ClerkLogin from "./pages/ClerkLogin";
-import AcceptInvitation from "./pages/AcceptInvitation";
+
+
 import ClerkTest from "./pages/ClerkTest";
 import ClerkApiTest from "./ClerkApiTest";
 import AuthRedirect from "./pages/AuthRedirect";
 
-import RootRedirect from "./pages/RootRedirect";
+
 
 function AuthEntryRedirect() {
   React.useEffect(() => {
