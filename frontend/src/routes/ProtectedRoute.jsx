@@ -3,10 +3,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@clerk/react";
 
@@ -24,6 +21,10 @@ export default function ProtectedRoute({ children }) {
   const location = useLocation();
 
   const { isLoaded, isSignedIn, getToken } = useAuth();
+
+  // STABLE_CLERK_TOKEN_REF_V1
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
 
 
   const [user, setUser] = useState(null);
@@ -78,7 +79,7 @@ export default function ProtectedRoute({ children }) {
         setError(null);
 
 
-        const token = await getToken();
+        const token = await getTokenRef.current();
 
         if (!token) {
           throw new Error("CLERK_SESSION_TOKEN_MISSING");
@@ -138,7 +139,7 @@ export default function ProtectedRoute({ children }) {
       cancelled = true;
     };
 
-  }, [isLoaded, isSignedIn, getToken]);
+  }, [isLoaded, isSignedIn]);
 
 
   // ==========================================
@@ -217,16 +218,7 @@ export default function ProtectedRoute({ children }) {
     }
 
 
-    if (error === 403) {
-
-      return (
-        <Navigate
-          to="/403"
-          replace
-        />
-      );
-
-    }
+    if (error === 403) { return <CrmAccessError status={403} message="This account does not have access to D-GATE CRM. Please use your authorized account or contact your manager." />; }
 
 
     return <CrmAccessError status={error || 500} />;

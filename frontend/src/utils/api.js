@@ -13,11 +13,16 @@ export function setClerkTokenGetter(getter) {
 }
 
 api.interceptors.request.use(async (config) => {
-  if (clerkTokenGetter) {
+  const existingAuthorization =
+    config.headers?.get?.("Authorization") ??
+    config.headers?.Authorization ??
+    config.headers?.authorization;
+
+  if (!existingAuthorization && clerkTokenGetter) {
     const token = await clerkTokenGetter();
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.set("Authorization", `Bearer ${token}`);
     }
   }
 

@@ -2,39 +2,39 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 //import Login from "./pages/Login";
-import ManagerDashboard from "./pages/manager/ManagerDashboard";
-import Leads from "./pages/manager/Leads";
-import Employees from "./pages/manager/Employees";
-import FollowUps from "./pages/manager/FollowUps";
-import Reports from "./pages/manager/Reports";
-import Settings from "./pages/manager/Settings";
-import CreateEmployee from "./pages/manager/CreateEmployee";
+const ManagerDashboard = React.lazy(() => import("./pages/manager/ManagerDashboard"));
+const Leads = React.lazy(() => import("./pages/manager/Leads"));
+const Employees = React.lazy(() => import("./pages/manager/Employees"));
+const FollowUps = React.lazy(() => import("./pages/manager/FollowUps"));
+const Reports = React.lazy(() => import("./pages/manager/Reports"));
+const Settings = React.lazy(() => import("./pages/manager/Settings"));
+const CreateEmployee = React.lazy(() => import("./pages/manager/CreateEmployee"));
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
-import EmployeeFollowUps from "./pages/employee/EmployeeFollowUps";
-import EmployeeAddLeads from "./pages/employee/EmployeeAddLeads";
-import EmployeeMyLeads from "./pages/employee/EmployeeLeads";
-import EmployeeDetails from "./pages/manager/EmployeeDetails";
-import EmployeeProfile from "./pages/employee/EmployeeProfile";
+const EmployeeDashboard = React.lazy(() => import("./pages/employee/EmployeeDashboard"));
+const EmployeeFollowUps = React.lazy(() => import("./pages/employee/EmployeeFollowUps"));
+const EmployeeAddLeads = React.lazy(() => import("./pages/employee/EmployeeAddLeads"));
+const EmployeeMyLeads = React.lazy(() => import("./pages/employee/EmployeeLeads"));
+const EmployeeDetails = React.lazy(() => import("./pages/manager/EmployeeDetails"));
+const EmployeeProfile = React.lazy(() => import("./pages/employee/EmployeeProfile"));
 
-import AddLeads from "./pages/manager/AddLeads";
+const AddLeads = React.lazy(() => import("./pages/manager/AddLeads"));
 
-import LeadDetails from "./pages/manager/LeadDetails";
-import ImportantLeads from "./pages/manager/ImportantLeads";
-import NotInterestedLeads from "./pages/manager/NotInterested";
-import ConvertedLeads from "./pages/manager/ConvertedLeads";
-import ManagerNotResponded from "./pages/manager/NotResponded";
+const LeadDetails = React.lazy(() => import("./pages/manager/LeadDetails"));
+const ImportantLeads = React.lazy(() => import("./pages/manager/ImportantLeads"));
+const NotInterestedLeads = React.lazy(() => import("./pages/manager/NotInterested"));
+const ConvertedLeads = React.lazy(() => import("./pages/manager/ConvertedLeads"));
+const ManagerNotResponded = React.lazy(() => import("./pages/manager/NotResponded"));
 
 
-import EmployeeImportantLeads from "./pages/employee/EmployeeImportantLeads";
-import EmployeeConvertedLeads from "./pages/employee/EmployeeConvertedLeads";
-import EmployeeNotInterested from "./pages/employee/EmployeeNotInterested";
-import EmployeeTasks from "./pages/employee/EmployeeTasks";
-import EmployeeTaskFollowups from "./pages/employee/EmployeeTaskFollowups";
-import EmployeeLeadDetails from "./pages/employee/EmployeeLeadDetails";
-import EmployeeReport from "./pages/employee/EmployeeReport";
-import NotResponded from "./pages/employee/EmployeeNotResponded";
+const EmployeeImportantLeads = React.lazy(() => import("./pages/employee/EmployeeImportantLeads"));
+const EmployeeConvertedLeads = React.lazy(() => import("./pages/employee/EmployeeConvertedLeads"));
+const EmployeeNotInterested = React.lazy(() => import("./pages/employee/EmployeeNotInterested"));
+const EmployeeTasks = React.lazy(() => import("./pages/employee/EmployeeTasks"));
+const EmployeeTaskFollowups = React.lazy(() => import("./pages/employee/EmployeeTaskFollowups"));
+const EmployeeLeadDetails = React.lazy(() => import("./pages/employee/EmployeeLeadDetails"));
+const EmployeeReport = React.lazy(() => import("./pages/employee/EmployeeReport"));
+const NotResponded = React.lazy(() => import("./pages/employee/EmployeeNotResponded"));
 
 import Error401 from "./pages/errors/401";
 import Error403 from "./pages/errors/403";
@@ -42,7 +42,7 @@ import Error404 from "./pages/errors/404";
 import Error500 from "./pages/errors/500";
 import Error503 from "./pages/errors/503";
 
-import ManagerProfile from "./pages/manager/Profile";
+const ManagerProfile = React.lazy(() => import("./pages/manager/Profile"));
 
 
 
@@ -58,7 +58,21 @@ function AuthEntryRedirect() {
 }
 function App() {
   return (
-    <Routes>
+    <React.Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          Loading D-GATE CRM...
+        </div>
+      }
+    >
+      <Routes>
       <Route
         path="/login"
         element={<Navigate to="/clerk-login" replace />}
@@ -420,6 +434,7 @@ function App() {
       />
 
     </Routes>
+    </React.Suspense>
   );
 }
 

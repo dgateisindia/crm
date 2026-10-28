@@ -343,7 +343,7 @@ export default function EmployeeTopbar() {
                 type="button"
                 className="profile-logout"
                 onClick={async () => {
-                  await signOut();
+                  await signOut({ redirectUrl: "/sign-in" });
                 }}
               >
                 <LogOut size={16} />

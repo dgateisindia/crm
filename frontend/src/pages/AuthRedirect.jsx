@@ -108,7 +108,7 @@ export default function AuthRedirect() {
   }
 
   if (status === "forbidden") {
-    return <Navigate to="/403" replace />;
+    return <CrmAccessError status={403} message="This Google account is not authorized for D-GATE CRM. Please sign in with your registered account or contact your manager." />;
   }
 
   return <CrmAccessError status={httpError} />;

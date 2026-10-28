@@ -1,7 +1,7 @@
 
 import { SignIn, useAuth, useClerk, useUser } from "@clerk/react";
 
-import { useEffect } from "react";
+
 import "../styles/clerklogin.css";
 
 export default function ClerkLogin() {
@@ -10,11 +10,7 @@ export default function ClerkLogin() {
   const { signOut } = useClerk();
   const goToCRM = () => window.location.replace(`${window.location.origin}/#/auth-redirect`);
 
-  useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
 
-    goToCRM();
-  }, [isLoaded, isSignedIn]);
 
   const handleSignOut = async () => {
     await signOut();

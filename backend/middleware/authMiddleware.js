@@ -116,19 +116,7 @@ const requireAuth = (
     // ===============================================
 
     const auth = getAuth(req);
-    console.log("D-GATE AUTH CHECK:", {
-  hasBearerToken:
-    req.headers.authorization?.startsWith("Bearer ") === true,
-
-  authenticated: auth.isAuthenticated === true,
-
-  hasClerkUserId: Boolean(auth.userId),
-
-  internalCompanyIdConfigured:
-    Number(process.env.INTERNAL_COMPANY_ID) === 1,
-
-  requestOrigin: req.headers.origin
-});
+    
 
     if (
       !auth.isAuthenticated ||
@@ -298,7 +286,7 @@ const requireAuth = (
                        ON c.id = e.company_id
                      WHERE LOWER(TRIM(e.email)) = ?
                        AND e.company_id = ?
-                       AND e.status = 'invited'
+                       AND e.status IN ('invited', 'active')
                        AND e.user_id IS NULL
                        AND c.status = 'active'
                        AND e.clerk_invitation_id IS NOT NULL
